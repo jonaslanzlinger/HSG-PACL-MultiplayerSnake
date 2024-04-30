@@ -2,7 +2,8 @@
 1. Navigate to /backend
 2. Execute the following command
 ```
-npm run test
+npm install
+npm run start
 ```
 3. Visit 
 ```
