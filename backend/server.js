@@ -1,4 +1,8 @@
 const Player = require("./Player.js");
+const Apple = require("./fields/Apple");
+const Empty = require("./fields/Empty");
+const Obstacle = require("./fields/Obstacle");
+const addRandomFieldsToMap = require("./utils/addRandomFieldsToMap");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -36,7 +40,7 @@ io.on("connection", (socket) => {
       console.log(nickname + " joined the game");
       // TODO assign unique player number to each new player
       let nextPlayerNumber = 1;
-      player = new Player(socket, nickname, nextPlayerNumber);
+      player = new Player(socket, nickname, nextPlayerNumber, map);
       players.push(player);
    });
 
@@ -55,63 +59,91 @@ io.on("connection", (socket) => {
 //////////////////////
 // Game logic       //
 //////////////////////
-let FPS = 10;
+const FPS = 10;
 let players = [];
 
 // State of the game map
-let mapSize = 60;
-// Init map
-let map = new Array(mapSize).fill(0).map(() => new Array(mapSize).fill(0));
+const mapSize = 60;
+
+// The amount of a given field to have on the map at any point in time
+const NumberOfFields = {
+    APPLE: 20,
+    OBSTACLE: 30,
+}
+
+// Initial static map layout with obstacles
+const initialMap = initiallyRenderMapLayout();
+
+// make a deep copy for live use with players and other elements
+let map = initialMap.map(row => [...row]);
 
 // Complete game state
 let gameState = {
-   map: map,
+    map: map,
 };
+
+/**
+ * Renders an initial map to be played on including obstacles.
+ * We do not want to re-generate this part every time as it's static.
+ *
+ * @returns {any[][]}
+ */
+function initiallyRenderMapLayout() {
+    // Initialize empty map
+    let map = new Array(mapSize).fill(Empty.IDENTIFIER).map(() => new Array(mapSize).fill(Empty.IDENTIFIER));
+
+    // Randomly add obstacles to map based on defined NumberOfFields.OBSTACLE.
+    addRandomFieldsToMap(map, Obstacle.IDENTIFIER, NumberOfFields.OBSTACLE);
+
+    // Randomly add apples to map based on defined NumberOfFields.APPLE.
+    //TODO: move away from this function
+    addRandomFieldsToMap(map, Apple.IDENTIFIER, NumberOfFields.APPLE);
+
+    return map;
+}
 
 // Update game state
 function updateGameState() {
-   // Update player positions
-   players.forEach((player) => {
-      player.move();
+    // re-initialize map as a deep copy from the initially generated map layout (with obstacles)
+    let newMap = initialMap.map(row => [...row]);
 
-      // Remove player from map if player collides with wall or other player
-      if (collides(player)) {
-         players = players.filter((p) => p !== player);
-      }
+    // Update player positions
+    players.forEach((player) => {
+        let moveSuccess = player.move();
+        if (!moveSuccess) {
+            // Remove player from list if collided
+            //TODO: better handle when player has game over
+            players = players.filter((p) => p !== player);
+        } else {
+            drawSnake(newMap, player);
+        }
+    });
 
-      // re-initialize map
-      map = new Array(mapSize).fill(0).map(() => new Array(mapSize).fill(0));
+    // Update game state
+    gameState.map = newMap;
+}
 
-      // Write players to map
-      players.forEach((p) => {
-         p.snake.forEach((s) => {
-            map[s.x][s.y] = p.playerNumber;
-         });
-         map[p.snake[0].x][p.snake[0].y] = -p.playerNumber;
-      });
-
-      // Update game state
-      gameState.map = map;
-   });
+function drawSnake(newMap, player) {
+    //the snake body is denoted as the playerNumber (e.g. 2)
+    player.snake.forEach((s) => {
+        newMap[s.x][s.y] = player.playerNumber;
+    });
+    //the snake head is denoted as the negative playerNumber (e.g. -2)
+    newMap[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
 }
 
 // Game loop
 function startGameLoop() {
 
-   setInterval(() => {
+    setInterval(() => {
 
-      // Update game state
-      updateGameState();
+        // Update game state
+        updateGameState();
 
-      // Emit game state to all clients
-      io.emit("gameState", gameState);
+        // Emit game state to all clients
+        io.emit("gameState", gameState);
 
-   }, 1000 / FPS);
-}
-
-function collides(player) {
-   // TODO check if player collides with wall
-   return false;
+    }, 1000 / FPS);
 }
 
 // Start the game loop

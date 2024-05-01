@@ -42,7 +42,30 @@ function initSocket(nickname) {
       for (let y = 0; y < gameState.map.length; y++) {
          for (let x = 0; x < gameState.map[y].length; x++) {
             if (gameState.map[y][x] !== 0) {
-               ctx.fillStyle = gameState.map[y][x] < 0 ? "red" : "grey";
+               //TODO: improve switch to efficiently handle all map fields
+               switch (true) {
+                  //field: snake body
+                  case gameState.map[y][x] > 0:
+                     ctx.fillStyle = "grey";
+                     break;
+                  //field: snake head
+                  case gameState.map[y][x] < 0:
+                     ctx.fillStyle = "red";
+                     break;
+                  //field: apple
+                  case gameState.map[y][x] === "a":
+                     ctx.fillStyle = "green";
+                     break;
+                  //field: obstacle
+                  case gameState.map[y][x] === "o":
+                     ctx.fillStyle = "black";
+                     break;
+                  default:
+                     //TODO: nothing should be orange, so be careful if you see that on the map. handle better
+                     ctx.fillStyle = "orange";
+                     break;
+               }
+
                ctx.fillRect(y * TILE_SIZE, x * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
          }
