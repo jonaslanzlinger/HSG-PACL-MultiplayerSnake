@@ -1,5 +1,4 @@
 const Apple = require("./fields/Apple");
-const addRandomFieldsToMap = require("./utils/addRandomFieldsToMap");
 
 class Player {
    constructor(socket, nickname, playerNumber, map) {
@@ -49,11 +48,10 @@ class Player {
          return false;
       }
 
-      //if snake head is on apple, let snake increase length and generate new apple
+      // Handle snake eating apple
       if (this.map[newHead.x][newHead.y] === Apple.IDENTIFIER) {
-         //Generate a new apple as we just ate one
-         //TODO: apple is not generated correctly
-         addRandomFieldsToMap(this.map, Apple.IDENTIFIER, 1);
+         // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
+         Apple.handleSnakeConsumedApple(this.map, newHead)
       } else {
          this.snake.pop();
       }
