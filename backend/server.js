@@ -60,18 +60,20 @@ let players = [];
 
 // State of the game map
 const mapSize = 60;
-// Percentage of apples on the map (number between 0 and 1)
-const appleDensity = 0.01
-// Percentage of obstacles when map is initially generated (number between 0 and 1)
-const obstacleDensity = 0.005
 
 // The available field types on the playing map
 const FieldType = {
-   EMPTY: 0,
-   OBSTACLE: 'o',
-   APPLE: 'a',
-   //POWERUP: 'p',
+    EMPTY: 0,
+    OBSTACLE: 'o',
+    APPLE: 'a',
+    //POWERUP: 'p',
 };
+
+// The amount of a given field to have on the map at any point in time
+const NumberOfFields = {
+    APPLE: 20,
+    OBSTACLE: 30,
+}
 
 // Initial static map layout with obstacles
 const initialMap = initiallyRenderMapLayout();
@@ -79,33 +81,34 @@ const initialMap = initiallyRenderMapLayout();
 // make a deep copy for live use with players and other elements
 let map = initialMap.map(row => [...row]);
 
+// Complete game state
+let gameState = {
+    map: map,
+};
 
 /**
  * Takes a map (2d array) and randomly generates fields of a given type based on the desired fieldDensity
  *
  * @param map is the playing map to generate fields on
  * @param newFieldType is the field type to be generated on the given map
- * @param fieldDensity is the percentage of how much of the map should be covered in the newFieldType
+ * @param numberOfFieldsToBeGenerated is the number of fields to be randomly generated
  * @returns {*}
  */
-function addRandomFieldsToMap(map, newFieldType, fieldDensity) {
-   //Use the total map area of length*width and defined density to calculate the necessary number of fields to be changed
-   const numberOfFieldsToBeGenerated = (map.length * map[0].length) * fieldDensity;
+function addRandomFieldsToMap(map, newFieldType, numberOfFieldsToBeGenerated) {
+    // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
+    let count = 0;
+    while (count < numberOfFieldsToBeGenerated) {
+        // Generate random indices
+        const row = Math.floor(Math.random() * map.length);
+        const col = Math.floor(Math.random() * map[0].length);
 
-   // Until we reach the desired field density, select a random field on the map and try to change it into the new field
-   let count = 0;
-   while (count < numberOfFieldsToBeGenerated) {
-      // Generate random indices
-      const row = Math.floor(Math.random() * map.length);
-      const col = Math.floor(Math.random() * map[0].length);
-
-      // Check if the field is empty
-      if (map[row][col] === FieldType.EMPTY) {
-         map[row][col] = newFieldType;
-         count++;
-      }
-   }
-   return map;
+        // Check if the field is empty
+        if (map[row][col] === FieldType.EMPTY) {
+            map[row][col] = newFieldType;
+            count++;
+        }
+    }
+    return map;
 }
 
 /**
@@ -115,71 +118,74 @@ function addRandomFieldsToMap(map, newFieldType, fieldDensity) {
  * @returns {any[][]}
  */
 function initiallyRenderMapLayout() {
-   // Initialize empty map
-   let map = new Array(mapSize).fill(FieldType.EMPTY).map(() => new Array(mapSize).fill(FieldType.EMPTY));
+    // Initialize empty map
+    let map = new Array(mapSize).fill(FieldType.EMPTY).map(() => new Array(mapSize).fill(FieldType.EMPTY));
 
-   // Randomly add obstacles to map based on defined obstacleDensity.
-   addRandomFieldsToMap(map, FieldType.OBSTACLE, obstacleDensity);
-   // Randomly add apples to map based on defined appleDensity.
-   //TODO: apples need to be regenerated when eaten on every tick and ensure that we always have around appleDensity on the map
-   addRandomFieldsToMap(map, FieldType.APPLE, appleDensity);
+    // Randomly add obstacles to map based on defined NumberOfFields.OBSTACLE.
+    addRandomFieldsToMap(map, FieldType.OBSTACLE, NumberOfFields.OBSTACLE);
+    // Randomly add apples to map based on defined NumberOfFields.APPLE.
+    addRandomFieldsToMap(map, FieldType.APPLE, NumberOfFields.APPLE);
 
-   //TODO: remove
-   console.log(map.toString())
-
-   return map;
+    return map;
 }
-
-// Complete game state
-let gameState = {
-   map: map,
-};
 
 // Update game state
 function updateGameState() {
-   // Update player positions
-   players.forEach((player) => {
-      player.move();
+    // re-initialize map as a deep copy from the initially generated map layout (with obstacles)
+    let newMap = initialMap.map(row => [...row]);
 
-      // Remove player from map if player collides with wall or other player
-      if (collides(player)) {
-         players = players.filter((p) => p !== player);
-      }
+    // Update player positions
+    players.forEach((player) => {
+        player.move();
 
-      // re-initialize map
-      //TODO: fix snake getting longer and longer
-      map = initialMap;
+        // Remove player from map if player collides with wall or other player
+        if (collides(player)) {
+            players = players.filter((p) => p !== player);
+        }
 
-      // Write players to map
-      players.forEach((p) => {
-         p.snake.forEach((s) => {
-            map[s.x][s.y] = p.playerNumber;
-         });
-         map[p.snake[0].x][p.snake[0].y] = -p.playerNumber;
-      });
+        consumeApple(player);
+        drawSnake(newMap, player);
+    });
 
-      // Update game state
-      gameState.map = map;
-   });
+    // Update game state
+    gameState.map = newMap;
+}
+
+function drawSnake(newMap, player) {
+    //the snake head is denoted as the playerNumber (e.g. 2)
+    player.snake.forEach((s) => {
+        newMap[s.x][s.y] = player.playerNumber;
+    });
+    //the snake body is denoted as the negative playerNumber (e.g. -2)
+    newMap[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
+}
+
+function consumeApple(player) {
+    //TODO: write function
+    //addRandomFieldsToMap(map, FieldType.APPLE, 1);
+    // 1. check if snake head is on apple
+    // 2. remove apple
+    // 3. increase snake size
+    // 4. re-generate an apple
+}
+
+function collides(player) {
+    // TODO check if player collides with wall or obstacle o
+    return false;
 }
 
 // Game loop
 function startGameLoop() {
 
-   setInterval(() => {
+    setInterval(() => {
 
-      // Update game state
-      updateGameState();
+        // Update game state
+        updateGameState();
 
-      // Emit game state to all clients
-      io.emit("gameState", gameState);
+        // Emit game state to all clients
+        io.emit("gameState", gameState);
 
-   }, 1000 / FPS);
-}
-
-function collides(player) {
-   // TODO check if player collides with wall
-   return false;
+    }, 1000 / FPS);
 }
 
 // Start the game loop
