@@ -32,6 +32,9 @@ function initSocket(nickname) {
 
    // Listen for game state updates
    socket.on("gameState", (gameState) => {
+
+      updateLeaderboard(gameState.map);
+
       let canvas = document.getElementById("canvas");
       canvas.height = TILE_SIZE * gameState.map.length + 1;
       canvas.width = canvas.height;
