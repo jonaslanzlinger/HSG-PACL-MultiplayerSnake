@@ -55,13 +55,80 @@ io.on("connection", (socket) => {
 //////////////////////
 // Game logic       //
 //////////////////////
-let FPS = 10;
+const FPS = 10;
 let players = [];
 
 // State of the game map
-let mapSize = 60;
-// Init map
-let map = new Array(mapSize).fill(0).map(() => new Array(mapSize).fill(0));
+const mapSize = 60;
+// Percentage of apples on the map (number between 0 and 1)
+const appleDensity = 0.01
+// Percentage of obstacles when map is initially generated (number between 0 and 1)
+const obstacleDensity = 0.005
+
+// The available field types on the playing map
+const FieldType = {
+   EMPTY: 0,
+   OBSTACLE: 'o',
+   APPLE: 'a',
+   //POWERUP: 'p',
+};
+
+// Initial static map layout with obstacles
+const initialMap = initiallyRenderMapLayout();
+
+// make a deep copy for live use with players and other elements
+let map = initialMap.map(row => [...row]);
+
+
+/**
+ * Takes a map (2d array) and randomly generates fields of a given type based on the desired fieldDensity
+ *
+ * @param map is the playing map to generate fields on
+ * @param newFieldType is the field type to be generated on the given map
+ * @param fieldDensity is the percentage of how much of the map should be covered in the newFieldType
+ * @returns {*}
+ */
+function addRandomFieldsToMap(map, newFieldType, fieldDensity) {
+   //Use the total map area of length*width and defined density to calculate the necessary number of fields to be changed
+   const numberOfFieldsToBeGenerated = (map.length * map[0].length) * fieldDensity;
+
+   // Until we reach the desired field density, select a random field on the map and try to change it into the new field
+   let count = 0;
+   while (count < numberOfFieldsToBeGenerated) {
+      // Generate random indices
+      const row = Math.floor(Math.random() * map.length);
+      const col = Math.floor(Math.random() * map[0].length);
+
+      // Check if the field is empty
+      if (map[row][col] === FieldType.EMPTY) {
+         map[row][col] = newFieldType;
+         count++;
+      }
+   }
+   return map;
+}
+
+/**
+ * Renders an initial map to be played on including obstacles.
+ * We do not want to re-generate this part every time as it's static.
+ *
+ * @returns {any[][]}
+ */
+function initiallyRenderMapLayout() {
+   // Initialize empty map
+   let map = new Array(mapSize).fill(FieldType.EMPTY).map(() => new Array(mapSize).fill(FieldType.EMPTY));
+
+   // Randomly add obstacles to map based on defined obstacleDensity.
+   addRandomFieldsToMap(map, FieldType.OBSTACLE, obstacleDensity);
+   // Randomly add apples to map based on defined appleDensity.
+   //TODO: apples need to be regenerated when eaten on every tick and ensure that we always have around appleDensity on the map
+   addRandomFieldsToMap(map, FieldType.APPLE, appleDensity);
+
+   //TODO: remove
+   console.log(map.toString())
+
+   return map;
+}
 
 // Complete game state
 let gameState = {
@@ -80,7 +147,8 @@ function updateGameState() {
       }
 
       // re-initialize map
-      map = new Array(mapSize).fill(0).map(() => new Array(mapSize).fill(0));
+      //TODO: fix snake getting longer and longer
+      map = initialMap;
 
       // Write players to map
       players.forEach((p) => {
