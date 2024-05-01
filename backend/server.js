@@ -89,11 +89,8 @@ function updateGameState() {
 
     // Update player positions
     players.forEach((player) => {
-        let moveSuccess = player.move();
-        if (!moveSuccess) {
-            // Remove player from list if collided
-            //TODO: better handle when player has game over
-            players = players.filter((p) => p !== player);
+        if (!player.move()) {
+            handlePlayerCollision(player);
         } else {
             drawSnake(map, player);
         }
@@ -101,6 +98,13 @@ function updateGameState() {
 
     // Update game state
     gameState.map = map;
+}
+
+function handlePlayerCollision(player) {
+    // Remove player from list of active players
+    players = players.filter((p) => p !== player);
+
+    //TODO: emit event that player died? what else?
 }
 
 function drawObstacles(map) {
