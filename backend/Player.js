@@ -1,10 +1,15 @@
+const Apple = require("./fields/Apple");
+const addRandomFieldsToMap = require("./utils/addRandomFieldsToMap");
+
 class Player {
-   constructor(socket, nickname, playerNumber) {
+   constructor(socket, nickname, playerNumber, map) {
       this.socket = socket;
       this.nickname = nickname;
       this.playerNumber = playerNumber;
-      let randomX = Math.floor(Math.random() * 30);
-      let randomY = Math.floor(Math.random() * 30);
+      this.map = map;
+      // Create random starting position for snake (atleast 3 cells away from the border)
+      let randomX = Math.floor(Math.random() * (this.map.length - 3) + 3);
+      let randomY = Math.floor(Math.random() * (this.map.length - 3) + 3);
       this.snake = [{ x: randomX, y: randomY }];
       this.snake[1] = { x: randomX - 1, y: randomY };
       this.snake[2] = { x: randomX - 2, y: randomY };
@@ -39,7 +44,28 @@ class Player {
             break;
       }
       this.snake.unshift(newHead);
-      this.snake.pop();
+
+      if (this.collides()) {
+         return false;
+      }
+
+      //if snake head is on apple, let snake increase length and generate new apple
+      if (this.map[newHead.x][newHead.y] === Apple.IDENTIFIER) {
+         //Generate a new apple as we just ate one
+         addRandomFieldsToMap(this.map, Apple.IDENTIFIER, 1);
+      } else {
+         this.snake.pop();
+      }
+
+      return true;
+   }
+
+   collides() {
+      if (this.snake[0].x < 0 || this.snake[0].x >= this.map.length || this.snake[0].y < 0 || this.snake[0].y >= this.map.length) {
+         console.log("Player " + this.nickname + " collided with wall");
+         return true;
+      }
+      return false;
    }
 }
 

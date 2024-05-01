@@ -1,4 +1,8 @@
 const Player = require("./Player.js");
+const Apple = require("./fields/Apple");
+const Empty = require("./fields/Empty");
+const Obstacle = require("./fields/Obstacle");
+const addRandomFieldsToMap = require("./utils/addRandomFieldsToMap");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -36,7 +40,7 @@ io.on("connection", (socket) => {
       console.log(nickname + " joined the game");
       // TODO assign unique player number to each new player
       let nextPlayerNumber = 1;
-      player = new Player(socket, nickname, nextPlayerNumber);
+      player = new Player(socket, nickname, nextPlayerNumber, map);
       players.push(player);
    });
 
@@ -61,14 +65,6 @@ let players = [];
 // State of the game map
 const mapSize = 60;
 
-// The available field types on the playing map
-const FieldType = {
-    EMPTY: 0,
-    OBSTACLE: 'o',
-    APPLE: 'a',
-    //POWERUP: 'p',
-};
-
 // The amount of a given field to have on the map at any point in time
 const NumberOfFields = {
     APPLE: 20,
@@ -87,31 +83,6 @@ let gameState = {
 };
 
 /**
- * Takes a map (2d array) and randomly generates fields of a given type based on the desired fieldDensity
- *
- * @param map is the playing map to generate fields on
- * @param newFieldType is the field type to be generated on the given map
- * @param numberOfFieldsToBeGenerated is the number of fields to be randomly generated
- * @returns {*}
- */
-function addRandomFieldsToMap(map, newFieldType, numberOfFieldsToBeGenerated) {
-    // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
-    let count = 0;
-    while (count < numberOfFieldsToBeGenerated) {
-        // Generate random indices
-        const row = Math.floor(Math.random() * map.length);
-        const col = Math.floor(Math.random() * map[0].length);
-
-        // Check if the field is empty
-        if (map[row][col] === FieldType.EMPTY) {
-            map[row][col] = newFieldType;
-            count++;
-        }
-    }
-    return map;
-}
-
-/**
  * Renders an initial map to be played on including obstacles.
  * We do not want to re-generate this part every time as it's static.
  *
@@ -119,12 +90,14 @@ function addRandomFieldsToMap(map, newFieldType, numberOfFieldsToBeGenerated) {
  */
 function initiallyRenderMapLayout() {
     // Initialize empty map
-    let map = new Array(mapSize).fill(FieldType.EMPTY).map(() => new Array(mapSize).fill(FieldType.EMPTY));
+    let map = new Array(mapSize).fill(Empty.IDENTIFIER).map(() => new Array(mapSize).fill(Empty.IDENTIFIER));
 
     // Randomly add obstacles to map based on defined NumberOfFields.OBSTACLE.
-    addRandomFieldsToMap(map, FieldType.OBSTACLE, NumberOfFields.OBSTACLE);
+    addRandomFieldsToMap(map, Obstacle.IDENTIFIER, NumberOfFields.OBSTACLE);
+
     // Randomly add apples to map based on defined NumberOfFields.APPLE.
-    addRandomFieldsToMap(map, FieldType.APPLE, NumberOfFields.APPLE);
+    //TODO: move away from this function
+    addRandomFieldsToMap(map, Apple.IDENTIFIER, NumberOfFields.APPLE);
 
     return map;
 }
@@ -136,15 +109,14 @@ function updateGameState() {
 
     // Update player positions
     players.forEach((player) => {
-        player.move();
-
-        // Remove player from map if player collides with wall or other player
-        if (collides(player)) {
+        let moveSuccess = player.move();
+        if (!moveSuccess) {
+            // Remove player from list if collided
+            //TODO: better handle when player has game over
             players = players.filter((p) => p !== player);
+        } else {
+            drawSnake(newMap, player);
         }
-
-        consumeApple(player);
-        drawSnake(newMap, player);
     });
 
     // Update game state
@@ -152,26 +124,12 @@ function updateGameState() {
 }
 
 function drawSnake(newMap, player) {
-    //the snake head is denoted as the playerNumber (e.g. 2)
+    //the snake body is denoted as the playerNumber (e.g. 2)
     player.snake.forEach((s) => {
         newMap[s.x][s.y] = player.playerNumber;
     });
-    //the snake body is denoted as the negative playerNumber (e.g. -2)
+    //the snake head is denoted as the negative playerNumber (e.g. -2)
     newMap[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
-}
-
-function consumeApple(player) {
-    //TODO: write function
-    //addRandomFieldsToMap(map, FieldType.APPLE, 1);
-    // 1. check if snake head is on apple
-    // 2. remove apple
-    // 3. increase snake size
-    // 4. re-generate an apple
-}
-
-function collides(player) {
-    // TODO check if player collides with wall or obstacle o
-    return false;
 }
 
 // Game loop
