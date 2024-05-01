@@ -52,6 +52,7 @@ class Player {
       //if snake head is on apple, let snake increase length and generate new apple
       if (this.map[newHead.x][newHead.y] === Apple.IDENTIFIER) {
          //Generate a new apple as we just ate one
+         //TODO: apple is not generated correctly
          addRandomFieldsToMap(this.map, Apple.IDENTIFIER, 1);
       } else {
          this.snake.pop();
