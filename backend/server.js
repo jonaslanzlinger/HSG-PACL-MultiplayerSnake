@@ -1,5 +1,6 @@
 const Game = require("./app/Game.js");
 const SocketConfig = require("./configs/socketConfig.js");
+const BackendConfig = require("./configs/backendConfig.js");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -41,7 +42,7 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
    // Listen for user input
    socket.on(SocketConfig.EVENTS.USER_INPUT, (userInput) => {
-      if (userInput === 'p') {
+      if (userInput === BackendConfig.USER_INPUTS.POWER_UP) {
          player.usePowerUp();
       } else {
          player.setDirection(userInput);
