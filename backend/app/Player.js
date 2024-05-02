@@ -1,5 +1,6 @@
 const Apple = require("./fields/Apple");
 const Obstacle = require("./fields/Obstacle");
+const Star = require("./fields/powerups/Star");
 const BackendConfig = require("../configs/backendConfig");
 
 class Player {
@@ -12,7 +13,10 @@ class Player {
         this.snake = this.spawnRandomSnake(BackendConfig.SNAKE_SPAWN_LENGTH);
         this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
-        //TODO: this.powerUpInventory -> holds a queue of power ups that player holds. Then be able to use it with spacebar?
+        //Holds an inventory of available power ups that the player holds, can be consumed.
+        //TODO: if this is a queue (in the sense that you need to consume the first powerup that you picked up), then rename it to powerUpQueue
+        this.powerUpInventory = [];
+        this.activePowerUp = null;
     }
 
     /**
@@ -25,12 +29,13 @@ class Player {
             //TODO: omit fields altogether that are false (gameOver, snakeInvulnerability, ...)
             playerNumber: this.playerNumber,
             nickname: this.nickname,
-            score: this.snake.length - BackendConfig.SNAKE_SPAWN_LENGTH, //TODO: the score might not only be based on the snake length (e.g. killing other snakes)
+            //TODO: the score might not only be based on the snake length (e.g. killing other snakes)
+            score: this.snake.length - BackendConfig.SNAKE_SPAWN_LENGTH,
             gameOver: this.gameOver,
-            snakeInvulnerability: this.snakeInvulnerability
-            //powerUpInventory: [], //TODO: add first Star.js to become invulnerable
-            //activePowerUp: null,
-            //activeDebuff: null,
+            snakeInvulnerability: this.snakeInvulnerability,
+            powerUpInventory: this.powerUpInventory,
+            activePowerUp: this.activePowerUp,
+            //activeDebuff: null, //TODO: certain powerups might add debuffs to other players
         };
     }
 
@@ -61,6 +66,17 @@ class Player {
 
         // Set the snake to invulnerable, but will be automatically changed to false after timeout is reached
         return true;
+    }
+
+    // Add the first powerUp from the inventory to the player's active PowerUp
+    //TODO: we could think about player selecting a powerUp rather than always using the first one he picked up
+    usePowerUp() {
+        // Move powerUp from inventory to active
+        if (this.powerUpInventory.length > 0) {
+            this.activePowerUp = this.powerUpInventory.shift();
+        }
+        // Activate the powerUp
+        Star.activatePowerUp(this);
     }
 
     setDirection(direction) {
@@ -104,14 +120,18 @@ class Player {
             return false;
         }
 
-        // Handle snake eating apple
-        if (this.map[newHead.x][newHead.y] === Apple.IDENTIFIER) {
-            // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
-            Apple.handleSnakeConsumedApple(this.map, newHead)
-        } else {
-            this.snake.pop();
+        // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
+        switch (this.map[newHead.x][newHead.y]) {
+            case Apple.IDENTIFIER:
+                // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
+                Apple.handleSnakeConsumedApple(this.map, newHead)
+                break;
+            case Star.IDENTIFIER:
+                Star.handleSnakeConsumedStar(this.map, newHead, this.powerUpInventory);
+                break;
+            default:
+                this.snake.pop();
         }
-
         return true;
     }
 

@@ -41,13 +41,21 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
    // Listen for user input
    socket.on(SocketConfig.EVENTS.USER_INPUT, (userInput) => {
-      player.setDirection(userInput);
+      if (userInput === 'p') {
+         player.usePowerUp();
+      } else {
+         player.setDirection(userInput);
+      }
    });
 
    // Remove player from players array when disconnected
    socket.on(SocketConfig.EVENTS.DISCONNECT, () => {
-      console.log("User: " + socket.id + " disconnected");
       game.handlePlayerDisconnected(socket);
+   });
+
+   // Remove player from players array when game over
+   socket.on(SocketConfig.EVENTS.FORCE_DISCONNECT, () => {
+      socket.disconnect();
    });
 });
 
