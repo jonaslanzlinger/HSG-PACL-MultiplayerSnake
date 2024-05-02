@@ -54,6 +54,8 @@ function initSocket(nickname) {
 
       updateLeaderboard(gameState);
 
+      //TODO: visually mark the snake if it's currently invulnerable (has gameState attribute called activePowerUp)
+
       let canvas = document.getElementById("canvas");
       canvas.height = TILE_SIZE * gameState.map.length + 1;
       canvas.width = canvas.height;
@@ -81,6 +83,11 @@ function initSocket(nickname) {
                   //field: obstacle
                   case gameState.map[y][x] === "o":
                      ctx.fillStyle = "black";
+                     break;
+                  //field: star
+                  //TODO: move field identifiers to common config
+                  case gameState.map[y][x] === "ps":
+                     ctx.fillStyle = "yellow";
                      break;
                   default:
                      //TODO: nothing should be orange, so be careful if you see that on the map. handle better
@@ -110,6 +117,9 @@ function initKeyControls() {
             break;
          case "d":
             sendUserInput("d");
+            break;
+         case " ": //send powerUp (p) when spacebar is pressed
+            sendUserInput("p");
             break;
       }
    });

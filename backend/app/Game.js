@@ -1,6 +1,7 @@
 const Apple = require("./fields/Apple");
 const Empty = require("./fields/Empty");
 const Obstacle = require("./fields/Obstacle");
+const Star = require("./fields/powerups/Star");
 const Player = require("./Player");
 const SocketConfig = require("../configs/socketConfig");
 const BackendConfig = require("../configs/backendConfig");
@@ -50,6 +51,7 @@ class Game {
 
         this.drawObstacles(map);
         this.drawApples(map);
+        this.drawPowerUps(map);
 
         // Update player positions for players with gameOver false
         this.players.filter(player => !player.gameOver).forEach(player => {
@@ -63,9 +65,8 @@ class Game {
         // Update game map
         this.gameState.map = map;
 
-        //TODO: Fix problem that game state includes player indefinitely with gameOver=true but we don't need it anymore..
-
         // Add all player states to gameState
+        //TODO: Fix problem that game state includes player indefinitely with gameOver=true but we don't need it anymore..
         this.gameState.players = this.players.map(player => player.getPlayerGameState());
     }
 
@@ -75,6 +76,10 @@ class Game {
         Obstacle.generateObstacles(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.OBSTACLE);
         Apple.generateApples(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.APPLE);
         //TODO: currently, we always have 20 apples on the map. Alternatively, add ticker that generates new apple every X seconds.
+
+        // Activate powerup generation
+        //TODO: add one randomly every 5 seconds, but not more than 5?
+        Star.generateStars(this.gameState.map, 5);
 
         setInterval(() => {
             // Update game state
@@ -94,6 +99,13 @@ class Game {
     drawApples(map) {
         Apple.apples.forEach((a) => {
             map[a.x][a.y] = Apple.IDENTIFIER;
+        })
+    }
+
+    //TODO: handle different types of powerups
+    drawPowerUps(map) {
+        Star.stars.forEach((a) => {
+            map[a.x][a.y] = Star.IDENTIFIER;
         })
     }
 
