@@ -1,12 +1,12 @@
 // Update leaderboard
 function updateLeaderboard(gameState) {
 
+   let leaderboardList = document.getElementById("leaderboard-list");
+
    // remove all children of leaderboard div
    while (leaderboardList.firstChild) {
       leaderboardList.removeChild(leaderboardList.firstChild);
    }
-
-   let leaderboardList = document.getElementById("leaderboard-list");
 
    gameState.players.forEach((player) => {
       let playerElement = document.createElement("p");
