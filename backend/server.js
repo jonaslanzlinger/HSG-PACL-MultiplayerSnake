@@ -1,4 +1,5 @@
-const Game = require("./Game.js");
+const Game = require("./app/Game.js");
+const SocketConfig = require("../configs/socketConfig.js");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -7,7 +8,7 @@ const path = require("path");
 const app = express();
 
 // Create server on port 1337
-const server = app.listen(1337, () => {
+const server = app.listen(SocketConfig.PORT, () => {
    console.log(`Express running → PORT ${server.address().port}`);
 });
 
@@ -27,23 +28,23 @@ app.get("/", (req, res) => {
 const io = socketio(server);
 
 // Listen socket.io events
-io.on("connection", (socket) => {
+io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
    console.log("User: " + socket.id + " connected");
    let player = null;
 
    // Listen for joinGame event
-   socket.on("joinGame", (nickname) => {
+   socket.on(SocketConfig.EVENTS.JOIN_GAME, (nickname) => {
       console.log("Player " + nickname + " joined the game");
       player = game.handlePlayerJoinedGame(socket, nickname)
    });
 
    // Listen for user input
-   socket.on("userInput", (userInput) => {
+   socket.on(SocketConfig.EVENTS.USER_INPUT, (userInput) => {
       player.setDirection(userInput);
    });
 
    // Remove player from players array when disconnected
-   socket.on("disconnect", () => {
+   socket.on(SocketConfig.EVENTS.DISCONNECT, () => {
       console.log("User: " + socket.id + " disconnected");
       game.handlePlayerDisconnected(socket);
    });

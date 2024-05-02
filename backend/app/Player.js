@@ -18,6 +18,7 @@ class Player {
     }
 
     setDirection(direction) {
+        //TODO: if statement tries to prevent the snake from turning backwards (into itself), but quickly pressing another direction and then back still makes it possible for the snake to move back through itself.
         if (this.direction === "w" && direction === "s"
             || this.direction === "s" && direction === "w"
             || this.direction === "a" && direction === "d"

@@ -1,5 +1,7 @@
+const SocketConfig = require("../configs/socketConfig.js");
+const FrontendConfig = require("../configs/frontendConfig.js");
+
 const socket = io();
-const TILE_SIZE = 12;
 
 function startGame() {
    document.getElementById("login").style.display = "none";
@@ -15,11 +17,11 @@ function setBackground(color1, color2) {
    ctx.fillStyle = color1;
    ctx.strokeStyle = color2;
    ctx.fillRect(0, 0, canvas.height, canvas.width);
-   for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
+   for (var x = 0.5; x < canvas.width; x += FrontendConfig.TILE_SIZE) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, canvas.height);
    }
-   for (var y = 0.5; y < canvas.height; y += TILE_SIZE) {
+   for (var y = 0.5; y < canvas.height; y += FrontendConfig.TILE_SIZE) {
       ctx.moveTo(0, y);
       ctx.lineTo(canvas.width, y);
    }
@@ -28,15 +30,15 @@ function setBackground(color1, color2) {
 
 // Init socket
 function initSocket(nickname) {
-   socket.emit("joinGame", nickname);
+   socket.emit(SocketConfig.EVENTS.JOIN_GAME, nickname);
 
    // Listen for game state updates
-   socket.on("gameState", (gameState) => {
+   socket.on(SocketConfig.EVENTS.GAME_STATE, (gameState) => {
 
       updateLeaderboard(gameState.map);
 
       let canvas = document.getElementById("canvas");
-      canvas.height = TILE_SIZE * gameState.map.length + 1;
+      canvas.height = FrontendConfig.TILE_SIZE * gameState.map.length + 1;
       canvas.width = canvas.height;
       ctx.beginPath();
       setBackground('#fff', '#ccc');
@@ -69,10 +71,15 @@ function initSocket(nickname) {
                      break;
                }
 
-               ctx.fillRect(y * TILE_SIZE, x * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+               ctx.fillRect(y * FrontendConfig.TILE_SIZE, x * FrontendConfig.TILE_SIZE, FrontendConfig.TILE_SIZE, FrontendConfig.TILE_SIZE);
             }
          }
       }
+   });
+
+   // Listen for game state updates
+   socket.on(SocketConfig.EVENTS.GAME_OVER, (gameState) => {
+      //TODO: handle game over
    });
 }
 
@@ -107,5 +114,5 @@ function initMap() {
 
 // Send user input
 function sendUserInput(userInput) {
-   socket.emit("userInput", userInput);
+   socket.emit(SocketConfig.EVENTS.USER_INPUT, userInput);
 }
