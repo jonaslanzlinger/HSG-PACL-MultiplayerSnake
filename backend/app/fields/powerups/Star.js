@@ -1,4 +1,5 @@
 const Empty = require("../Empty");
+const BackendConfig = require("../../../configs/backendConfig");
 
 class Star {
 
@@ -54,6 +55,15 @@ class Star {
 
         // Add PowerUp to inventory of player
         powerUpInventory.push(Star.IDENTIFIER);
+    }
+
+    static activatePowerUp(player) {
+        // Gain invulnerability until timeout is reached
+        //TODO: Add second value if we want to visually differentiate between spawn and star invulnerability (e.g. spawn might be more "cloudy" and star might make the snake more "star-like")
+        player.snakeInvulnerability = true;
+        console.log("actived star");
+        setTimeout(() => player.snakeInvulnerability = false, BackendConfig.POWERUPS.STAR.EFFECT.SNAKE_INVULNERABILITY_MS);
+        console.log("deactived star");
     }
 }
 

@@ -41,7 +41,11 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
    // Listen for user input
    socket.on(SocketConfig.EVENTS.USER_INPUT, (userInput) => {
-      player.setDirection(userInput);
+      if (userInput === 'p') {
+         player.usePowerUp();
+      } else {
+         player.setDirection(userInput);
+      }
    });
 
    // Remove player from players array when disconnected

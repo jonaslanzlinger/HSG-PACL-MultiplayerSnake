@@ -16,6 +16,7 @@ class Player {
         //Holds an inventory of available power ups that the player holds, can be consumed.
         //TODO: if this is a queue (in the sense that you need to consume the first powerup that you picked up), then rename it to powerUpQueue
         this.powerUpInventory = [];
+        this.activePowerUp = null;
     }
 
     /**
@@ -33,8 +34,8 @@ class Player {
             gameOver: this.gameOver,
             snakeInvulnerability: this.snakeInvulnerability,
             powerUpInventory: this.powerUpInventory,
-            //activePowerUp: null,
-            //activeDebuff: null,
+            activePowerUp: this.activePowerUp,
+            //activeDebuff: null, //TODO: certain powerups might add debuffs to other players
         };
     }
 
@@ -65,6 +66,17 @@ class Player {
 
         // Set the snake to invulnerable, but will be automatically changed to false after timeout is reached
         return true;
+    }
+
+    // Add the first powerUp from the inventory to the player's active PowerUp
+    //TODO: we could think about player selecting a powerUp rather than always using the first one he picked up
+    usePowerUp() {
+        // Move powerUp from inventory to active
+        if (this.powerUpInventory.length > 0) {
+            this.activePowerUp = this.powerUpInventory.shift();
+        }
+        // Activate the powerUp
+        Star.activatePowerUp(this);
     }
 
     setDirection(direction) {

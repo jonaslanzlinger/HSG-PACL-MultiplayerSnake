@@ -41,6 +41,8 @@ function initSocket(nickname) {
 
       updateLeaderboard(gameState);
 
+      //TODO: visually mark the snake if it's currently invulnerable (has gameState attribute called activePowerUp)
+
       let canvas = document.getElementById("canvas");
       canvas.height = TILE_SIZE * gameState.map.length + 1;
       canvas.width = canvas.height;
@@ -102,6 +104,9 @@ function initKeyControls() {
             break;
          case "d":
             sendUserInput("d");
+            break;
+         case " ": //send powerUp (p) when spacebar is pressed
+            sendUserInput("p");
             break;
       }
    });
