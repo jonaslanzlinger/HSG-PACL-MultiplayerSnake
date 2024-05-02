@@ -1,9 +1,10 @@
-const socket = io();
+let socket = null;
 const TILE_SIZE = 12;
 let playerNumber = null;
 
 function startGame() {
    document.getElementById("login").style.display = "none";
+   document.getElementById("final-score-value").style.display = "block";
    document.getElementById("game").style.display = "block";
    let nickname = document.getElementById("nickname").value;
 
@@ -29,6 +30,9 @@ function setBackground(color1, color2) {
 
 // Init socket
 function initSocket(nickname) {
+
+   socket = io();
+
    socket.emit("joinGame", nickname);
 
    // Lister for player number
@@ -38,6 +42,15 @@ function initSocket(nickname) {
 
    // Listen for game state updates
    socket.on("gameState", (gameState) => {
+      // If player is dead, return to login screen
+      if (gameState.players.find(player => player.playerNumber === this.playerNumber).gameOver) {
+         document.getElementById("login").style.display = "block";
+         document.getElementById("game").style.display = "none";
+         document.getElementById("final-score-value").innerText =
+            `Final Score: ${gameState.players.find(player => player.playerNumber === this.playerNumber).score}`;
+         socket.emit("forceDisconnect");
+         return;
+      }
 
       updateLeaderboard(gameState);
 

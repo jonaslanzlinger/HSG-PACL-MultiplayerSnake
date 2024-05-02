@@ -35,6 +35,7 @@ class Game {
 
     handlePlayerDisconnected(socket) {
         this.players = this.players.filter((p) => p.socket.id !== socket.id);
+        console.log("User: " + socket.id + " disconnected");
     }
 
     handlePlayerGameOver(player) {
