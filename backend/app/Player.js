@@ -12,6 +12,26 @@ class Player {
         this.snake = this.spawnRandomSnake(BackendConfig.SNAKE_SPAWN_LENGTH);
         this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
+        //TODO: this.powerUpInventory -> holds a queue of power ups that player holds. Then be able to use it with spacebar?
+    }
+
+    /**
+     * Returns the player's current game state as a JSON-ready object sent to the frontend.
+     *
+     * @returns {{playerNumber, score, snakeInvulnerability: *, nickname, gameOver: boolean}}
+     */
+    getPlayerGameState() {
+        return {
+            //TODO: omit fields altogether that are false (gameOver, snakeInvulnerability, ...)
+            playerNumber: this.playerNumber,
+            nickname: this.nickname,
+            score: this.snake.length - BackendConfig.SNAKE_SPAWN_LENGTH, //TODO: the score might not only be based on the snake length (e.g. killing other snakes)
+            gameOver: this.gameOver,
+            snakeInvulnerability: this.snakeInvulnerability
+            //powerUpInventory: [], //TODO: add first Star.js to become invulnerable
+            //activePowerUp: null,
+            //activeDebuff: null,
+        };
     }
 
     //TODO: if enough time, add random spawn direction? currently snake is always horizontal and moves to the right by default
@@ -74,9 +94,9 @@ class Player {
         this.snake.unshift(newHead);
 
         // Ignore collision detection if snake is invulnerable. Snake cannot eat apples either.
-        //TODO: Snake is invulnerable for the first 3 seconds after it spawned, we need to display this visually in frontend (e.g. blinking?)
         if (this.snakeInvulnerability) {
             this.snake.pop();
+            //TODO: handle snake going outside the map while invulnerable (because it cannot hit the wall..)
             return true;
         }
 
