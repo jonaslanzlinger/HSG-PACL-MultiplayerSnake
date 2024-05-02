@@ -32,6 +32,7 @@ function updateLeaderboard(map) {
    for (let player in leaderboard) {
       let playerElement = document.createElement("p");
       // add one to the final score for the head of the snake
+      //TODO: I suggest we simply use the entered player name instead of an incrementing number
       playerElement.innerHTML = `Player ${player}: ${leaderboard[player] + 1}`;
       leaderboardList.appendChild(playerElement);
    }

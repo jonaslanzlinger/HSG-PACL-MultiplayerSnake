@@ -15,6 +15,9 @@ class Game {
 
         this.players = [];
 
+        // Keeps track of the player numbers (used to draw map as each snake has numbered body parts)
+        this.nextPlayerNumber = 1;
+
         // Complete game state
         this.gameState = {
             // initialize the map as a deep copy of the empty map template
@@ -23,11 +26,9 @@ class Game {
     }
 
     handlePlayerJoinedGame(socket, nickname) {
-        // TODO assign unique player number to each new player
-        let nextPlayerNumber = 1;
-        let player = new Player(socket, nickname, nextPlayerNumber, this.gameState.map);
+        let player = new Player(socket, nickname, this.nextPlayerNumber, this.gameState.map);
         this.players.push(player);
-
+        this.nextPlayerNumber++;
         return player;
     }
 
@@ -39,7 +40,8 @@ class Game {
         // Remove player from list of active players
         this.players = this.players.filter((p) => p !== player);
         console.log("Player " + player.nickname + " has died.");
-        this.io.emit(SocketConfig.EVENTS.GAME_OVER, player);
+        //TODO: cannot access this.io correctly
+        //this.io.emit(SocketConfig.EVENTS.GAME_OVER, player);
     }
 
     // Update game state

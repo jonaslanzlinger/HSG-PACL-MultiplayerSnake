@@ -1,5 +1,6 @@
 const Apple = require("./fields/Apple");
 const Obstacle = require("./fields/Obstacle");
+const BackendConfig = require("../configs/backendConfig");
 
 class Player {
     constructor(socket, nickname, playerNumber, map) {
@@ -8,13 +9,25 @@ class Player {
         this.playerNumber = playerNumber;
         this.gameOver = false;
         this.map = map;
-        // Create random starting position for snake (atleast 3 cells away from the border)
-        let randomX = Math.floor(Math.random() * (this.map.length - 3) + 3);
+        this.snake = this.spawnRandomSnake(BackendConfig.SNAKE_SPAWN_LENGTH);
+        this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
+    }
+
+    //TODO: if enough time, add random spawn direction? currently snake is always horizontal and moves to the right by default
+    spawnRandomSnake(length) {
+        // Create random starting position for snake (atleast 3 cells away from the border, but 6 for the direction it's moving)
+        let randomX = Math.floor(Math.random() * (this.map.length - 6) + 3);
         let randomY = Math.floor(Math.random() * (this.map.length - 3) + 3);
-        this.snake = [{x: randomX, y: randomY}];
-        this.snake[1] = {x: randomX - 1, y: randomY};
-        this.snake[2] = {x: randomX - 2, y: randomY};
-        this.direction = "d";
+
+        //Create snake head at the random starting position
+        let snake = [{x: randomX, y: randomY}];
+
+        //Fill the snake body counting cells backwards from the starting cell (by subtracting from x coordinate as the snake spawns horizontally)
+        for (let snakeBodyNum = 1; snakeBodyNum < length; snakeBodyNum++) {
+            snake[snakeBodyNum] = {x: randomX - snakeBodyNum, y: randomY};
+        }
+
+        return snake;
     }
 
     setDirection(direction) {
@@ -76,7 +89,7 @@ class Player {
             console.log("Player " + this.nickname + " collided with obstacle");
             return this.gameOver = true;
         }
-        
+
         // Check if snake collides with another snake
         if (this.isSnakeCollision(snakeHead, Obstacle.obstacles)) {
             console.log("Player " + this.nickname + " collided with another snake");
@@ -93,7 +106,7 @@ class Player {
     }
 
     isSnakeCollision(snakeHead, snakes) {
-       //TODO: implement logic to check if snake collides with another snake
+        //TODO: implement logic to check if snake collides with another snake
         return false;
     }
 }
