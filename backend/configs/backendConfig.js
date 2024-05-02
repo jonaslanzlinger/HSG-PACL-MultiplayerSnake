@@ -1,6 +1,13 @@
 'use strict';
 
 const BackendConfig = {
+    USER_INPUTS: {
+        LEFT: 'a',
+        UP: 'w',
+        RIGHT: 'd',
+        DOWN: 's',
+        POWER_UP: 'p',
+    },
     FPS: 8,
     MAP_SIZE: 50,
     SNAKE_SPAWN_LENGTH: 3, // default length of the snake when it spawns

@@ -61,9 +61,7 @@ class Star {
         // Gain invulnerability until timeout is reached
         //TODO: Add second value if we want to visually differentiate between spawn and star invulnerability (e.g. spawn might be more "cloudy" and star might make the snake more "star-like")
         player.snakeInvulnerability = true;
-        console.log("actived star");
         setTimeout(() => player.snakeInvulnerability = false, BackendConfig.POWERUPS.STAR.EFFECT.SNAKE_INVULNERABILITY_MS);
-        console.log("deactived star");
     }
 }
 

@@ -81,11 +81,16 @@ class Player {
 
     setDirection(direction) {
         //TODO: if statement tries to prevent the snake from turning backwards (into itself), but quickly pressing another direction and then back still makes it possible for the snake to move back through itself.
-        if (this.direction === "w" && direction === "s"
-            || this.direction === "s" && direction === "w"
-            || this.direction === "a" && direction === "d"
-            || this.direction === "d" && direction === "a") {
-            return;
+        const oppositeDirections = {
+            [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
+            [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
+            [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
+            [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT
+        };
+
+        // Check if the new direction is opposite to the current direction
+        if (this.direction === oppositeDirections[direction]) {
+            return; // If it is, don't change the direction
         }
         this.direction = direction;
     }
@@ -94,16 +99,16 @@ class Player {
         let head = this.snake[0];
         let newHead = {x: head.x, y: head.y};
         switch (this.direction) {
-            case "w":
+            case BackendConfig.USER_INPUTS.UP:
                 newHead.y -= 1;
                 break;
-            case "a":
+            case BackendConfig.USER_INPUTS.LEFT:
                 newHead.x -= 1;
                 break;
-            case "s":
+            case BackendConfig.USER_INPUTS.DOWN:
                 newHead.y += 1;
                 break;
-            case "d":
+            case BackendConfig.USER_INPUTS.RIGHT:
                 newHead.x += 1;
                 break;
         }
