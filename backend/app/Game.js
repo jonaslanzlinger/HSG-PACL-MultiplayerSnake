@@ -20,6 +20,7 @@ class Game {
 
         // Complete game state
         this.gameState = {
+            players: [],
             // initialize the map as a deep copy of the empty map template
             map: Game.EMPTY_MAP.map(row => [...row]),
         };
@@ -37,11 +38,8 @@ class Game {
     }
 
     handlePlayerGameOver(player) {
-        // Remove player from list of active players
-        this.players = this.players.filter((p) => p !== player);
+        player.gameOver = true;
         console.log("Player " + player.nickname + " has died.");
-        //TODO: cannot access this.io correctly
-        //this.io.emit(SocketConfig.EVENTS.GAME_OVER, player);
     }
 
     // Update game state
@@ -52,8 +50,8 @@ class Game {
         this.drawObstacles(map);
         this.drawApples(map);
 
-        // Update player positions
-        this.players.forEach((player) => {
+        // Update player positions for players with gameOver false
+        this.players.filter(player => !player.gameOver).forEach(player => {
             if (!player.move()) {
                 this.handlePlayerGameOver(player);
             } else {
@@ -61,8 +59,13 @@ class Game {
             }
         });
 
-        // Update game state
+        // Update game map
         this.gameState.map = map;
+
+        //TODO: Fix problem that game state includes player indefinitely with gameOver=true but we don't need it anymore..
+
+        // Add all player states to gameState
+        this.gameState.players = this.players.map(player => player.getPlayerGameState());
     }
 
     // Game loop
