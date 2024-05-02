@@ -10,13 +10,16 @@ class Player {
         this.gameOver = false;
         this.map = map;
         this.snake = this.spawnRandomSnake(BackendConfig.SNAKE_SPAWN_LENGTH);
+        this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
     }
 
     //TODO: if enough time, add random spawn direction? currently snake is always horizontal and moves to the right by default
     spawnRandomSnake(length) {
-        // Create random starting position for snake (atleast 3 cells away from the border, but 6 for the direction it's moving)
-        let randomX = Math.floor(Math.random() * (this.map.length - 6) + 3);
+        // Create random starting position for snake.
+        // As the snake is drawn horizontally, we want at least its body length as space to the left.
+        // As the snake moves horizontally to the right, we want an arbitrary margin of 6 to give the player enough time to react.
+        let randomX = Math.floor(Math.random() * (this.map.length - 6) + length);
         let randomY = Math.floor(Math.random() * (this.map.length - 3) + 3);
 
         //Create snake head at the random starting position
@@ -28,6 +31,16 @@ class Player {
         }
 
         return snake;
+    }
+
+    setSpawnInvulnerability(invulnerableMs) {
+        // After defined invulnerability in ms, set the snake invulnerability back to false
+        setTimeout(() => {
+            this.snakeInvulnerability = false;
+        }, invulnerableMs);
+
+        // Set the snake to invulnerable, but will be automatically changed to false after timeout is reached
+        return true;
     }
 
     setDirection(direction) {
@@ -59,6 +72,13 @@ class Player {
                 break;
         }
         this.snake.unshift(newHead);
+
+        // Ignore collision detection if snake is invulnerable. Snake cannot eat apples either.
+        //TODO: Snake is invulnerable for the first 3 seconds after it spawned, we need to display this visually in frontend (e.g. blinking?)
+        if (this.snakeInvulnerability) {
+            this.snake.pop();
+            return true;
+        }
 
         if (this.collides()) {
             return false;
@@ -95,6 +115,8 @@ class Player {
             console.log("Player " + this.nickname + " collided with another snake");
             return this.gameOver = true;
         }
+
+        return false;
     }
 
     isObstacleCollision(snakeHead, obstacles) {
