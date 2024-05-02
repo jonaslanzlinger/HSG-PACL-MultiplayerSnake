@@ -2,4 +2,9 @@
    display: none;
 }
 
+#leaderboard {
+   position: absolute;
+   z-index: 1;
+}
+
 /* TODO add styles */
