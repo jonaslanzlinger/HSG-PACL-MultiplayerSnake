@@ -33,7 +33,7 @@ function initSocket(nickname) {
    // Listen for game state updates
    socket.on("gameState", (gameState) => {
 
-      updateLeaderboard(gameState.map);
+      updateLeaderboard(gameState);
 
       let canvas = document.getElementById("canvas");
       canvas.height = TILE_SIZE * gameState.map.length + 1;
@@ -47,19 +47,19 @@ function initSocket(nickname) {
             if (gameState.map[y][x] !== 0) {
                //TODO: improve switch to efficiently handle all map fields
                switch (true) {
-                   //field: snake body
+                  //field: snake body
                   case gameState.map[y][x] > 0:
                      ctx.fillStyle = "grey";
                      break;
-                   //field: snake head
+                  //field: snake head
                   case gameState.map[y][x] < 0:
                      ctx.fillStyle = "red";
                      break;
-                   //field: apple
+                  //field: apple
                   case gameState.map[y][x] === "a":
                      ctx.fillStyle = "green";
                      break;
-                   //field: obstacle
+                  //field: obstacle
                   case gameState.map[y][x] === "o":
                      ctx.fillStyle = "black";
                      break;
