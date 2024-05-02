@@ -6,6 +6,7 @@ const SocketConfig = {
         CONNECTION: 'connection',
         DISCONNECT: 'disconnect',
         JOIN_GAME: 'joinGame',
+        PLAYER_NUMBER: 'playerNumber',
         USER_INPUT: 'userInput',
         GAME_STATE: 'gameState',
         GAME_OVER: 'gameOver',

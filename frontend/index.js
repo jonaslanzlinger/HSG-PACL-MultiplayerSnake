@@ -1,5 +1,6 @@
 const socket = io();
 const TILE_SIZE = 12;
+let playerNumber = null;
 
 function startGame() {
    document.getElementById("login").style.display = "none";
@@ -29,6 +30,11 @@ function setBackground(color1, color2) {
 // Init socket
 function initSocket(nickname) {
    socket.emit("joinGame", nickname);
+
+   // Lister for player number
+   socket.on("playerNumber", (playerNumber) => {
+      this.playerNumber = playerNumber;
+   });
 
    // Listen for game state updates
    socket.on("gameState", (gameState) => {
