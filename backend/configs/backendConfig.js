@@ -8,8 +8,8 @@ const BackendConfig = {
         DOWN: 's',
         POWER_UP: 'p',
     },
-    FPS: 10,
-    MAP_SIZE: 60,
+    FPS: 8,
+    MAP_SIZE: 50,
     SNAKE_SPAWN_LENGTH: 3, // default length of the snake when it spawns
     SNAKE_SPAWN_DIRECTION: 'd', //default direction the snake moves when it spawns
     SNAKE_SPAWN_INVULNERABILITY_MS: 2000,

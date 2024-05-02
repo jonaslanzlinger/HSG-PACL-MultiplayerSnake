@@ -51,8 +51,12 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
    // Remove player from players array when disconnected
    socket.on(SocketConfig.EVENTS.DISCONNECT, () => {
-      console.log("User: " + socket.id + " disconnected");
       game.handlePlayerDisconnected(socket);
+   });
+
+   // Remove player from players array when game over
+   socket.on(SocketConfig.EVENTS.FORCE_DISCONNECT, () => {
+      socket.disconnect();
    });
 });
 

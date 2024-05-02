@@ -10,6 +10,7 @@ const SocketConfig = {
         USER_INPUT: 'userInput',
         GAME_STATE: 'gameState',
         GAME_OVER: 'gameOver',
+        FORCE_DISCONNECT: 'forceDisconnect'
     }
 }
 
