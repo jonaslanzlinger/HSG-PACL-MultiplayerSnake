@@ -1,7 +1,5 @@
-const SocketConfig = require("../configs/socketConfig.js");
-const FrontendConfig = require("../configs/frontendConfig.js");
-
 const socket = io();
+const TILE_SIZE = 12;
 
 function startGame() {
    document.getElementById("login").style.display = "none";
@@ -17,11 +15,11 @@ function setBackground(color1, color2) {
    ctx.fillStyle = color1;
    ctx.strokeStyle = color2;
    ctx.fillRect(0, 0, canvas.height, canvas.width);
-   for (var x = 0.5; x < canvas.width; x += FrontendConfig.TILE_SIZE) {
+   for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, canvas.height);
    }
-   for (var y = 0.5; y < canvas.height; y += FrontendConfig.TILE_SIZE) {
+   for (var y = 0.5; y < canvas.height; y += TILE_SIZE) {
       ctx.moveTo(0, y);
       ctx.lineTo(canvas.width, y);
    }
@@ -30,15 +28,15 @@ function setBackground(color1, color2) {
 
 // Init socket
 function initSocket(nickname) {
-   socket.emit(SocketConfig.EVENTS.JOIN_GAME, nickname);
+   socket.emit("joinGame", nickname);
 
    // Listen for game state updates
-   socket.on(SocketConfig.EVENTS.GAME_STATE, (gameState) => {
+   socket.on("gameState", (gameState) => {
 
       updateLeaderboard(gameState.map);
 
       let canvas = document.getElementById("canvas");
-      canvas.height = FrontendConfig.TILE_SIZE * gameState.map.length + 1;
+      canvas.height = TILE_SIZE * gameState.map.length + 1;
       canvas.width = canvas.height;
       ctx.beginPath();
       setBackground('#fff', '#ccc');
@@ -49,19 +47,19 @@ function initSocket(nickname) {
             if (gameState.map[y][x] !== 0) {
                //TODO: improve switch to efficiently handle all map fields
                switch (true) {
-                  //field: snake body
+                   //field: snake body
                   case gameState.map[y][x] > 0:
                      ctx.fillStyle = "grey";
                      break;
-                  //field: snake head
+                   //field: snake head
                   case gameState.map[y][x] < 0:
                      ctx.fillStyle = "red";
                      break;
-                  //field: apple
+                   //field: apple
                   case gameState.map[y][x] === "a":
                      ctx.fillStyle = "green";
                      break;
-                  //field: obstacle
+                   //field: obstacle
                   case gameState.map[y][x] === "o":
                      ctx.fillStyle = "black";
                      break;
@@ -71,15 +69,10 @@ function initSocket(nickname) {
                      break;
                }
 
-               ctx.fillRect(y * FrontendConfig.TILE_SIZE, x * FrontendConfig.TILE_SIZE, FrontendConfig.TILE_SIZE, FrontendConfig.TILE_SIZE);
+               ctx.fillRect(y * TILE_SIZE, x * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
          }
       }
-   });
-
-   // Listen for game state updates
-   socket.on(SocketConfig.EVENTS.GAME_OVER, (gameState) => {
-      //TODO: handle game over
    });
 }
 
@@ -114,5 +107,5 @@ function initMap() {
 
 // Send user input
 function sendUserInput(userInput) {
-   socket.emit(SocketConfig.EVENTS.USER_INPUT, userInput);
+   socket.emit("userInput", userInput);
 }

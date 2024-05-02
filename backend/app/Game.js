@@ -2,8 +2,8 @@ const Apple = require("./fields/Apple");
 const Empty = require("./fields/Empty");
 const Obstacle = require("./fields/Obstacle");
 const Player = require("./Player");
-const SocketConfig = require("../../configs/socketConfig");
-const BackendConfig = require("../../configs/backendConfig");
+const SocketConfig = require("../configs/socketConfig");
+const BackendConfig = require("../configs/backendConfig");
 
 class Game {
     // Initialize an empty map to serve as a blank canvas
@@ -35,6 +35,13 @@ class Game {
         this.players = this.players.filter((p) => p.socket.id !== socket.id);
     }
 
+    handlePlayerGameOver(player) {
+        // Remove player from list of active players
+        this.players = this.players.filter((p) => p !== player);
+        console.log("Player " + player.nickname + " has died.");
+        this.io.emit(SocketConfig.EVENTS.GAME_OVER, player);
+    }
+
     // Update game state
     updateGameState() {
         // re-initialize clean map to be drawn on as a deep copy from the empty map template
@@ -46,7 +53,7 @@ class Game {
         // Update player positions
         this.players.forEach((player) => {
             if (!player.move()) {
-                this.handlePlayerCollision(player);
+                this.handlePlayerGameOver(player);
             } else {
                 this.drawSnake(map, player);
             }
@@ -70,12 +77,6 @@ class Game {
             // Emit game state to all clients
             this.io.emit(SocketConfig.EVENTS.GAME_STATE, this.gameState);
         }, 1000 / BackendConfig.FPS);
-    }
-
-    handlePlayerCollision(player) {
-        // Remove player from list of active players
-        this.players = this.players.filter((p) => p !== player);
-        this.io.emit(SocketConfig.EVENTS.GAME_OVER, player);
     }
 
     drawObstacles(map) {

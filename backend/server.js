@@ -1,5 +1,5 @@
 const Game = require("./app/Game.js");
-const SocketConfig = require("../configs/socketConfig.js");
+const SocketConfig = require("./configs/socketConfig.js");
 
 const express = require("express");
 const socketio = require("socket.io");
