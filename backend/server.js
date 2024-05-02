@@ -35,7 +35,8 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
    // Listen for joinGame event
    socket.on(SocketConfig.EVENTS.JOIN_GAME, (nickname) => {
       console.log("Player " + nickname + " joined the game");
-      player = game.handlePlayerJoinedGame(socket, nickname)
+      player = game.handlePlayerJoinedGame(socket, nickname);
+      socket.emit(SocketConfig.EVENTS.PLAYER_NUMBER, player.playerNumber);
    });
 
    // Listen for user input
