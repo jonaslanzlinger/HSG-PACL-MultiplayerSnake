@@ -2,7 +2,6 @@ const Player = require("./Player.js");
 const Apple = require("./fields/Apple");
 const Empty = require("./fields/Empty");
 const Obstacle = require("./fields/Obstacle");
-const addRandomFieldsToMap = require("./utils/addRandomFieldsToMap");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -40,7 +39,7 @@ io.on("connection", (socket) => {
       console.log(nickname + " joined the game");
       // TODO assign unique player number to each new player
       let nextPlayerNumber = 1;
-      player = new Player(socket, nickname, nextPlayerNumber, map);
+      player = new Player(socket, nickname, nextPlayerNumber, gameState.map);
       players.push(player);
    });
 
@@ -71,78 +70,77 @@ const NumberOfFields = {
     OBSTACLE: 30,
 }
 
-// Initial static map layout with obstacles
-const initialMap = initiallyRenderMapLayout();
-
-// make a deep copy for live use with players and other elements
-let map = initialMap.map(row => [...row]);
+// initialize an empty map
+const EMPTY_MAP = new Array(mapSize).fill(Empty.IDENTIFIER).map(() => new Array(mapSize).fill(Empty.IDENTIFIER));
 
 // Complete game state
 let gameState = {
-    map: map,
+    // initialize the map as a deep copy of the empty map template
+    map: EMPTY_MAP.map(row => [...row]),
 };
-
-/**
- * Renders an initial map to be played on including obstacles.
- * We do not want to re-generate this part every time as it's static.
- *
- * @returns {any[][]}
- */
-function initiallyRenderMapLayout() {
-    // Initialize empty map
-    let map = new Array(mapSize).fill(Empty.IDENTIFIER).map(() => new Array(mapSize).fill(Empty.IDENTIFIER));
-
-    // Randomly add obstacles to map based on defined NumberOfFields.OBSTACLE.
-    addRandomFieldsToMap(map, Obstacle.IDENTIFIER, NumberOfFields.OBSTACLE);
-
-    // Randomly add apples to map based on defined NumberOfFields.APPLE.
-    //TODO: move away from this function
-    addRandomFieldsToMap(map, Apple.IDENTIFIER, NumberOfFields.APPLE);
-
-    return map;
-}
 
 // Update game state
 function updateGameState() {
-    // re-initialize map as a deep copy from the initially generated map layout (with obstacles)
-    let newMap = initialMap.map(row => [...row]);
+    // re-initialize clean map to be drawn on as a deep copy from the empty map template
+    let map = EMPTY_MAP.map(row => [...row]);
+
+    drawObstacles(map);
+    drawApples(map);
 
     // Update player positions
     players.forEach((player) => {
-        let moveSuccess = player.move();
-        if (!moveSuccess) {
-            // Remove player from list if collided
-            //TODO: better handle when player has game over
-            players = players.filter((p) => p !== player);
+        if (!player.move()) {
+            handlePlayerCollision(player);
         } else {
-            drawSnake(newMap, player);
+            drawSnake(map, player);
         }
     });
 
     // Update game state
-    gameState.map = newMap;
+    gameState.map = map;
 }
 
-function drawSnake(newMap, player) {
+function handlePlayerCollision(player) {
+    // Remove player from list of active players
+    players = players.filter((p) => p !== player);
+
+    //TODO: emit event that player died? what else?
+}
+
+function drawObstacles(map) {
+    Obstacle.obstacles.forEach((o) => {
+        map[o.x][o.y] = Obstacle.IDENTIFIER;
+    })
+}
+
+function drawApples(map) {
+    Apple.apples.forEach((a) => {
+        map[a.x][a.y] = Apple.IDENTIFIER;
+    })
+}
+
+function drawSnake(map, player) {
     //the snake body is denoted as the playerNumber (e.g. 2)
     player.snake.forEach((s) => {
-        newMap[s.x][s.y] = player.playerNumber;
+        map[s.x][s.y] = player.playerNumber;
     });
     //the snake head is denoted as the negative playerNumber (e.g. -2)
-    newMap[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
+    map[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
 }
 
 // Game loop
 function startGameLoop() {
+    // For the initial game setup, add obstacles and apples
+    Obstacle.generateObstacles(gameState.map, NumberOfFields.OBSTACLE);
+    Apple.generateApples(gameState.map, NumberOfFields.APPLE);
+    //TODO: currently, we always have 20 apples. Alternatively, add ticker that generates new apple every X seconds.
 
     setInterval(() => {
-
         // Update game state
         updateGameState();
 
         // Emit game state to all clients
         io.emit("gameState", gameState);
-
     }, 1000 / FPS);
 }
 
