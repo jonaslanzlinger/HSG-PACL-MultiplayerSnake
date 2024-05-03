@@ -18,7 +18,7 @@ class Obstacle {
      * @param numberOfObstaclesToBeGenerated
      * @returns {*[]}
      */
-    static generateObstacles(map, numberOfObstaclesToBeGenerated) {
+    static generateFixNumberOfObstacles(map, numberOfObstaclesToBeGenerated) {
         // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
         let count = 0;
         while (count < numberOfObstaclesToBeGenerated) {

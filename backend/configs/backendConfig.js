@@ -16,11 +16,13 @@ const BackendConfig = {
     FIELDS: {
         APPLE: {
             IDENTIFIER: 'a',
-            NUMBER_OF_FIELDS: 20,
+            INITIAL_SPAWN_AMOUNT: 10,
+            SPAWN_CHANCE_PER_SECOND: 0.2,
+            MAX_ON_MAP: 20,
         },
         OBSTACLE: {
             IDENTIFIER: 'o',
-            NUMBER_OF_FIELDS: 30, //the number of fields to be generated on the map
+            INITIAL_SPAWN_AMOUNT: 30, //the number of fields to be initially generated on the map
         },
         EMPTY: {
             IDENTIFIER: 0,
@@ -30,7 +32,7 @@ const BackendConfig = {
         STAR: {
             IDENTIFIER: 'ps',
             SPAWN_CHANCE_PER_SECOND: 0.1,
-            MAX_ON_MAP: 5,
+            MAX_ON_MAP: 3,
             EFFECT: {
                 SNAKE_INVULNERABILITY_MS: 3000,
             }
