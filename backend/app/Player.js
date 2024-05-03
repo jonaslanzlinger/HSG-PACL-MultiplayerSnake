@@ -14,7 +14,7 @@ class Player {
         this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
         //Holds an inventory of available power ups that the player holds, can be consumed.
-        this.powerUpInventory = [];
+        this.powerUpInventory = []; //TODO: we might want to limit how many power ups a player can hold at a time
         this.activePowerUp = null; // Holds the identifier of the currently active powerup
         this.isPowerUpActive = false; // Flag to denote whether player currently has an ongoing powerup
         this.activeDebuffs = []; // Holds a list of active debuffs the player suffers from
@@ -253,7 +253,8 @@ class Player {
      * @returns {boolean} whether the snake head moved into another snake
      */
     isSnakeCollision(snakeHead, map) {
-        return map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0;
+        // TODO: Very rarely, the snake dies because it apparently collided with an invisible one. Could not reproduce reliably, possibly adding the initial check if it's a number helped.
+        return typeof map[snakeHead.x][snakeHead.y] === 'number' && (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0);
     }
 }
 
