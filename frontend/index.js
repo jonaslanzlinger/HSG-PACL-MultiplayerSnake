@@ -84,10 +84,14 @@ function initSocket(nickname) {
                   case gameState.map[y][x] === "o":
                      ctx.fillStyle = "black";
                      break;
-                  //field: star
+                  //powerup field: star
                   //TODO: move field identifiers to common config
                   case gameState.map[y][x] === "ps":
                      ctx.fillStyle = "yellow";
+                     break;
+                  //powerup field: inverser
+                  case gameState.map[y][x] === "pi":
+                     ctx.fillStyle = "purple";
                      break;
                   default:
                      //TODO: nothing should be orange, so be careful if you see that on the map. handle better

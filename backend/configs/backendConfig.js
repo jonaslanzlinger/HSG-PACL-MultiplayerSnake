@@ -29,9 +29,16 @@ const BackendConfig = {
     POWERUPS: {
         STAR: {
             IDENTIFIER: 'ps',
-            //SPAWN_CHANCE: 0.1, //TODO: handle spawn chances of different power ups
+            //SPAWN_CHANCE: 0.1,
             EFFECT: {
                 SNAKE_INVULNERABILITY_MS: 3000,
+            }
+        },
+        INVERSER: {
+            IDENTIFIER: 'pi',
+            //SPAWN_CHANCE: 0.1,
+            EFFECT: {
+                INVERSE_OTHER_PLAYERS_MOVEMENT_MS: 5000,
             }
         }
     }

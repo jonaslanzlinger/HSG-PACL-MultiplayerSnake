@@ -1,6 +1,7 @@
 const Apple = require("./fields/Apple");
 const Obstacle = require("./fields/Obstacle");
 const Star = require("./fields/powerups/Star");
+const Inverser = require("./fields/powerups/Inverser");
 const BackendConfig = require("../configs/backendConfig");
 
 class Player {
@@ -133,9 +134,14 @@ class Player {
                 break;
             case Star.IDENTIFIER:
                 Star.handleSnakeConsumedStar(this.map, newSnakeHead, this.powerUpInventory);
+                this.snake.pop();
+                break;
+            case Inverser.IDENTIFIER:
+                Inverser.handleSnakeConsumedInverser(this.map, newSnakeHead, this.powerUpInventory);
+                this.snake.pop();
                 break;
             default:
-                this.snake.pop();
+                this.snake.pop(); //Snake should not increase in size
         }
         return true;
     }

@@ -2,6 +2,7 @@ const Apple = require("./fields/Apple");
 const Empty = require("./fields/Empty");
 const Obstacle = require("./fields/Obstacle");
 const Star = require("./fields/powerups/Star");
+const Inverser = require("./fields/powerups/Inverser");
 const Player = require("./Player");
 const SocketConfig = require("../configs/socketConfig");
 const BackendConfig = require("../configs/backendConfig");
@@ -55,7 +56,7 @@ class Game {
 
         // Update player positions for players with gameOver false
         this.players.filter(player => !player.gameOver).forEach(player => {
-            if (!player.isPowerUpActive) {
+            if (!player.isPowerUpActive && player.activePowerUp !== null) {
                 this.handleActivePowerUp(player);
             }
 
@@ -82,8 +83,9 @@ class Game {
         Apple.generateApples(this.gameState.map, BackendConfig.FIELDS.APPLE.NUMBER_OF_FIELDS);
 
         // Activate powerup generation
-        //TODO: add one randomly every 5 seconds, but not more than 5?
+        //TODO: use spawn_chance to randomly spawn powerups (instead of defined number)
         Star.generateStars(this.gameState.map, 5);
+        Inverser.generateInversers(this.gameState.map, 5);
 
         setInterval(() => {
             // Update game state
@@ -95,9 +97,13 @@ class Game {
     }
 
     handleActivePowerUp(player) {
+        console.log(player.activePowerUp);
         switch (player.activePowerUp) {
             case Star.IDENTIFIER:
                 Star.activatePowerUp(player);
+                break;
+            case Inverser.IDENTIFIER:
+                Inverser.activatePowerUp(player);
                 break;
             //TODO: add all other power ups that need to be handled when activated by user
             default:
@@ -121,6 +127,10 @@ class Game {
     drawPowerUps(map) {
         Star.stars.forEach((a) => {
             map[a.x][a.y] = Star.IDENTIFIER;
+        })
+
+        Inverser.inversers.forEach((a) => {
+            map[a.x][a.y] = Inverser.IDENTIFIER;
         })
     }
 
