@@ -106,9 +106,8 @@ class Game {
                 Star.activatePowerUp(player);
                 break;
             case Inverser.IDENTIFIER:
-                Inverser.activatePowerUp(player);
+                Inverser.activatePowerUp(player, this.players);
                 break;
-            //TODO: add all other power ups that need to be handled when activated by user
             default:
                 break;
         }
@@ -126,7 +125,6 @@ class Game {
         })
     }
 
-    //TODO: handle different types of powerups
     drawPowerUps(map) {
         Star.stars.forEach((a) => {
             map[a.x][a.y] = Star.IDENTIFIER;

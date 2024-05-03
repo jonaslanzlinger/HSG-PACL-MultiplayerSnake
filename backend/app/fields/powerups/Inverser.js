@@ -49,7 +49,7 @@ class Inverser {
         map[inverserCoordinate.x][inverserCoordinate.y] = Empty.IDENTIFIER;
 
         // Remove the inverser at given coordinates from array of available inversers
-        this.inversers = this.inversers.filter(function(inverser) {
+        this.inversers = this.inversers.filter(function (inverser) {
             return !(inverser.x === inverserCoordinate.x && inverser.y === inverserCoordinate.y);
         });
 
@@ -60,17 +60,32 @@ class Inverser {
     /**
      * Inverse the movement of other players until timeout is reached.
      *
-     * @param player is the snake activating the powerup.
+     * @param castingPlayer is the snake activating the powerup.
+     * @param players is the current list of players that are affected by the powerup
      */
-    static activatePowerUp(player) {
-        //TODO: handle powerup
-        //player.snakeInvulnerability = false;
-        player.isPowerUpActive = true;
+    static activatePowerUp(castingPlayer, players) {
+        castingPlayer.isPowerUpActive = true;
 
+        //Add the inverser debuff to all other players
+        players.filter(player => player.socket.id !== castingPlayer.socket.id)
+            .forEach(player => {
+                player.activeDebuffs.push(Inverser.IDENTIFIER);
+            });
+
+        // Stop powerup effect after specified time
         setTimeout(() => {
-            //player.snakeInvulnerability = false;
-            player.isPowerUpActive = false;
-            player.activePowerUp = null;
+            castingPlayer.isPowerUpActive = false;
+            castingPlayer.activePowerUp = null;
+
+            // For each player, remove the first occurrence of the debuff in the list of activeDebuffs of the opponent
+            players.filter(player => player.socket.id !== castingPlayer.socket.id)
+                .forEach(player => {
+                    // Note that because we only remove the first occurrence, it is possible to stack multiple debuffs that have their own setTimeout until they expire
+                    let firstDebuffOccurrence = player.activeDebuffs.indexOf(Inverser.IDENTIFIER);
+                    if (firstDebuffOccurrence !== -1) {
+                        player.activeDebuffs.splice(firstDebuffOccurrence, 1);
+                    }
+                });
         }, BackendConfig.POWERUPS.INVERSER.EFFECT.INVERSE_OTHER_PLAYERS_MOVEMENT_MS);
     }
 }

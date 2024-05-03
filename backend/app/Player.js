@@ -15,10 +15,10 @@ class Player {
         this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
         //Holds an inventory of available power ups that the player holds, can be consumed.
-        //TODO: if this is a queue (in the sense that you need to consume the first powerup that you picked up), then rename it to powerUpQueue
         this.powerUpInventory = [];
         this.activePowerUp = null; // Holds the identifier of the currently active powerup
         this.isPowerUpActive = false; // Flag to denote whether player currently has an ongoing powerup
+        this.activeDebuffs = []; // Holds a list of active debuffs the player suffers from
     }
 
     /**
@@ -37,7 +37,7 @@ class Player {
             snakeInvulnerability: this.snakeInvulnerability,
             powerUpInventory: this.powerUpInventory,
             activePowerUp: this.activePowerUp,
-            //activeDebuff: null, //TODO: certain powerups might add debuffs to other players
+            activeDebuffs: [],
         };
     }
 
