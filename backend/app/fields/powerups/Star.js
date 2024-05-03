@@ -66,7 +66,7 @@ class Star {
      * @param player is the snake receiving the powerup.
      */
     static activatePowerUp(player) {
-        //TODO: Add second value if we want to visually differentiate between spawn and star invulnerability (e.g. spawn might be more "cloudy" and star might make the snake more "star-like")
+        //TODO: think about whether we want to differentiate between spawn invulnerability and the one we get from the star powerup. Currently, it's the same flag snakeInvulnerability. Concretely, for the design, spawn might be more like "cloudy" and star more like "rainbow" snake.
         player.snakeInvulnerability = true;
         player.isPowerUpActive = true;
 

@@ -78,7 +78,7 @@ class Player {
     }
 
     setDirection(direction) {
-        //TODO: if statement tries to prevent the snake from turning backwards (into itself), but quickly pressing another direction and then back still makes it possible for the snake to move back through itself.
+        //TODO: it's possible to move reverse by quickly pressing another direction and then back (e.g. you go right, then quickly press up,left to go left, which should not be possible)
         const oppositeDirections = {
             [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
             [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,

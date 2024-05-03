@@ -54,7 +54,13 @@ function initSocket(nickname) {
 
       updateLeaderboard(gameState);
 
-      //TODO: visually mark the snake if it's currently invulnerable (has gameState attribute called activePowerUp)
+      //TODO: add field which shows powerups in inventory (picked up)
+      //TODO: add field which shows currently active powerup? -> also show timer that decreases on frontend! Example: See INVERSE_OTHER_PLAYERS_MOVEMENT_MS that defines how lung the debuff is active
+      //TODO: handle all powerUp states -> See Player.activePowerUp and Player.activeDebuffs
+      //TODO: mark visually when player has a debuff (e.g. Inverser makes movement inverse for player)
+      //TODO: add visuals for spawnInvulnerability (currently same visual as for Star.js -> see Player.snakeInvulnerability)
+
+      //TODO: probably much more. For hints, check all todos in backend and what is sent to frontend in Player.getPlayerGameState
 
       let canvas = document.getElementById("canvas");
       canvas.height = TILE_SIZE * gameState.map.length + 1;
@@ -66,7 +72,7 @@ function initSocket(nickname) {
       for (let y = 0; y < gameState.map.length; y++) {
          for (let x = 0; x < gameState.map[y].length; x++) {
             if (gameState.map[y][x] !== 0) {
-               //TODO: improve switch to efficiently handle all map fields
+               //TODO: Make displayed fields nicer -> e.g. use apple for apple fields instead of just a green field, etc.
                switch (true) {
                   //field: snake body
                   case gameState.map[y][x] > 0:
@@ -85,7 +91,7 @@ function initSocket(nickname) {
                      ctx.fillStyle = "black";
                      break;
                   //powerup field: star
-                  //TODO: move field identifiers to common config
+                  //TODO: move field identifiers to common config (see configs folder -> some things are necessary for both backend and frontend (not super important))
                   case gameState.map[y][x] === "ps":
                      ctx.fillStyle = "yellow";
                      break;

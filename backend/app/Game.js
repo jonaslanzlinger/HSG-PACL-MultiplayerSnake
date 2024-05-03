@@ -71,7 +71,7 @@ class Game {
         this.gameState.map = map;
 
         // Add all player states to gameState
-        //TODO: Fix problem that game state includes player indefinitely with gameOver=true but we don't need it anymore..
+        //TODO: Currently, gameState includes player indefinitely with gameOver=true but we could also remove it and do it via io.emit (not very important)
         this.gameState.players = this.players.map(player => player.getPlayerGameState());
     }
 
