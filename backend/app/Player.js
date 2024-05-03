@@ -120,8 +120,15 @@ class Player {
             return true;
         }
 
+        //Handle active debuff effect from Inverser powerup activated by another player
+        let newSnakeHead;
+        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
+            newSnakeHead = this.moveSnakeHeadInverse(1);
+        } else {
+            newSnakeHead = this.moveSnakeHead(1);
+        }
+
         //Handle regular snake move
-        let newSnakeHead = this.moveSnakeHead(1);
         if (this.collides(newSnakeHead)) {
             return false;
         }
@@ -167,6 +174,35 @@ class Player {
                 break;
             case BackendConfig.USER_INPUTS.RIGHT:
                 snakeHead.x += numberOfSteps;
+                break;
+        }
+        this.snake.unshift(snakeHead);
+        return snakeHead;
+    }
+
+    /**
+     * Moves the snake's head by specified number of steps in the INVERSE direction provided by user input
+     *
+     *
+     * @param numberOfSteps is the number of steps the snake should move at once
+     *
+     * @returns {{x, y}} the new coordinate of the snake head
+     */
+    moveSnakeHeadInverse(numberOfSteps) {
+        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
+        switch (this.direction) {
+            //Note: All move directions are inversed. Example: if user presses UP, snake moves down
+            case BackendConfig.USER_INPUTS.UP:
+                snakeHead.y += numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.LEFT:
+                snakeHead.x += numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.DOWN:
+                snakeHead.y -= numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.RIGHT:
+                snakeHead.x -= numberOfSteps;
                 break;
         }
         this.snake.unshift(snakeHead);
