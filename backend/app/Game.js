@@ -60,7 +60,7 @@ class Game {
                 this.handleActivePowerUp(player);
             }
 
-            if (!player.move()) {
+            if (!player.move(this.gameState.map)) {
                 this.handlePlayerGameOver(player);
             } else {
                 this.drawSnake(map, player);

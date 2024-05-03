@@ -10,8 +10,7 @@ class Player {
         this.nickname = nickname;
         this.playerNumber = playerNumber;
         this.gameOver = false;
-        this.map = map;
-        this.snake = this.spawnRandomSnake(BackendConfig.SNAKE_SPAWN_LENGTH);
+        this.snake = this.spawnRandomSnake(map, BackendConfig.SNAKE_SPAWN_LENGTH);
         this.snakeInvulnerability = this.setSpawnInvulnerability(BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS);
         this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
         //Holds an inventory of available power ups that the player holds, can be consumed.
@@ -28,7 +27,6 @@ class Player {
      */
     getPlayerGameState() {
         return {
-            //TODO: omit fields altogether that are false (gameOver, snakeInvulnerability, ...)
             playerNumber: this.playerNumber,
             nickname: this.nickname,
             //TODO: the score might not only be based on the snake length (e.g. killing other snakes)
@@ -42,12 +40,12 @@ class Player {
     }
 
     //TODO: if enough time, add random spawn direction? currently snake is always horizontal and moves to the right by default
-    spawnRandomSnake(length) {
+    spawnRandomSnake(map, length) {
         // Create random starting position for snake.
         // As the snake is drawn horizontally, we want at least its body length as space to the left.
         // As the snake moves horizontally to the right, we want an arbitrary margin of 12 to give the player enough time to react.
-        let randomX = Math.floor(Math.random() * (this.map.length - 20) + length);
-        let randomY = Math.floor(Math.random() * (this.map.length - 3) + 3);
+        let randomX = Math.floor(Math.random() * (map.length - 20) + length);
+        let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
 
         //Create snake head at the random starting position
         let snake = [{x: randomX, y: randomY}];
@@ -103,16 +101,14 @@ class Player {
      *
      * @returns {boolean} whether snake move was a success.
      */
-    move() {
+    move(map) {
         // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
-        //TODO: handle snake move for different active powerUps
         if (this.snakeInvulnerability) {
             //Handle snake moving to the next coordinate based on user input
             let newSnakeHead = this.moveSnakeHead(1);
-            if (this.isWallCollision(newSnakeHead)) {
+            if (this.isWallCollision(newSnakeHead, map)) {
                 //TODO: currently, even when invulnerable a wall collision means game over.
                 // Possibly handle wall collision differently (maybe move to side randomly?).
-                // Would require different handling of this.snake.unshift() because snake might then be out of map bounds
                 this.gameOver = true;
                 return false;
             }
@@ -129,22 +125,22 @@ class Player {
         }
 
         //Handle regular snake move
-        if (this.collides(newSnakeHead)) {
+        if (this.collides(newSnakeHead, map)) {
             return false;
         }
 
         // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
-        switch (this.map[newSnakeHead.x][newSnakeHead.y]) {
+        switch (map[newSnakeHead.x][newSnakeHead.y]) {
             case Apple.IDENTIFIER:
                 // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
-                Apple.handleSnakeConsumedApple(this.map, newSnakeHead)
+                Apple.handleSnakeConsumedApple(map, newSnakeHead)
                 break;
             case Star.IDENTIFIER:
-                Star.handleSnakeConsumedStar(this.map, newSnakeHead, this.powerUpInventory);
+                Star.handleSnakeConsumedStar(map, newSnakeHead, this.powerUpInventory);
                 this.snake.pop();
                 break;
             case Inverser.IDENTIFIER:
-                Inverser.handleSnakeConsumedInverser(this.map, newSnakeHead, this.powerUpInventory);
+                Inverser.handleSnakeConsumedInverser(map, newSnakeHead, this.powerUpInventory);
                 this.snake.pop();
                 break;
             default:
@@ -209,9 +205,9 @@ class Player {
         return snakeHead;
     }
 
-    collides(snakeHead) {
+    collides(snakeHead, map) {
         // Check if snake collides with walls of map
-        if (this.isWallCollision(snakeHead)) {
+        if (this.isWallCollision(snakeHead, map)) {
             console.log("Player " + this.nickname + " collided with wall");
             return this.gameOver = true;
         }
@@ -223,7 +219,7 @@ class Player {
         }
 
         // Check if snake collides with another snake
-        if (this.isSnakeCollision(snakeHead)) {
+        if (this.isSnakeCollision(snakeHead, map)) {
             console.log("Player " + this.nickname + " collided with another snake");
             return this.gameOver = true;
         }
@@ -231,8 +227,8 @@ class Player {
         return false;
     }
 
-    isWallCollision(snakeHead) {
-        return snakeHead.x < 0 || snakeHead.x >= this.map.length || snakeHead.y < 0 || snakeHead.y >= this.map[0].length;
+    isWallCollision(snakeHead, map) {
+        return snakeHead.x < 0 || snakeHead.x >= map.length || snakeHead.y < 0 || snakeHead.y >= map[0].length;
     }
 
     isObstacleCollision(snakeHead, obstacles) {
@@ -252,12 +248,12 @@ class Player {
      *  For example: snake head is denoted as -2 and the snake body is denoted as 2
      *
      * @param snakeHead the new coordinate of the snake head to verify
+     * @param map the map to verify on
      *
      * @returns {boolean} whether the snake head moved into another snake
      */
-    isSnakeCollision(snakeHead) {
-        //TODO: It seems the map it not updated quick enough to detect moving snakes for collisions. If I change to !== 0 it detects the collision correctly for other fields
-        return this.map[snakeHead.x][snakeHead.y] < 0 || this.map[snakeHead.x][snakeHead.y] > 0;
+    isSnakeCollision(snakeHead, map) {
+        return map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0;
     }
 }
 
