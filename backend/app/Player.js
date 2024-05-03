@@ -201,9 +201,21 @@ class Player {
         }
     }
 
-    isSnakeCollision(snakeHead, snakes) {
-        //TODO: implement logic to check if snake collides with another snake
-        return false;
+    /**
+     *  Check whether the snake head moved to a field that contains a value smaller or greater than 0
+     *
+     *  This works because all snakes are denoted as numbers on the map, with the snake head being a negative number and its body the respective positive number
+     *  All other fields (apples, etc) are denoted as strings
+     *
+     *  For example: snake head is denoted as -2 and the snake body is denoted as 2
+     *
+     * @param snakeHead the new coordinate of the snake head to verify
+     *
+     * @returns {boolean} whether the snake head moved into another snake
+     */
+    isSnakeCollision(snakeHead) {
+        //TODO: It seems the map it not updated quick enough to detect moving snakes for collisions. If I change to !== 0 it detects the collision correctly for other fields
+        return this.map[snakeHead.x][snakeHead.y] < 0 || this.map[snakeHead.x][snakeHead.y] > 0;
     }
 }
 
