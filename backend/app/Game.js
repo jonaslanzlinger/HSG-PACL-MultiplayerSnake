@@ -77,9 +77,9 @@ class Game {
     // Game loop
     startGameLoop() {
         // For the initial game setup, add the default amount of obstacles and apples
-        Obstacle.generateObstacles(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.OBSTACLE);
+        Obstacle.generateObstacles(this.gameState.map, BackendConfig.FIELDS.OBSTACLE.NUMBER_OF_FIELDS);
         //TODO: currently, we always have 20 apples on the map. Alternatively, add ticker that generates new apple every X seconds.
-        Apple.generateApples(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.APPLE);
+        Apple.generateApples(this.gameState.map, BackendConfig.FIELDS.APPLE.NUMBER_OF_FIELDS);
 
         // Activate powerup generation
         //TODO: add one randomly every 5 seconds, but not more than 5?

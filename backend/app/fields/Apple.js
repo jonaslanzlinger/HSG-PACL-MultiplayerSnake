@@ -1,8 +1,9 @@
 const Empty = require("./Empty");
+const BackendConfig = require("../../configs/backendConfig");
 
 class Apple {
 
-    static IDENTIFIER = 'a';
+    static IDENTIFIER = BackendConfig.FIELDS.APPLE.IDENTIFIER;
 
     // Stores positions of apples on map
     static apples = [];

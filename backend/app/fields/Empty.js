@@ -1,6 +1,8 @@
+const BackendConfig = require("../../configs/backendConfig");
+
 class Empty {
 
-    static IDENTIFIER = 0;
+    static IDENTIFIER = BackendConfig.FIELDS.EMPTY.IDENTIFIER;
 
     constructor() {
     }

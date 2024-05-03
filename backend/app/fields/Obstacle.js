@@ -1,8 +1,9 @@
 const Empty = require("./Empty");
+const BackendConfig = require("../../configs/backendConfig");
 
 class Obstacle {
 
-    static IDENTIFIER = 'o';
+    static IDENTIFIER = BackendConfig.FIELDS.OBSTACLE.IDENTIFIER;
 
     // Stores positions of obstacles on map
     static obstacles = [];

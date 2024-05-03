@@ -44,8 +44,8 @@ class Player {
     spawnRandomSnake(length) {
         // Create random starting position for snake.
         // As the snake is drawn horizontally, we want at least its body length as space to the left.
-        // As the snake moves horizontally to the right, we want an arbitrary margin of 6 to give the player enough time to react.
-        let randomX = Math.floor(Math.random() * (this.map.length - 6) + length);
+        // As the snake moves horizontally to the right, we want an arbitrary margin of 12 to give the player enough time to react.
+        let randomX = Math.floor(Math.random() * (this.map.length - 20) + length);
         let randomY = Math.floor(Math.random() * (this.map.length - 3) + 3);
 
         //Create snake head at the random starting position

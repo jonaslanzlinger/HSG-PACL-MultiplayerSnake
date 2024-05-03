@@ -4,7 +4,7 @@ const BackendConfig = require("../../../configs/backendConfig");
 class Star {
 
     //p for powerup, s for star
-    static IDENTIFIER = 'ps';
+    static IDENTIFIER = BackendConfig.POWERUPS.STAR.IDENTIFIER;
 
     // Stores positions of stars on map
     static stars = [];
