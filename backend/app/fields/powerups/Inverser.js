@@ -9,20 +9,22 @@ class Inverser {
     // Stores positions of inverser on map
     static inversers = [];
 
+    // Though the SPAWN_CHANCE_PER_SECOND denotes the percentage per second, the actual tick rate of the game
+    // is 1000 / FPS, so we have to calculate the chance per tick.
+    static SPAWN_CHANCE_PER_TICK = BackendConfig.POWERUPS.INVERSER.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
+
     constructor() {
     }
 
     /**
-     * Randomly generate valid inverser coordinates on the map until numberOfInversersToBeGenerated is reached
+     * Randomly generate valid inverser coordinates while reflecting the desired SPAWN_CHANCE
      *
      * @param map
-     * @param numberOfInversersToBeGenerated
      * @returns {*[]}
      */
-    static generateInversers(map, numberOfInversersToBeGenerated= 1) {
-        // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
-        let count = 0;
-        while (count < numberOfInversersToBeGenerated) {
+    static generateInversers(map) {
+        // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
+        if (Math.random() < this.SPAWN_CHANCE_PER_TICK) {
             // Generate random map field coordinates
             const x = Math.floor(Math.random() * map.length);
             const y = Math.floor(Math.random() * map[0].length);
@@ -32,16 +34,14 @@ class Inverser {
                 // Although the map is regenerated right afterward, this ensures that a parallel generation of another field does not occupy the same coordinate
                 map[x][y] = Inverser.IDENTIFIER;
 
-                // Store generated inverser in inversers array
+                // Store generated star in stars array
                 let inverser = {
                     x: x,
                     y: y,
                 };
                 this.inversers.push(inverser);
-                count++;
             }
         }
-        return this.inversers;
     }
 
     static handleSnakeConsumedInverser(map, inverserCoordinate, powerUpInventory) {

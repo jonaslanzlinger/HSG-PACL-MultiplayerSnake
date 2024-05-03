@@ -82,18 +82,21 @@ class Game {
         //TODO: currently, we always have 20 apples on the map. Alternatively, add ticker that generates new apple every X seconds.
         Apple.generateApples(this.gameState.map, BackendConfig.FIELDS.APPLE.NUMBER_OF_FIELDS);
 
-        // Activate powerup generation
-        //TODO: use spawn_chance to randomly spawn powerups (instead of defined number)
-        Star.generateStars(this.gameState.map, 5);
-        Inverser.generateInversers(this.gameState.map, 5);
-
         setInterval(() => {
+            // Generate random power ups on map based on each spawn_chance
+            this.generatePowerUps(this.gameState.map);
+
             // Update game state
             this.updateGameState();
 
             // Emit game state to all clients
             this.io.emit(SocketConfig.EVENTS.GAME_STATE, this.gameState);
         }, 1000 / BackendConfig.FPS);
+    }
+
+    generatePowerUps() {
+        Star.generateStars(this.gameState.map);
+        Inverser.generateInversers(this.gameState.map);
     }
 
     handleActivePowerUp(player) {

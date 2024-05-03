@@ -9,20 +9,22 @@ class Star {
     // Stores positions of stars on map
     static stars = [];
 
+    // Though the SPAWN_CHANCE_PER_SECOND denotes the percentage per second, the actual tick rate of the game
+    // is 1000 / FPS, so we have to calculate the chance per tick.
+    static SPAWN_CHANCE_PER_TICK = BackendConfig.POWERUPS.STAR.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
+
     constructor() {
     }
 
     /**
-     * Randomly generate valid star coordinates on the map until numberOfStarsToBeGenerated is reached
+     * Randomly generate valid star coordinates while reflecting the desired SPAWN_CHANCE
      *
      * @param map
-     * @param numberOfStarsToBeGenerated
      * @returns {*[]}
      */
-    static generateStars(map, numberOfStarsToBeGenerated= 1) {
-        // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
-        let count = 0;
-        while (count < numberOfStarsToBeGenerated) {
+    static generateStars(map) {
+        // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
+        if (Math.random() < this.SPAWN_CHANCE_PER_TICK) {
             // Generate random map field coordinates
             const x = Math.floor(Math.random() * map.length);
             const y = Math.floor(Math.random() * map[0].length);
@@ -38,10 +40,8 @@ class Star {
                     y: y,
                 };
                 this.stars.push(star);
-                count++;
             }
         }
-        return this.stars;
     }
 
     static handleSnakeConsumedStar(map, starCoordinate, powerUpInventory) {
