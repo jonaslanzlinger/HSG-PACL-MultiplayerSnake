@@ -30,6 +30,7 @@ const BackendConfig = {
         STAR: {
             IDENTIFIER: 'ps',
             SPAWN_CHANCE_PER_SECOND: 0.1,
+            MAX_ON_MAP: 5,
             EFFECT: {
                 SNAKE_INVULNERABILITY_MS: 3000,
             }
@@ -37,6 +38,7 @@ const BackendConfig = {
         INVERSER: {
             IDENTIFIER: 'pi',
             SPAWN_CHANCE_PER_SECOND: 0.1,
+            MAX_ON_MAP: 3,
             EFFECT: {
                 INVERSE_OTHER_PLAYERS_MOVEMENT_MS: 5000,
             }

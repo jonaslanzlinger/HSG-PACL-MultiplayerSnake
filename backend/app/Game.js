@@ -100,7 +100,6 @@ class Game {
     }
 
     handleActivePowerUp(player) {
-        console.log(player.activePowerUp);
         switch (player.activePowerUp) {
             case Star.IDENTIFIER:
                 Star.activatePowerUp(player);

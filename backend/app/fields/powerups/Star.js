@@ -23,8 +23,11 @@ class Star {
      * @returns {*[]}
      */
     static generateStars(map) {
+        //Denotes the maximum number of stars allowed on the map
+        const maxStarsReached = this.stars.length >= BackendConfig.POWERUPS.STAR.MAX_ON_MAP;
+
         // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
-        if (Math.random() < this.SPAWN_CHANCE_PER_TICK) {
+        if (!maxStarsReached && Math.random() < this.SPAWN_CHANCE_PER_TICK) {
             // Generate random map field coordinates
             const x = Math.floor(Math.random() * map.length);
             const y = Math.floor(Math.random() * map[0].length);
