@@ -16,7 +16,8 @@ class Player {
         //Holds an inventory of available power ups that the player holds, can be consumed.
         //TODO: if this is a queue (in the sense that you need to consume the first powerup that you picked up), then rename it to powerUpQueue
         this.powerUpInventory = [];
-        this.activePowerUp = null;
+        this.activePowerUp = null; // Holds the identifier of the currently active powerup
+        this.isPowerUpActive = false; // Flag to denote whether player currently has an ongoing powerup
     }
 
     /**
@@ -75,8 +76,6 @@ class Player {
         if (this.powerUpInventory.length > 0) {
             this.activePowerUp = this.powerUpInventory.shift();
         }
-        // Activate the powerUp
-        Star.activatePowerUp(this);
     }
 
     setDirection(direction) {
@@ -95,44 +94,45 @@ class Player {
         this.direction = direction;
     }
 
+    /**
+     * Move the snake based on the user input's direction.
+     *
+     * Return true if move was successful.
+     * Returns false if snake could not move in the specified direction (e.g. collided with obstacle).
+     *
+     * @returns {boolean} whether snake move was a success.
+     */
     move() {
-        let head = this.snake[0];
-        let newHead = {x: head.x, y: head.y};
-        switch (this.direction) {
-            case BackendConfig.USER_INPUTS.UP:
-                newHead.y -= 1;
-                break;
-            case BackendConfig.USER_INPUTS.LEFT:
-                newHead.x -= 1;
-                break;
-            case BackendConfig.USER_INPUTS.DOWN:
-                newHead.y += 1;
-                break;
-            case BackendConfig.USER_INPUTS.RIGHT:
-                newHead.x += 1;
-                break;
-        }
-        this.snake.unshift(newHead);
-
-        // Ignore collision detection if snake is invulnerable. Snake cannot eat apples either.
+        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
+        //TODO: handle snake move for different active powerUps
         if (this.snakeInvulnerability) {
+            //Handle snake moving to the next coordinate based on user input
+            let newSnakeHead = this.moveSnakeHead(1);
+            if (this.isWallCollision(newSnakeHead)) {
+                //TODO: currently, even when invulnerable a wall collision means game over.
+                // Possibly handle wall collision differently (maybe move to side randomly?).
+                // Would require different handling of this.snake.unshift() because snake might then be out of map bounds
+                this.gameOver = true;
+                return false;
+            }
             this.snake.pop();
-            //TODO: handle snake going outside the map while invulnerable (because it cannot hit the wall..)
             return true;
         }
 
-        if (this.collides()) {
+        //Handle regular snake move
+        let newSnakeHead = this.moveSnakeHead(1);
+        if (this.collides(newSnakeHead)) {
             return false;
         }
 
         // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
-        switch (this.map[newHead.x][newHead.y]) {
+        switch (this.map[newSnakeHead.x][newSnakeHead.y]) {
             case Apple.IDENTIFIER:
                 // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
-                Apple.handleSnakeConsumedApple(this.map, newHead)
+                Apple.handleSnakeConsumedApple(this.map, newSnakeHead)
                 break;
             case Star.IDENTIFIER:
-                Star.handleSnakeConsumedStar(this.map, newHead, this.powerUpInventory);
+                Star.handleSnakeConsumedStar(this.map, newSnakeHead, this.powerUpInventory);
                 break;
             default:
                 this.snake.pop();
@@ -140,11 +140,36 @@ class Player {
         return true;
     }
 
-    collides() {
-        const snakeHead = this.snake[0];
+    /**
+     * Moves the snake's head by specified number of steps in the specified direction provided by user input
+     *
+     * @param numberOfSteps is the number of steps the snake should move at once
+     *
+     * @returns {{x, y}} the new coordinate of the snake head
+     */
+    moveSnakeHead(numberOfSteps) {
+        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
+        switch (this.direction) {
+            case BackendConfig.USER_INPUTS.UP:
+                snakeHead.y -= numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.LEFT:
+                snakeHead.x -= numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.DOWN:
+                snakeHead.y += numberOfSteps;
+                break;
+            case BackendConfig.USER_INPUTS.RIGHT:
+                snakeHead.x += numberOfSteps;
+                break;
+        }
+        this.snake.unshift(snakeHead);
+        return snakeHead;
+    }
 
+    collides(snakeHead) {
         // Check if snake collides with walls of map
-        if (snakeHead.x < 0 || snakeHead.x >= this.map.length || snakeHead.y < 0 || snakeHead.y >= this.map.length) {
+        if (this.isWallCollision(snakeHead)) {
             console.log("Player " + this.nickname + " collided with wall");
             return this.gameOver = true;
         }
@@ -156,12 +181,16 @@ class Player {
         }
 
         // Check if snake collides with another snake
-        if (this.isSnakeCollision(snakeHead, Obstacle.obstacles)) {
+        if (this.isSnakeCollision(snakeHead)) {
             console.log("Player " + this.nickname + " collided with another snake");
             return this.gameOver = true;
         }
 
         return false;
+    }
+
+    isWallCollision(snakeHead) {
+        return snakeHead.x < 0 || snakeHead.x >= this.map.length || snakeHead.y < 0 || snakeHead.y >= this.map[0].length;
     }
 
     isObstacleCollision(snakeHead, obstacles) {

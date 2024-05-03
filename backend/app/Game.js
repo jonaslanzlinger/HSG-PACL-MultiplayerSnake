@@ -55,6 +55,10 @@ class Game {
 
         // Update player positions for players with gameOver false
         this.players.filter(player => !player.gameOver).forEach(player => {
+            if (!player.isPowerUpActive) {
+                this.handleActivePowerUp(player);
+            }
+
             if (!player.move()) {
                 this.handlePlayerGameOver(player);
             } else {
@@ -74,8 +78,8 @@ class Game {
     startGameLoop() {
         // For the initial game setup, add the default amount of obstacles and apples
         Obstacle.generateObstacles(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.OBSTACLE);
-        Apple.generateApples(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.APPLE);
         //TODO: currently, we always have 20 apples on the map. Alternatively, add ticker that generates new apple every X seconds.
+        Apple.generateApples(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.APPLE);
 
         // Activate powerup generation
         //TODO: add one randomly every 5 seconds, but not more than 5?
@@ -88,6 +92,17 @@ class Game {
             // Emit game state to all clients
             this.io.emit(SocketConfig.EVENTS.GAME_STATE, this.gameState);
         }, 1000 / BackendConfig.FPS);
+    }
+
+    handleActivePowerUp(player) {
+        switch (player.activePowerUp) {
+            case Star.IDENTIFIER:
+                Star.activatePowerUp(player);
+                break;
+            //TODO: add all other power ups that need to be handled when activated by user
+            default:
+                break;
+        }
     }
 
     drawObstacles(map) {
