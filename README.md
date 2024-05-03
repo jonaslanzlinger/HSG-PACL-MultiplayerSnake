@@ -12,3 +12,4 @@ http:localhost:1337
 
 # ToDo's
 - All marked in the code
+- Extensively explain what we did!!! (all features, etc.)

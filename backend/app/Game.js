@@ -2,6 +2,7 @@ const Apple = require("./fields/Apple");
 const Empty = require("./fields/Empty");
 const Obstacle = require("./fields/Obstacle");
 const Star = require("./fields/powerups/Star");
+const Inverser = require("./fields/powerups/Inverser");
 const Player = require("./Player");
 const SocketConfig = require("../configs/socketConfig");
 const BackendConfig = require("../configs/backendConfig");
@@ -55,7 +56,11 @@ class Game {
 
         // Update player positions for players with gameOver false
         this.players.filter(player => !player.gameOver).forEach(player => {
-            if (!player.move()) {
+            if (!player.isPowerUpActive && player.activePowerUp !== null) {
+                this.handleActivePowerUp(player);
+            }
+
+            if (!player.move(this.gameState.map)) {
                 this.handlePlayerGameOver(player);
             } else {
                 this.drawSnake(map, player);
@@ -66,28 +71,48 @@ class Game {
         this.gameState.map = map;
 
         // Add all player states to gameState
-        //TODO: Fix problem that game state includes player indefinitely with gameOver=true but we don't need it anymore..
+        //TODO: Currently, gameState includes player indefinitely with gameOver=true but we could also remove it and do it via io.emit (not very important)
         this.gameState.players = this.players.map(player => player.getPlayerGameState());
     }
 
     // Game loop
     startGameLoop() {
         // For the initial game setup, add the default amount of obstacles and apples
-        Obstacle.generateObstacles(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.OBSTACLE);
-        Apple.generateApples(this.gameState.map, BackendConfig.NUMBER_OF_FIELDS.APPLE);
-        //TODO: currently, we always have 20 apples on the map. Alternatively, add ticker that generates new apple every X seconds.
-
-        // Activate powerup generation
-        //TODO: add one randomly every 5 seconds, but not more than 5?
-        Star.generateStars(this.gameState.map, 5);
+        Obstacle.generateFixNumberOfObstacles(this.gameState.map, BackendConfig.FIELDS.OBSTACLE.INITIAL_SPAWN_AMOUNT);
+        Apple.generateFixNumberOfApples(this.gameState.map, BackendConfig.FIELDS.APPLE.INITIAL_SPAWN_AMOUNT);
 
         setInterval(() => {
+
+            // Randomly generate apples on map based on the apple spawn_chance
+            Apple.generateApples(this.gameState.map);
+
+            // Generate random power ups on map based on each spawn_chance
+            this.generatePowerUps(this.gameState.map);
+
             // Update game state
             this.updateGameState();
 
             // Emit game state to all clients
             this.io.emit(SocketConfig.EVENTS.GAME_STATE, this.gameState);
         }, 1000 / BackendConfig.FPS);
+    }
+
+    generatePowerUps() {
+        Star.generateStars(this.gameState.map);
+        Inverser.generateInversers(this.gameState.map);
+    }
+
+    handleActivePowerUp(player) {
+        switch (player.activePowerUp) {
+            case Star.IDENTIFIER:
+                Star.activatePowerUp(player);
+                break;
+            case Inverser.IDENTIFIER:
+                Inverser.activatePowerUp(player, this.players);
+                break;
+            default:
+                break;
+        }
     }
 
     drawObstacles(map) {
@@ -102,10 +127,13 @@ class Game {
         })
     }
 
-    //TODO: handle different types of powerups
     drawPowerUps(map) {
         Star.stars.forEach((a) => {
             map[a.x][a.y] = Star.IDENTIFIER;
+        })
+
+        Inverser.inversers.forEach((a) => {
+            map[a.x][a.y] = Inverser.IDENTIFIER;
         })
     }
 

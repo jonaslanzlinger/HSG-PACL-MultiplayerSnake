@@ -4,25 +4,30 @@ const BackendConfig = require("../../../configs/backendConfig");
 class Star {
 
     //p for powerup, s for star
-    static IDENTIFIER = 'ps';
+    static IDENTIFIER = BackendConfig.POWERUPS.STAR.IDENTIFIER;
 
     // Stores positions of stars on map
     static stars = [];
+
+    // Though the SPAWN_CHANCE_PER_SECOND denotes the percentage per second, the actual tick rate of the game
+    // is 1000 / FPS, so we have to calculate the chance per tick.
+    static SPAWN_CHANCE_PER_TICK = BackendConfig.POWERUPS.STAR.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
 
     constructor() {
     }
 
     /**
-     * Randomly generate valid star coordinates on the map until numberOfStarsToBeGenerated is reached
+     * Randomly generate valid star coordinates while reflecting the desired SPAWN_CHANCE
      *
      * @param map
-     * @param numberOfStarsToBeGenerated
      * @returns {*[]}
      */
-    static generateStars(map, numberOfStarsToBeGenerated= 1) {
-        // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
-        let count = 0;
-        while (count < numberOfStarsToBeGenerated) {
+    static generateStars(map) {
+        //Denotes the maximum number of stars allowed on the map
+        const maxStarsReached = this.stars.length >= BackendConfig.POWERUPS.STAR.MAX_ON_MAP;
+
+        // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
+        if (!maxStarsReached && Math.random() < this.SPAWN_CHANCE_PER_TICK) {
             // Generate random map field coordinates
             const x = Math.floor(Math.random() * map.length);
             const y = Math.floor(Math.random() * map[0].length);
@@ -38,10 +43,8 @@ class Star {
                     y: y,
                 };
                 this.stars.push(star);
-                count++;
             }
         }
-        return this.stars;
     }
 
     static handleSnakeConsumedStar(map, starCoordinate, powerUpInventory) {
@@ -57,11 +60,21 @@ class Star {
         powerUpInventory.push(Star.IDENTIFIER);
     }
 
+    /**
+     * Gain invulnerability until timeout is reached.
+     *
+     * @param player is the snake receiving the powerup.
+     */
     static activatePowerUp(player) {
-        // Gain invulnerability until timeout is reached
-        //TODO: Add second value if we want to visually differentiate between spawn and star invulnerability (e.g. spawn might be more "cloudy" and star might make the snake more "star-like")
+        //TODO: think about whether we want to differentiate between spawn invulnerability and the one we get from the star powerup. Currently, it's the same flag snakeInvulnerability. Concretely, for the design, spawn might be more like "cloudy" and star more like "rainbow" snake.
         player.snakeInvulnerability = true;
-        setTimeout(() => player.snakeInvulnerability = false, BackendConfig.POWERUPS.STAR.EFFECT.SNAKE_INVULNERABILITY_MS);
+        player.isPowerUpActive = true;
+
+        setTimeout(() => {
+            player.snakeInvulnerability = false;
+            player.isPowerUpActive = false;
+            player.activePowerUp = null;
+        }, BackendConfig.POWERUPS.STAR.EFFECT.SNAKE_INVULNERABILITY_MS);
     }
 }
 

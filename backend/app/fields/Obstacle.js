@@ -1,8 +1,9 @@
 const Empty = require("./Empty");
+const BackendConfig = require("../../configs/backendConfig");
 
 class Obstacle {
 
-    static IDENTIFIER = 'o';
+    static IDENTIFIER = BackendConfig.FIELDS.OBSTACLE.IDENTIFIER;
 
     // Stores positions of obstacles on map
     static obstacles = [];
@@ -17,7 +18,7 @@ class Obstacle {
      * @param numberOfObstaclesToBeGenerated
      * @returns {*[]}
      */
-    static generateObstacles(map, numberOfObstaclesToBeGenerated) {
+    static generateFixNumberOfObstacles(map, numberOfObstaclesToBeGenerated) {
         // Until we reach the desired number of newly generated fields, select a random field on the map and try to change it into the new field
         let count = 0;
         while (count < numberOfObstaclesToBeGenerated) {
