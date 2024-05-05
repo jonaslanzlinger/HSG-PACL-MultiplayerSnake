@@ -39,7 +39,7 @@ function startGame() {
 function setBackground(color1, color2) {
   ctx.fillStyle = color1
   ctx.strokeStyle = color2
-  ctx.fillRect(0, 0, canvas.height, canvas.width)
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
   for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
     ctx.moveTo(x, 0)
     ctx.lineTo(x, canvas.height)
