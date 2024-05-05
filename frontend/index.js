@@ -1,5 +1,4 @@
 let socket = null
-let playerNumber = null
 let camera = null
 
 // Constants
@@ -96,11 +95,19 @@ function initSocket(nickname) {
     canvas.height = TILE_SIZE * cameraHeight + 1
     canvas.width = TILE_SIZE * cameraWidth + 1
     ctx.beginPath()
-    setBackground('#fff', '#ccc')
+    if (!this.playerNumber) {
+      return
+    }
 
     if (!camera) {
       // Init camera
-      camera = new Camera(gameState.map, cameraWidth, cameraHeight, cameraThreshold)
+      camera = new Camera(
+        gameState.map,
+        this.playerNumber,
+        cameraWidth,
+        cameraHeight,
+        cameraThreshold
+      )
     } else {
       // Update camera with new map state, i.e. move camera if needed
       camera.update(gameState.map)
