@@ -1,5 +1,6 @@
 class GameAudio {
 
+   #music
    #appleSoundList = []
    #pickup
    #inverser
@@ -9,6 +10,11 @@ class GameAudio {
    constructor() {
 
       // Loading all sounds
+
+      this.#music = new Audio()
+      this.#music.src = '/assets/sounds/music.wav'
+      this.#music.loop = true;
+      this.#music.volume = 0.5;
 
       let appleSoundPaths = [
          '/assets/sounds/apple/apple1.m4a',
@@ -35,8 +41,14 @@ class GameAudio {
 
       this.#obstacle = new Audio()
       this.#obstacle.src = '/assets/sounds/obstacle.m4a'
+   }
 
+   playMusic() {
+      this.#music.play();
+   }
 
+   stopMusic() {
+      this.#music.pause();
    }
 
    playSoundByFieldType(fieldType) {

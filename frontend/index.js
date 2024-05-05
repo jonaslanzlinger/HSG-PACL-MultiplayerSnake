@@ -33,6 +33,7 @@ function startGame() {
   initSocket(nickname)
   initKeyControls()
   initMap()
+  gameAudio.playMusic();
 }
 
 /**
@@ -72,6 +73,9 @@ function initSocket(nickname) {
   socket.on('gameState', (gameState) => {
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
+
+      gameAudio.stopMusic();
+
       document.getElementById('login').style.display = 'block'
       document.getElementById('game').style.display = 'none'
       document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
