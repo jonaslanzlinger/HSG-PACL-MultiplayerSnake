@@ -35,7 +35,7 @@ class Player {
             snakeInvulnerability: this.snakeInvulnerability,
             powerUpInventory: this.powerUpInventory,
             activePowerUp: this.activePowerUp,
-            activeDebuffs: [],
+            activeDebuffs: this.activeDebuffs,
         };
     }
 
@@ -90,7 +90,14 @@ class Player {
         if (this.direction === oppositeDirections[direction]) {
             return; // If it is, don't change the direction
         }
-        this.direction = direction;
+
+        // Check if inverser debuff is active
+        // If so, change the direction to the opposite of the user input
+        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
+            this.direction = oppositeDirections[direction]
+        } else {
+            this.direction = direction;
+        }
     }
 
     /**
@@ -117,12 +124,7 @@ class Player {
         }
 
         //Handle active debuff effect from Inverser powerup activated by another player
-        let newSnakeHead;
-        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
-            newSnakeHead = this.moveSnakeHeadInverse(1);
-        } else {
-            newSnakeHead = this.moveSnakeHead(1);
-        }
+        const newSnakeHead = this.moveSnakeHead(1);
 
         //Handle regular snake move
         if (this.collides(newSnakeHead, map)) {
@@ -170,35 +172,6 @@ class Player {
                 break;
             case BackendConfig.USER_INPUTS.RIGHT:
                 snakeHead.x += numberOfSteps;
-                break;
-        }
-        this.snake.unshift(snakeHead);
-        return snakeHead;
-    }
-
-    /**
-     * Moves the snake's head by specified number of steps in the INVERSE direction provided by user input
-     *
-     *
-     * @param numberOfSteps is the number of steps the snake should move at once
-     *
-     * @returns {{x, y}} the new coordinate of the snake head
-     */
-    moveSnakeHeadInverse(numberOfSteps) {
-        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
-        switch (this.direction) {
-            //Note: All move directions are inversed. Example: if user presses UP, snake moves down
-            case BackendConfig.USER_INPUTS.UP:
-                snakeHead.y += numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.LEFT:
-                snakeHead.x += numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.DOWN:
-                snakeHead.y -= numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.RIGHT:
-                snakeHead.x -= numberOfSteps;
                 break;
         }
         this.snake.unshift(snakeHead);
