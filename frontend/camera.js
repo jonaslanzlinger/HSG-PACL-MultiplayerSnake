@@ -88,12 +88,12 @@ class Camera {
     let camY = playerY - Math.floor(this.#camHeight / 2)
 
     // Clamp camera bounds (top/left)
-    if (camX < this.#threshold) camX = this.#threshold
-    if (camY < this.#threshold) camY = this.#threshold
+    if (camX < this.#threshold) camX = 0
+    if (camY < this.#threshold) camY = 0
 
     // Clamp camera bounds (bottom/right)
-    if (camX + this.#camWidth >= this.#map.length - this.#threshold) camX = this.#map.length - this.#camWidth - this.#threshold
-    if (camY + this.#camHeight >= this.#map[0].length - this.#threshold) camY = this.#map[0].length - this.#camHeight - this.#threshold
+    if (camX + this.#camWidth >= this.#map.length) camX = this.#map.length - this.#camWidth
+    if (camY + this.#camHeight >= this.#map[0].length) camY = this.#map.length - this.#camHeight
 
     // Set camera bounds
     this.#camX = camX
