@@ -15,10 +15,12 @@ const AppleImage = new Image()
 const StarImage = new Image()
 const InverserImage = new Image()
 const ObstacleImage = new Image()
+const ShieldImage = new Image()
 AppleImage.src = '/assets/apple.svg'
 StarImage.src = '/assets/star.svg'
 InverserImage.src = '/assets/inverser.svg'
 ObstacleImage.src = '/assets/obstacle.svg'
+ShieldImage.src = '/assets/shield.svg'
 
 // Initialize audio
 gameAudio = new GameAudio();
@@ -103,6 +105,8 @@ function initSocket(nickname) {
     canvas.height = TILE_SIZE * cameraHeight + 1
     canvas.width = TILE_SIZE * cameraWidth + 1
     ctx.beginPath()
+    setBackground('#fff', '#ccc')
+
     if (!this.playerNumber) {
       return
     }
@@ -120,6 +124,8 @@ function initSocket(nickname) {
       // Update camera with new map state, i.e. move camera if needed
       camera.update(gameState.map)
     }
+
+    let player = gameState.players.find((p) => p.playerNumber === this.playerNumber)
 
     // Draw map
     for (let x = camera.x; x < camera.x + camera.width; x++) {
@@ -148,6 +154,16 @@ function initSocket(nickname) {
               // Check if sounds should be played for my snake
               if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
                 gameAudio.playSoundByFieldType(prevGameState[x][y]);
+              }
+
+              if (player?.snakeInvulnerability) {
+                ctx.drawImage(
+                  ShieldImage,
+                  (x - camera.x) * TILE_SIZE,
+                  (y - camera.y) * TILE_SIZE,
+                  TILE_SIZE,
+                  TILE_SIZE
+                )
               }
               break
             //field: apple
