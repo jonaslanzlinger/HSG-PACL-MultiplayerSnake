@@ -1,5 +1,7 @@
 let socket = null
+let prevGameState = null
 let camera = null
+let gameAudio = null
 
 // Constants
 const TILE_SIZE = 28
@@ -18,6 +20,9 @@ StarImage.src = '/assets/star.svg'
 InverserImage.src = '/assets/inverser.svg'
 ObstacleImage.src = '/assets/obstacle.svg'
 
+// Initialize audio
+gameAudio = new GameAudio();
+
 function startGame() {
   document.getElementById('login').style.display = 'none'
   document.getElementById('final-score-value').style.display = 'block'
@@ -27,6 +32,7 @@ function startGame() {
   initSocket(nickname)
   initKeyControls()
   initMap()
+  gameAudio.playMusic();
 }
 
 /**
@@ -66,11 +72,13 @@ function initSocket(nickname) {
   socket.on('gameState', (gameState) => {
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
+
+      gameAudio.stopMusic();
+
       document.getElementById('login').style.display = 'block'
       document.getElementById('game').style.display = 'none'
-      document.getElementById('final-score-value').innerText = `Final Score: ${
-        gameState.players.find((player) => player.playerNumber === this.playerNumber).score
-      }`
+      document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
+        }`
 
       // Reset camera
       camera = null
@@ -137,6 +145,10 @@ function initSocket(nickname) {
                 TILE_SIZE,
                 TILE_SIZE
               )
+              // Check if sounds should be played for my snake
+              if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
+                gameAudio.playSoundByFieldType(prevGameState[x][y]);
+              }
               break
             //field: apple
             case gameState.map[x][y] === 'a':
@@ -193,6 +205,9 @@ function initSocket(nickname) {
         }
       }
     }
+
+    // Save previous game state
+    prevGameState = gameState.map
 
     // Draw map bounds left
     if (camera.x === 0) {
