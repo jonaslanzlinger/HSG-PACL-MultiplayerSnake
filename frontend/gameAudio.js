@@ -1,11 +1,13 @@
 class GameAudio {
 
    #music
+   #gameOver
    #appleSoundList = []
    #pickup
    #inverser
    #star
    #obstacle
+   #immune
 
    constructor() {
 
@@ -15,6 +17,9 @@ class GameAudio {
       this.#music.src = '/assets/sounds/music.wav'
       this.#music.loop = true;
       this.#music.volume = 0.5;
+
+      this.#gameOver = new Audio()
+      this.#gameOver.src = '/assets/sounds/gameOver.m4a'
 
       let appleSoundPaths = [
          '/assets/sounds/apple/apple1.m4a',
@@ -41,6 +46,9 @@ class GameAudio {
 
       this.#obstacle = new Audio()
       this.#obstacle.src = '/assets/sounds/obstacle.m4a'
+
+      this.#immune = new Audio()
+      this.#immune.src = '/assets/sounds/immune.m4a'
    }
 
    playMusic() {
@@ -49,43 +57,56 @@ class GameAudio {
 
    stopMusic() {
       this.#music.pause();
+      this.playGameOver();
    }
 
-   playSoundByFieldType(fieldType) {
+   playGameOver() {
+      this.#gameOver.play();
+   }
+
+   playSoundByFieldType(fieldType, player) {
       switch (fieldType) {
          case 'a':
-            this.playAppleSound();
+            this.playApple();
             break;
          case 'ps':
-            this.playPickupSound();
+            this.playPickup();
             break;
          case 'pi':
-            this.playPickupSound();
+            this.playPickup();
             break;
          case 'o':
-            this.playObstacleSound();
+            if (player.snakeInvulnerability)
+               this.playImmune();
+            else
+               this.playObstacle();
             break;
       }
    }
 
-   playAppleSound() {
+   playApple() {
       const index = Math.floor(Math.random() * this.#appleSoundList.length);
       this.#appleSoundList[index].play();
    }
 
-   playPickupSound() {
+   playPickup() {
       this.#pickup.play();
    }
 
-   playInverserSound() {
+   playInverser() {
       this.#inverser.play();
    }
 
-   playStarSound() {
+   playStar() {
       this.#star.play();
    }
 
-   playObstacleSound() {
+   playObstacle() {
       this.#obstacle.play();
    }
+
+   playImmune() {
+      this.#immune.play();
+   }
+
 }
