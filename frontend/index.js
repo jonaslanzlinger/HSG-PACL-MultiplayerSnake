@@ -90,7 +90,6 @@ function initSocket(nickname) {
 
   // Listen for game state updates
   socket.on('gameState', (gameState) => {
-    console.log(gameState)
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
       gameAudio.stopMusic()
