@@ -41,7 +41,7 @@ const snakeColors = [
 ]
 
 // Initialize audio
-gameAudio = new GameAudio();
+gameAudio = new GameAudio()
 
 function startGame() {
   document.getElementById('login').style.display = 'none'
@@ -52,7 +52,7 @@ function startGame() {
   initSocket(nickname)
   initKeyControls()
   initMap()
-  gameAudio.playMusic();
+  gameAudio.playMusic()
 }
 
 /**
@@ -92,13 +92,13 @@ function initSocket(nickname) {
   socket.on('gameState', (gameState) => {
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
-
-      gameAudio.stopMusic();
+      gameAudio.stopMusic()
 
       document.getElementById('login').style.display = 'block'
       document.getElementById('game').style.display = 'none'
-      document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
-        }`
+      document.getElementById('final-score-value').innerText = `Final Score: ${
+        gameState.players.find((player) => player.playerNumber === this.playerNumber).score
+      }`
 
       // Reset camera
       camera = null
@@ -178,7 +178,7 @@ function initSocket(nickname) {
               )
               // Check if sounds should be played for my snake
               if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
-                gameAudio.playSoundByFieldType(prevGameState[x][y]);
+                gameAudio.playSoundByFieldType(prevGameState[x][y])
               }
 
               if (player?.snakeInvulnerability) {
