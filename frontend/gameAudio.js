@@ -56,6 +56,7 @@ class GameAudio {
    }
 
    stopMusic() {
+      this.playObstacle();
       this.#music.pause();
       this.playGameOver();
    }
