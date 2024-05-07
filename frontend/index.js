@@ -1,5 +1,4 @@
 let socket = null
-let playerNumber = null
 let prevGameState = null
 let camera = null
 let gameAudio = null
@@ -16,13 +15,33 @@ const AppleImage = new Image()
 const StarImage = new Image()
 const InverserImage = new Image()
 const ObstacleImage = new Image()
+const ShieldImage = new Image()
 AppleImage.src = '/assets/apple.svg'
 StarImage.src = '/assets/star.svg'
 InverserImage.src = '/assets/inverser.svg'
 ObstacleImage.src = '/assets/obstacle.svg'
+ShieldImage.src = '/assets/shield.svg'
+
+const snakeColors = [
+  ['#0000ff', '#7a7aff'],
+  ['#ff0000', '#ff7a7a'],
+  ['#ffd700', '#fbe87e'],
+  ['#9ae91c', '#c7fb74'],
+  ['#1cf29c', '#85ffce'],
+  ['#9b30f2', '#c583fb'],
+  ['#322f36', '#68666b'],
+  ['#00bfff', '#8fe3ff'],
+  ['#f2991c', '#ffc370'],
+  ['#ff338b', '#ff7ab4'],
+  ['#196b1b', '#59915a'],
+  ['#232277', '#56558b'],
+  ['#806452', '#bea293'],
+  ['#800080', '#c665c8'],
+  ['#a7320c', '#db7c5c'],
+]
 
 // Initialize audio
-gameAudio = new GameAudio();
+gameAudio = new GameAudio()
 
 function startGame() {
   document.getElementById('login').style.display = 'none'
@@ -33,7 +52,7 @@ function startGame() {
   initSocket(nickname)
   initKeyControls()
   initMap()
-  gameAudio.playMusic();
+  gameAudio.playMusic()
 }
 
 /**
@@ -46,7 +65,7 @@ function startGame() {
 function setBackground(color1, color2) {
   ctx.fillStyle = color1
   ctx.strokeStyle = color2
-  ctx.fillRect(0, 0, canvas.height, canvas.width)
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
   for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
     ctx.moveTo(x, 0)
     ctx.lineTo(x, canvas.height)
@@ -73,13 +92,13 @@ function initSocket(nickname) {
   socket.on('gameState', (gameState) => {
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
-
-      gameAudio.stopMusic();
+      gameAudio.stopMusic()
 
       document.getElementById('login').style.display = 'block'
       document.getElementById('game').style.display = 'none'
-      document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
-        }`
+      document.getElementById('final-score-value').innerText = `Final Score: ${
+        gameState.players.find((player) => player.playerNumber === this.playerNumber).score
+      }`
 
       // Reset camera
       camera = null
@@ -106,13 +125,25 @@ function initSocket(nickname) {
     ctx.beginPath()
     setBackground('#fff', '#ccc')
 
+    if (!this.playerNumber) {
+      return
+    }
+
     if (!camera) {
       // Init camera
-      camera = new Camera(gameState.map, cameraWidth, cameraHeight, cameraThreshold)
+      camera = new Camera(
+        gameState.map,
+        this.playerNumber,
+        cameraWidth,
+        cameraHeight,
+        cameraThreshold
+      )
     } else {
       // Update camera with new map state, i.e. move camera if needed
       camera.update(gameState.map)
     }
+
+    let player = gameState.players.find((p) => p.playerNumber === this.playerNumber)
 
     // Draw map
     for (let x = camera.x; x < camera.x + camera.width; x++) {
@@ -121,7 +152,11 @@ function initSocket(nickname) {
           switch (true) {
             //field: snake body
             case gameState.map[x][y] > 0:
-              ctx.fillStyle = 'grey'
+              ctx.fillStyle =
+                snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
+                  player?.activeDebuffs.includes('pi') ? 0 : 1
+                ]
+
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
@@ -131,7 +166,10 @@ function initSocket(nickname) {
               break
             //field: snake head
             case gameState.map[x][y] < 0:
-              ctx.fillStyle = 'red'
+              ctx.fillStyle =
+                snakeColors[(gameState.map[x][y] * -1 - 1) % snakeColors.length][
+                  player?.activeDebuffs.includes('pi') ? 1 : 0
+                ]
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
@@ -140,7 +178,17 @@ function initSocket(nickname) {
               )
               // Check if sounds should be played for my snake
               if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
-                gameAudio.playSoundByFieldType(prevGameState[x][y]);
+                gameAudio.playSoundByFieldType(prevGameState[x][y])
+              }
+
+              if (player?.snakeInvulnerability) {
+                ctx.drawImage(
+                  ShieldImage,
+                  (x - camera.x) * TILE_SIZE,
+                  (y - camera.y) * TILE_SIZE,
+                  TILE_SIZE,
+                  TILE_SIZE
+                )
               }
               break
             //field: apple
