@@ -1,5 +1,7 @@
 let socket = null
 let prevGameState = null
+let playerNumber = null
+let player = null
 let camera = null
 let gameAudio = null
 
@@ -90,6 +92,7 @@ function initSocket(nickname) {
 
   // Listen for game state updates
   socket.on('gameState', (gameState) => {
+
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
       gameAudio.stopMusic()
@@ -107,6 +110,9 @@ function initSocket(nickname) {
       socket.emit('forceDisconnect')
       return
     }
+
+    // Update player state
+    this.player = gameState.players.find((player) => player.playerNumber === this.playerNumber)
 
     updateLeaderboard(gameState)
 
@@ -311,8 +317,21 @@ function initKeyControls() {
       case 'ArrowRight':
         sendUserInput('d')
         break
-      case ' ': //send powerUp (p) when spacebar is pressed
-        sendUserInput('p')
+      case '1': // send powerUp (ps) when '1' is pressed
+        if (this.player.powerUpInventory.includes('ps')) {
+          sendUserInput('ps')
+          gameAudio.playStar();
+        } else {
+          gameAudio.playInventoryError();
+        }
+        break
+      case '2': // send powerUp (pi) when '2' is pressed
+        if (this.player.powerUpInventory.includes('pi')) {
+          sendUserInput('pi')
+          gameAudio.playInverser();
+        } else {
+          gameAudio.playInventoryError();
+        }
         break
     }
   })

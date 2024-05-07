@@ -67,7 +67,7 @@ class Camera {
     for (let x = 0; x < this.#map.length; x++) {
       for (let y = 0; y < this.#map[x].length; y++) {
         if (this.#map[x][y] === -1 * this.#playerNumber) {
-          console.log(`Player ${this.#playerNumber} found at (${x}, ${y})`)
+          // console.log(`Player ${this.#playerNumber} found at (${x}, ${y})`)
           return { playerX: x, playerY: y }
         }
       }

@@ -8,6 +8,7 @@ class GameAudio {
    #star
    #obstacle
    #immune
+   #inventoryError
 
    constructor() {
 
@@ -49,6 +50,9 @@ class GameAudio {
 
       this.#immune = new Audio()
       this.#immune.src = '/assets/sounds/immune.m4a'
+
+      this.#inventoryError = new Audio()
+      this.#inventoryError.src = '/assets/sounds/inventoryError.m4a'
    }
 
    playMusic() {
@@ -108,6 +112,10 @@ class GameAudio {
 
    playImmune() {
       this.#immune.play();
+   }
+
+   playInventoryError() {
+      this.#inventoryError.play();
    }
 
 }

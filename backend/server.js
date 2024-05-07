@@ -42,8 +42,8 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
    // Listen for user input
    socket.on(SocketConfig.EVENTS.USER_INPUT, (userInput) => {
-      if (userInput === BackendConfig.USER_INPUTS.POWER_UP) {
-         player.usePowerUp();
+      if (userInput === BackendConfig.POWERUPS.STAR.IDENTIFIER || userInput === BackendConfig.POWERUPS.INVERSER.IDENTIFIER) {
+         player.usePowerUp(userInput);
       } else {
          player.setDirection(userInput);
       }
