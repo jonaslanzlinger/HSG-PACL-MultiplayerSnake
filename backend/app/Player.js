@@ -48,11 +48,11 @@ class Player {
         let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
 
         //Create snake head at the random starting position
-        let snake = [{x: randomX, y: randomY}];
+        let snake = [{ x: randomX, y: randomY }];
 
         //Fill the snake body counting cells backwards from the starting cell (by subtracting from x coordinate as the snake spawns horizontally)
         for (let snakeBodyNum = 1; snakeBodyNum < length; snakeBodyNum++) {
-            snake[snakeBodyNum] = {x: randomX - snakeBodyNum, y: randomY};
+            snake[snakeBodyNum] = { x: randomX - snakeBodyNum, y: randomY };
         }
 
         return snake;
@@ -68,12 +68,13 @@ class Player {
         return true;
     }
 
-    // Add the first powerUp from the inventory to the player's active PowerUp
-    //TODO: we could think about player selecting a powerUp rather than always using the first one he picked up
-    usePowerUp() {
+    // Use powerUp from inventory if it exists
+    usePowerUp(powerUpIdentifier) {
         // Move powerUp from inventory to active
-        if (this.powerUpInventory.length > 0) {
-            this.activePowerUp = this.powerUpInventory.shift();
+        // and remove one instance of the powerUp from the inventory
+        if (this.powerUpInventory.includes(powerUpIdentifier)) {
+            this.activePowerUp = powerUpIdentifier;
+            this.powerUpInventory.splice(this.powerUpInventory.indexOf(powerUpIdentifier), 1);
         }
     }
 
@@ -159,7 +160,7 @@ class Player {
      * @returns {{x, y}} the new coordinate of the snake head
      */
     moveSnakeHead(numberOfSteps) {
-        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
+        let snakeHead = { x: this.snake[0].x, y: this.snake[0].y };
         switch (this.direction) {
             case BackendConfig.USER_INPUTS.UP:
                 snakeHead.y -= numberOfSteps;

@@ -1,5 +1,7 @@
 let socket = null
 let prevGameState = null
+let playerNumber = null
+let player = null
 let camera = null
 let gameAudio = null
 
@@ -90,15 +92,15 @@ function initSocket(nickname) {
 
   // Listen for game state updates
   socket.on('gameState', (gameState) => {
+
     // If player is dead, return to login screen
     if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
       gameAudio.stopMusic()
 
       document.getElementById('login').style.display = 'block'
       document.getElementById('game').style.display = 'none'
-      document.getElementById('final-score-value').innerText = `Final Score: ${
-        gameState.players.find((player) => player.playerNumber === this.playerNumber).score
-      }`
+      document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
+        }`
 
       // Reset camera
       camera = null
@@ -108,6 +110,9 @@ function initSocket(nickname) {
       socket.emit('forceDisconnect')
       return
     }
+
+    // Update player state
+    this.player = gameState.players.find((player) => player.playerNumber === this.playerNumber)
 
     updateLeaderboard(gameState)
 
@@ -154,7 +159,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] > 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
-                  player?.activeDebuffs.includes('pi') ? 0 : 1
+                player?.activeDebuffs.includes('pi') ? 0 : 1
                 ]
 
               ctx.fillRect(
@@ -168,7 +173,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] < 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] * -1 - 1) % snakeColors.length][
-                  player?.activeDebuffs.includes('pi') ? 1 : 0
+                player?.activeDebuffs.includes('pi') ? 1 : 0
                 ]
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
@@ -178,7 +183,7 @@ function initSocket(nickname) {
               )
               // Check if sounds should be played for my snake
               if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
-                gameAudio.playSoundByFieldType(prevGameState[x][y])
+                gameAudio.playSoundByFieldType(prevGameState[x][y], player)
               }
 
               if (player?.snakeInvulnerability) {
@@ -312,8 +317,21 @@ function initKeyControls() {
       case 'ArrowRight':
         sendUserInput('d')
         break
-      case ' ': //send powerUp (p) when spacebar is pressed
-        sendUserInput('p')
+      case '1': // send powerUp (ps) when '1' is pressed
+        if (this.player.powerUpInventory.includes('ps')) {
+          sendUserInput('ps')
+          gameAudio.playStar();
+        } else {
+          gameAudio.playInventoryError();
+        }
+        break
+      case '2': // send powerUp (pi) when '2' is pressed
+        if (this.player.powerUpInventory.includes('pi')) {
+          sendUserInput('pi')
+          gameAudio.playInverser();
+        } else {
+          gameAudio.playInventoryError();
+        }
         break
     }
   })
