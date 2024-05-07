@@ -22,6 +22,24 @@ InverserImage.src = '/assets/inverser.svg'
 ObstacleImage.src = '/assets/obstacle.svg'
 ShieldImage.src = '/assets/shield.svg'
 
+const snakeColors = [
+  ['#0000ff', '#7a7aff'],
+  ['#ff0000', '#ff7a7a'],
+  ['#ffd700', '#fbe87e'],
+  ['#9ae91c', '#c7fb74'],
+  ['#1cf29c', '#85ffce'],
+  ['#9b30f2', '#c583fb'],
+  ['#322f36', '#68666b'],
+  ['#00bfff', '#8fe3ff'],
+  ['#f2991c', '#ffc370'],
+  ['#ff338b', '#ff7ab4'],
+  ['#196b1b', '#59915a'],
+  ['#232277', '#56558b'],
+  ['#806452', '#bea293'],
+  ['#800080', '#c665c8'],
+  ['#a7320c', '#db7c5c'],
+]
+
 // Initialize audio
 gameAudio = new GameAudio();
 
@@ -134,7 +152,11 @@ function initSocket(nickname) {
           switch (true) {
             //field: snake body
             case gameState.map[x][y] > 0:
-              ctx.fillStyle = 'grey'
+              ctx.fillStyle =
+                snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
+                  player?.activeDebuffs.includes('pi') ? 0 : 1
+                ]
+
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
@@ -144,7 +166,10 @@ function initSocket(nickname) {
               break
             //field: snake head
             case gameState.map[x][y] < 0:
-              ctx.fillStyle = 'red'
+              ctx.fillStyle =
+                snakeColors[(gameState.map[x][y] * -1 - 1) % snakeColors.length][
+                  player?.activeDebuffs.includes('pi') ? 1 : 0
+                ]
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
