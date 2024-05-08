@@ -16,10 +16,12 @@ const cameraThreshold = 7;
 const AppleImage = new Image();
 const StarImage = new Image();
 const InverserImage = new Image();
+const SnakeEaterImage = new Image();
 const ObstacleImage = new Image();
 const ShieldImage = new Image();
 AppleImage.src = "/assets/apple.svg";
 StarImage.src = "/assets/star.svg";
+SnakeEaterImage.src = "/assets/snake_eater.svg";
 InverserImage.src = "/assets/inverser.svg";
 ObstacleImage.src = "/assets/obstacle.svg";
 ShieldImage.src = "/assets/shield.svg";
@@ -124,6 +126,7 @@ function initSocket(nickname) {
 
     updateLeaderboard(gameState);
     updatePowerups(this.player);
+    updateBuffs(this.player);
 
     //TODO: add field which shows powerups in inventory (picked up)
     //TODO: add field which shows currently active powerup? -> also show timer that decreases on frontend! Example: See INVERSE_OTHER_PLAYERS_MOVEMENT_MS that defines how lung the debuff is active
@@ -251,6 +254,16 @@ function initSocket(nickname) {
                 TILE_SIZE
               );
               break;
+            //powerup field: snake eater
+            case gameState.map[x][y] === "pe":
+              ctx.drawImage(
+                SnakeEaterImage,
+                (x - camera.x) * TILE_SIZE,
+                (y - camera.y) * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+              );
+              break;
             default:
               //TODO: nothing should be orange, so be careful if you see that on the map. handle better
               ctx.fillStyle = "orange";
@@ -347,6 +360,13 @@ function initKeyControls() {
           gameAudio.playInventoryError();
         }
         break;
+      case "3": // send powerUp (pe) when '3' is pressed
+        if (this.player.powerUpInventory.includes("pe")) {
+          sendUserInput("pe");
+          //TODO: play snake eater sound
+        } else {
+          gameAudio.playInventoryError();
+        }
     }
   });
 }

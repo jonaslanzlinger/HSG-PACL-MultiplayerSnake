@@ -2,6 +2,8 @@ const PowerupStarImage = document.createElement("img");
 PowerupStarImage.src = "/assets/star.svg";
 const PowerupInverserImage = document.createElement("img");
 PowerupInverserImage.src = "/assets/inverser.svg";
+const PowerupEaterImage = document.createElement("img");
+PowerupEaterImage.src = "/assets/snake_eater.svg";
 // Update powerups
 function updatePowerups(player) {
   let powerupsList = document.getElementById("powerups-list");
@@ -26,6 +28,13 @@ function updatePowerups(player) {
   InverserDiv.appendChild(InverserCount);
   InverserDiv.appendChild(PowerupInverserImage);
 
+  let eaters = 0;
+  let EaterDiv = document.createElement("div");
+  let EaterCount = document.createElement("p");
+  EaterCount.textContent = eaters;
+  EaterDiv.appendChild(EaterCount);
+  EaterDiv.appendChild(PowerupEaterImage);
+
   // If player has powerups, add them to the list
   player.powerUpInventory.forEach((powerUp) => {
     switch (powerUp) {
@@ -38,6 +47,11 @@ function updatePowerups(player) {
         inversers++;
         InverserCount.textContent = inversers;
         powerupsList.appendChild(InverserDiv);
+        break;
+      case "pe":
+        eaters++;
+        EaterCount.textContent = eaters;
+        powerupsList.appendChild(EaterDiv);
         break;
       default:
         break;
