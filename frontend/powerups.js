@@ -1,3 +1,7 @@
+const PowerupStarImage = document.createElement("img");
+PowerupStarImage.src = "/assets/star.svg";
+const PowerupInverserImage = document.createElement("img");
+PowerupInverserImage.src = "/assets/inverser.svg";
 // Update powerups
 function updatePowerups(player) {
   let powerupsList = document.getElementById("powerups-list");
@@ -13,14 +17,14 @@ function updatePowerups(player) {
   let StarCount = document.createElement("p");
   StarCount.textContent = stars;
   StarDiv.appendChild(StarCount);
-  StarDiv.appendChild(StarImage);
+  StarDiv.appendChild(PowerupStarImage);
 
   let inversers = 0;
   let InverserDiv = document.createElement("div");
   let InverserCount = document.createElement("p");
   InverserCount.textContent = inversers;
   InverserDiv.appendChild(InverserCount);
-  InverserDiv.appendChild(InverserImage);
+  InverserDiv.appendChild(PowerupInverserImage);
 
   // If player has powerups, add them to the list
   player.powerUpInventory.forEach((powerUp) => {

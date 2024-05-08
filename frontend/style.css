@@ -6,11 +6,6 @@
   display: none;
 }
 
-#leaderboard {
-  position: absolute;
-  z-index: 1;
-}
-
 #color-customizer {
   position: fixed;
   top: 10px;
@@ -70,18 +65,18 @@
   font-size: 10pt;
   flex-grow: 1;
 }
-
-#powerups-list {
-  width: 50px;
+.powerup-container {
+  height: 100px;
 }
-#powerups-list div {
-  display: flex;
-  justify-content: center;
-}
-
-#powerups-list img {
+.powerup-container img {
   height: 25px;
   width: auto;
+}
+.powerup-container div {
+  display: flex;
+  justify-content: left;
+  width: 50px;
+  height: 25px;
 }
 
 /* TODO add styles */
