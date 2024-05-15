@@ -128,25 +128,7 @@ class Player {
         //Handle active debuff effect from Inverser powerup activated by another player
         let newSnakeHead = this.moveSnakeHead(1);
 
-        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
-        if (this.snakeInvulnerability) {
-            if (this.isWallCollision(newSnakeHead, map)) {
-                //TODO: currently, even when invulnerable a wall collision means game over.
-                // Possibly handle wall collision differently (maybe move to side randomly?).
-                this.gameOver = true;
-                return false;
-            }
-            this.snake.pop();
-            return true;
-        }
-
-        //Handle regular snake move
-        if (this.collides(newSnakeHead, map)) {
-            return false;
-        }
-
         // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
-        console.log("Player " + this.nickname + " consumed " + map[newSnakeHead.x][newSnakeHead.y]);
         switch (map[newSnakeHead.x][newSnakeHead.y]) {
             case Apple.IDENTIFIER:
                 // Snake automatically increases in size by 1 by not popping the last element (the snake's tail)
@@ -162,6 +144,22 @@ class Player {
                 break;
             default:
                 this.snake.pop(); //Snake should not increase in size
+        }
+
+        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
+        if (this.snakeInvulnerability) {
+            if (this.isWallCollision(newSnakeHead, map)) {
+                //TODO: currently, even when invulnerable a wall collision means game over.
+                // Possibly handle wall collision differently (maybe move to side randomly?).
+                this.gameOver = true;
+                return false;
+            }
+            return true;
+        }
+
+        //Handle regular snake move
+        if (this.collides(newSnakeHead, map)) {
+            return false;
         }
         return true;
     }
