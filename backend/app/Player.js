@@ -105,7 +105,6 @@ class Player {
         // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
         // If so, the snake should not move in the specified direction and ignore the user input.
         // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
-        console.log(this.snake);
         if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
             || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
             || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
