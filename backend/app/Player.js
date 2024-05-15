@@ -88,7 +88,7 @@ class Player {
         };
 
         // Check if the new direction is opposite to the current direction
-        if (this.direction === oppositeDirections[direction]) {
+        if (this.direction === oppositeDirections[direction] || this.direction === direction) {
             return; // If it is, don't change the direction
         }
 
