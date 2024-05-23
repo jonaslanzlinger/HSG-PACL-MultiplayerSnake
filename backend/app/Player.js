@@ -128,6 +128,15 @@ class Player {
         //Handle active debuff effect from Inverser powerup activated by another player
         let newSnakeHead = this.moveSnakeHead(1);
 
+        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
+
+        if (this.isWallCollision(newSnakeHead, map)) {
+            //TODO: currently, even when invulnerable a wall collision means game over.
+            // Possibly handle wall collision differently (maybe move to side randomly?).
+            this.gameOver = true;
+            return false;
+        }
+
         // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
         switch (map[newSnakeHead.x][newSnakeHead.y]) {
             case Apple.IDENTIFIER:
@@ -146,14 +155,7 @@ class Player {
                 this.snake.pop(); //Snake should not increase in size
         }
 
-        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
         if (this.snakeInvulnerability) {
-            if (this.isWallCollision(newSnakeHead, map)) {
-                //TODO: currently, even when invulnerable a wall collision means game over.
-                // Possibly handle wall collision differently (maybe move to side randomly?).
-                this.gameOver = true;
-                return false;
-            }
             return true;
         }
 
