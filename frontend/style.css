@@ -78,5 +78,9 @@
   width: 50px;
   height: 25px;
 }
-
+.leaderboard-container {
+  justify-content: left;
+}
+.stats-container {
+}
 /* TODO add styles */

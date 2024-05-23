@@ -36,7 +36,8 @@ class Game {
       socket,
       nickname,
       this.nextPlayerNumber,
-      this.gameState.map
+      this.gameState.map,
+      this
     );
     this.players.push(player);
     this.nextPlayerNumber++;

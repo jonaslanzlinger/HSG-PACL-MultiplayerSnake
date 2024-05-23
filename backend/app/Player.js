@@ -8,7 +8,7 @@ const e = require("express");
 const Game = require("./Game");
 
 class Player {
-  constructor(socket, nickname, playerNumber, map) {
+  constructor(socket, nickname, playerNumber, map, game) {
     this.socket = socket;
     this.nickname = nickname;
     this.playerNumber = playerNumber;
@@ -24,6 +24,7 @@ class Player {
     this.activePowerUp = null; // Holds the identifier of the currently active powerup
     this.isPowerUpActive = false; // Flag to denote whether player currently has an ongoing powerup
     this.activeDebuffs = []; // Holds a list of active debuffs the player suffers from
+    this.game = game;
   }
 
   /**
@@ -254,23 +255,31 @@ class Player {
    */
   isSnakeCollision(snakeHead, map) {
     // TODO: Very rarely, the snake dies because it apparently collided with an invisible one. Could not reproduce reliably, possibly adding the initial check if it's a number helped.
+    // If snakeEatability is true, check if there is another snake in that spot and let it die
     if (this.snakeEatability) {
       if (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
         (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
       ) {
-        if (player.snakeEatability) {
-          let playernumber = map[snakeHead.x][snakeHead.y];
-          if (playernumber < 0) {
-            playernumber = playernumber * -1;
-          }
-          Game.letSnakeDie(playernumber);
-          return false;
-        } else {
-          return true;
+        // Get the player number and make it positive
+        let playernumber = map[snakeHead.x][snakeHead.y];
+        if (playernumber < 0) {
+          playernumber = playernumber * -1;
         }
+
+        // Let the snake die
+        this.game.letSnakeDie(playernumber);
+        return false;
       }
     }
+    // If snakeEatability is false, check normally if there is a another snake in that spot
+    console.log(
+      "Checking if player " + this.nickname + " collided with another snake"
+    );
+    return (
+      typeof map[snakeHead.x][snakeHead.y] === "number" &&
+      (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
+    );
   }
 }
 
