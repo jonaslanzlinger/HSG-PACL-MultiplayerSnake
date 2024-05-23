@@ -79,7 +79,9 @@ class Player {
     }
 
     setDirection(direction) {
-        //TODO: it's possible to move reverse by quickly pressing another direction and then back (e.g. you go right, then quickly press up,left to go left, which should not be possible)
+
+        let previousDirection = this.direction;
+
         const oppositeDirections = {
             [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
             [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
@@ -88,7 +90,7 @@ class Player {
         };
 
         // Check if the new direction is opposite to the current direction
-        if (this.direction === oppositeDirections[direction]) {
+        if (this.direction === oppositeDirections[direction] || this.direction === direction) {
             return; // If it is, don't change the direction
         }
 
@@ -98,6 +100,17 @@ class Player {
             this.direction = oppositeDirections[direction]
         } else {
             this.direction = direction;
+        }
+
+        // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
+        // If so, the snake should not move in the specified direction and ignore the user input.
+        // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
+        if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.RIGHT && this.snake[0].x + 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+        ) {
+            this.direction = previousDirection;
         }
     }
 
@@ -110,27 +123,10 @@ class Player {
      * @returns {boolean} whether snake move was a success.
      */
     move(map) {
-        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
-        if (this.snakeInvulnerability) {
-            //Handle snake moving to the next coordinate based on user input
-            let newSnakeHead = this.moveSnakeHead(1);
-            if (this.isWallCollision(newSnakeHead, map)) {
-                //TODO: currently, even when invulnerable a wall collision means game over.
-                // Possibly handle wall collision differently (maybe move to side randomly?).
-                this.gameOver = true;
-                return false;
-            }
-            this.snake.pop();
-            return true;
-        }
 
+        //Handle snake moving to the next coordinate based on user input
         //Handle active debuff effect from Inverser powerup activated by another player
-        const newSnakeHead = this.moveSnakeHead(1);
-
-        //Handle regular snake move
-        if (this.collides(newSnakeHead, map)) {
-            return false;
-        }
+        let newSnakeHead = this.moveSnakeHead(1);
 
         // Handle all snake consumptions (ie. when snake head collides with consumable coordinate)
         switch (map[newSnakeHead.x][newSnakeHead.y]) {
@@ -148,6 +144,22 @@ class Player {
                 break;
             default:
                 this.snake.pop(); //Snake should not increase in size
+        }
+
+        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
+        if (this.snakeInvulnerability) {
+            if (this.isWallCollision(newSnakeHead, map)) {
+                //TODO: currently, even when invulnerable a wall collision means game over.
+                // Possibly handle wall collision differently (maybe move to side randomly?).
+                this.gameOver = true;
+                return false;
+            }
+            return true;
+        }
+
+        //Handle regular snake move
+        if (this.collides(newSnakeHead, map)) {
+            return false;
         }
         return true;
     }
