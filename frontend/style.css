@@ -84,10 +84,11 @@
 .stats-container {
 }
 .grid-container {
+  padding-top: 25px;
   width: 75vh;
-   display: grid;
-   grid-template-columns: 100px 1fr;
-   grid-gap: 10px;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  grid-gap: 10px;
 }
 .grid-item {
    background-color: #ddd;
@@ -112,5 +113,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   height: 100vh;
+}
+.gap {
+  height: 100px;
 }
