@@ -13,8 +13,7 @@ class Apple {
     static SPAWN_CHANCE_PER_TICK = BackendConfig.FIELDS.APPLE.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
 
 
-    constructor() {
-    }
+    constructor() { }
 
     /**
      * Randomly generate valid apple coordinates on the map until numberOfApplesToBeGenerated is reached
@@ -55,7 +54,7 @@ class Apple {
      * @returns {*[]}
      */
     static generateApples(map) {
-        //Denotes the maximum number of apples allowed on the map
+        // Denotes the maximum number of apples allowed on the map
         const maxApplesReached = this.apples.length >= BackendConfig.FIELDS.APPLE.MAX_ON_MAP;
 
         // Only generate apples at a rate that resembles the defined SPAWN_CHANCE
@@ -65,7 +64,6 @@ class Apple {
             const y = Math.floor(Math.random() * map[0].length);
 
             // Check if the field is empty
-            //TODO: in addition to the random check, we do not account for the random field to be occupied (which further decreases the chance), but I guess we could argue that this is a self-adjusting mechanism because as the map is filled with junk, the smaller the chance that there actually spawns even more.
             if (map[x][y] === Empty.IDENTIFIER) {
                 // Although the map is regenerated right afterward, this ensures that a parallel generation of another field does not occupy the same coordinate
                 map[x][y] = Apple.IDENTIFIER;
@@ -80,11 +78,19 @@ class Apple {
         }
     }
 
+    /**
+     * Handle the consumption of an apple by a snake.
+     * The apple is removed from the map and the snake is given a point.
+     * 
+     * @param map is the current map of the game
+     * @param appleCoordinate is the coordinate of the apple that is consumed
+     * @returns void
+     */
     static handleSnakeConsumedApple(map, appleCoordinate) {
         map[appleCoordinate.x][appleCoordinate.y] = Empty.IDENTIFIER;
 
         // Remove the apple at given coordinates from array of available apples
-        this.apples = this.apples.filter(function(apple) {
+        this.apples = this.apples.filter(function (apple) {
             return !(apple.x === appleCoordinate.x && apple.y === appleCoordinate.y);
         });
     }

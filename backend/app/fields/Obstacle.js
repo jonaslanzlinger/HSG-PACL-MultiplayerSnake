@@ -8,8 +8,7 @@ class Obstacle {
     // Stores positions of obstacles on map
     static obstacles = [];
 
-    constructor() {
-    }
+    constructor() { }
 
     /**
      * Randomly generate valid obstacle coordinates on the map until numberOfObstaclesToBeGenerated is reached
@@ -31,7 +30,7 @@ class Obstacle {
                 // Although the map is regenerated right afterward, this ensures that a parallel generation of another field does not occupy the same coordinate
                 map[x][y] = Obstacle.IDENTIFIER;
 
-                //Store generated obstacle in obstacles array
+                // Store generated obstacle in obstacles array
                 let obstacle = {
                     x: x,
                     y: y,

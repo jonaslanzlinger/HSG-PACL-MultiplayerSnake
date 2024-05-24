@@ -4,8 +4,7 @@ class Empty {
 
     static IDENTIFIER = BackendConfig.FIELDS.EMPTY.IDENTIFIER;
 
-    constructor() {
-    }
+    constructor() { }
 
 }
 

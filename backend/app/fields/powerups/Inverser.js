@@ -3,7 +3,6 @@ const BackendConfig = require("../../../configs/backendConfig");
 
 class Inverser {
 
-    //p for powerup, i for inverser
     static IDENTIFIER = BackendConfig.POWERUPS.INVERSER.IDENTIFIER;
 
     // Stores positions of inverser on map
@@ -13,8 +12,7 @@ class Inverser {
     // is 1000 / FPS, so we have to calculate the chance per tick.
     static SPAWN_CHANCE_PER_TICK = BackendConfig.POWERUPS.INVERSER.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
 
-    constructor() {
-    }
+    constructor() { }
 
     /**
      * Randomly generate valid inverser coordinates while reflecting the desired SPAWN_CHANCE
@@ -23,7 +21,7 @@ class Inverser {
      * @returns {*[]}
      */
     static generateInversers(map) {
-        //Denotes the maximum number of stars allowed on the map
+        // Denotes the maximum number of stars allowed on the map
         const maxInversersReached = this.inversers.length >= BackendConfig.POWERUPS.INVERSER.MAX_ON_MAP;
 
         // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
@@ -47,6 +45,15 @@ class Inverser {
         }
     }
 
+    /**
+     * Handle the consumption of an inverser by a snake.
+     * The inverser is removed from the map and the powerup is added to the inventory of the snake.
+     * 
+     * @param map is the current map of the game
+     * @param inverserCoordinate is the coordinate of the inverser that is consumed
+     * @param powerUpInventory is the inventory of the snake that consumes the inverser
+     * @returns void
+     */
     static handleSnakeConsumedInverser(map, inverserCoordinate, powerUpInventory) {
         // After consumption, the field cell is back to normal
         map[inverserCoordinate.x][inverserCoordinate.y] = Empty.IDENTIFIER;
@@ -61,37 +68,13 @@ class Inverser {
     }
 
     /**
-     * Inverse the movement of other players until timeout is reached.
-     *
-     * @param castingPlayer is the snake activating the powerup.
-     * @param players is the current list of players that are affected by the powerup
+     * Activate the inverser powerup for a player.
+     * The player is given the inverser powerup for a certain duration.
+     * 
+     * @param player is the player that consumes the inverser
+     * @param allPlayers is the array of all players in the game
+     * @returns void
      */
-    // static activatePowerUp(castingPlayer, players) {
-    //     castingPlayer.isPowerUpActive = true;
-
-    //     //Add the inverser debuff to all other players
-    //     players.filter(player => player.socket.id !== castingPlayer.socket.id)
-    //         .forEach(player => {
-    //             player.activeDebuffs.push(Inverser.IDENTIFIER);
-    //         });
-
-    //     // Stop powerup effect after specified time
-    //     setTimeout(() => {
-    //         castingPlayer.isPowerUpActive = false;
-    //         castingPlayer.activePowerUp = null;
-
-    //         // For each player, remove the first occurrence of the debuff in the list of activeDebuffs of the opponent
-    //         players.filter(player => player.socket.id !== castingPlayer.socket.id)
-    //             .forEach(player => {
-    //                 // Note that because we only remove the first occurrence, it is possible to stack multiple debuffs that have their own setTimeout until they expire
-    //                 let firstDebuffOccurrence = player.activeDebuffs.indexOf(Inverser.IDENTIFIER);
-    //                 if (firstDebuffOccurrence !== -1) {
-    //                     player.activeDebuffs.splice(firstDebuffOccurrence, 1);
-    //                 }
-    //             });
-    //     }, BackendConfig.POWERUPS.INVERSER.EFFECT.INVERSE_OTHER_PLAYERS_MOVEMENT_MS);
-    // }
-
     static activatePowerUp(player, allPlayers) {
         player.activePowerUps.push(Inverser.IDENTIFIER);
         setTimeout(() => {

@@ -25,7 +25,7 @@ class Player {
   /**
    * Returns the player's current game state as a JSON-ready object sent to the frontend.
    *
-   * @returns {{playerNumber, score, snakeInvulnerability: *, nickname, gameOver: boolean}}
+   * @returns {Object} the player's game state
    */
   getPlayerGameState() {
     return {
@@ -33,13 +33,19 @@ class Player {
       nickname: this.nickname,
       score: this.snake.length - BackendConfig.SNAKE_SPAWN_LENGTH,
       gameOver: this.gameOver,
-      snakeInvulnerability: this.snakeInvulnerability,
       powerUpInventory: this.powerUpInventory,
       activePowerUps: this.activePowerUps,
       activeDebuffs: this.activeDebuffs,
     };
   }
 
+  /**
+   * Spawns a snake at a random position on the map.
+   * 
+   * @param map is the current map of the game
+   * @param length is the length of the snake to spawn
+   * @returns {Array} the snake that was spawned
+   */
   spawnRandomSnake(map, length) {
     // Create random starting position for snake.
     // As the snake is drawn horizontally, we want at least its body length as space to the left.
@@ -47,10 +53,10 @@ class Player {
     let randomX = Math.floor(Math.random() * (map.length - 20) + length);
     let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
 
-    //Create snake head at the random starting position
+    // Create snake head at the random starting position
     let snake = [{ x: randomX, y: randomY }];
 
-    //Fill the snake body counting cells backwards from the starting cell (by subtracting from x coordinate as the snake spawns horizontally)
+    // Fill the snake body counting cells backwards from the starting cell (by subtracting from x coordinate as the snake spawns horizontally)
     for (let snakeBodyNum = 1; snakeBodyNum < length; snakeBodyNum++) {
       snake[snakeBodyNum] = { x: randomX - snakeBodyNum, y: randomY };
     }
@@ -58,17 +64,13 @@ class Player {
     return snake;
   }
 
-  setSpawnInvulnerability(invulnerableMs) {
-    // After defined invulnerability in ms, set the snake invulnerability back to false
-    setTimeout(() => {
-      this.snakeInvulnerability = false;
-    }, invulnerableMs);
-
-    // Set the snake to invulnerable, but will be automatically changed to false after timeout is reached
-    return true;
-  }
-
-  // Use powerUp from inventory if it exists
+  /**
+   * Handle the consumption of a powerup by a snake.
+   * The powerup is removed from the map and the snake is given the powerup.
+   * 
+   * @param powerUpIdentifier is the identifier of the powerup that is consumed
+   * @returns {void}
+   */
   usePowerUp(powerUpIdentifier) {
     // Move powerUp from inventory to active
     // and remove one instance of the powerUp from the inventory
@@ -97,6 +99,12 @@ class Player {
     }
   }
 
+  /**
+   * Set the direction of the snake based on the user input.
+   * 
+   * @param direction is the direction the snake should move in
+   * @returns void
+   */
   setDirection(direction) {
 
     let previousDirection = this.direction;
@@ -139,11 +147,12 @@ class Player {
    * Return true if move was successful.
    * Returns false if snake could not move in the specified direction (e.g. collided with obstacle).
    *
+   * @param map is the current map of the game
    * @returns {boolean} whether snake move was a success.
    */
   move(map) {
 
-    //Handle active debuff effect from Inverser powerup activated by another player
+    // Handle active debuff effect from Inverser powerup activated by another player
     const newSnakeHead = this.moveSnakeHead(1);
 
     if (this.collides(newSnakeHead, map)) {
@@ -177,7 +186,7 @@ class Player {
         this.snake.pop();
         break;
       default:
-        this.snake.pop(); //Snake should not increase in size
+        this.snake.pop();
     }
     return true;
   }
@@ -209,6 +218,13 @@ class Player {
     return snakeHead;
   }
 
+  /**
+   * Check if the snake head collides with any object on the map
+   * 
+   * @param snakeHead is the new coordinate of the snake head to verify
+   * @param map is the current map of the game
+   * @returns {boolean} whether the snake head collides with any object on the map
+   */
   collides(snakeHead, map) {
 
     if (this.isWallCollision(snakeHead, map)) {
@@ -229,6 +245,13 @@ class Player {
     return false;
   }
 
+  /**
+   * Check whether the snake head moved to a field that is outside of the map
+   * 
+   * @param snakeHead is the new coordinate of the snake head to verify
+   * @param map is the current map of the game
+   * @returns {boolean} whether the snake head moved outside of the map
+   */
   isWallCollision(snakeHead, map) {
     return (
       snakeHead.x < 0 ||
@@ -238,6 +261,13 @@ class Player {
     );
   }
 
+  /**
+   * Check whether the snake head moved to a field that contains an obstacle
+   * 
+   * @param snakeHead is the new coordinate of the snake head to verify
+   * @param obstacles is the array of obstacles to verify on
+   * @returns {boolean} whether the snake head moved into an obstacle
+   */
   isObstacleCollision(snakeHead, obstacles) {
     if (this.activePowerUps.includes(Star.IDENTIFIER)) { return false }
     for (let i = 0; i < obstacles.length; i++) {
