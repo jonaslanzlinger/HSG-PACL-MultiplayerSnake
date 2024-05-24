@@ -360,13 +360,14 @@ function initKeyControls() {
           gameAudio.playInventoryError();
         }
         break;
-      case "3": // send powerUp (pe) when '3' is pressed
-        if (this.player.powerUpInventory.includes("pe")) {
-          sendUserInput("pe");
-          //TODO: play snake eater sound
+      case '3': // send powerUp (pe) when '3' is pressed
+        if (this.player.powerUpInventory.includes('pe')) {
+          sendUserInput('pe')
+          gameAudio.playPickup();
         } else {
           gameAudio.playInventoryError();
         }
+        break;
     }
   });
 }

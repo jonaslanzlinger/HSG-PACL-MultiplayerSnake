@@ -9,6 +9,7 @@ class GameAudio {
    #obstacle
    #immune
    #inventoryError
+   #snakeEater
 
    constructor() {
 
@@ -53,6 +54,9 @@ class GameAudio {
 
       this.#inventoryError = new Audio()
       this.#inventoryError.src = '/assets/sounds/inventoryError.m4a'
+
+      this.#snakeEater = new Audio()
+      this.#snakeEater.src = '/assets/sounds/snakeEater.m4a'
    }
 
    playMusic() {
@@ -123,6 +127,11 @@ class GameAudio {
    playInventoryError() {
       this.#inventoryError.currentTime = 0;
       this.#inventoryError.play();
+   }
+
+   playSnakeEaterSound() {
+      this.#snakeEater.currentTime = 0;
+      this.#snakeEater.play();
    }
 
 }
