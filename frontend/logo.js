@@ -1,13 +1,13 @@
-const TILE_SIZE = 20
-const width = 20 * TILE_SIZE
-const height = 5 * TILE_SIZE
+const LOGO_TILE_SIZE = 20
+const logoWidth = 20 * LOGO_TILE_SIZE
+const logoHeight = 5 * LOGO_TILE_SIZE
 
-const canvas = document.getElementById('logo')
-const ctx = canvas.getContext('2d')
-canvas.width = width
-canvas.height = height
+const logoCanvas = document.getElementById('logo')
+const logoCtx = logoCanvas.getContext('2d')
+logoCanvas.width = logoWidth
+logoCanvas.height = logoHeight
 
-const frames = [
+const logoFrames = [
   [
     [2, 0, '#0000ff'],
     [4, 4, '#ff0000'],
@@ -383,18 +383,18 @@ const frames = [
 drawLogo()
 
 async function drawLogo() {
-  ctx.fillStyle = "#ffffff"
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  logoCtx.fillStyle = "#ffffff"
+  logoCtx.fillRect(0, 0, logoCanvas.width, logoCanvas.height)
 
-  for (const frame of frames) {
+  for (const frame of logoFrames) {
     for (const [x, y, color] of frame) {
-      ctx.fillStyle = color
-      ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+      logoCtx.fillStyle = color
+      logoCtx.fillRect(x * LOGO_TILE_SIZE, y * LOGO_TILE_SIZE, LOGO_TILE_SIZE, LOGO_TILE_SIZE)
     }
     await sleep(75)
   }
 
-  canvas.addEventListener("click", async () => drawLogo())
+  logoCanvas.addEventListener("click", async () => drawLogo())
 }
 
 function sleep(ms) {
