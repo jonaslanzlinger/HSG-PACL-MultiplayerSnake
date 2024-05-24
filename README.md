@@ -11,10 +11,6 @@ This is a multiplayer version of the classic Snake game, enhanced with various p
 - **Sound Effects**: Various sounds are implemented to increase the game feeling.
 - **Dynamic Map View**: Players see only a part of the large map in a window. As the player moves, the window follows the player's snake until reaching the edge of the map.
 - **Powerups**: Collect various powerups to gain temporary advantages.
-  - **Star**: Grants invulnerability for 5 seconds.
-  - **Inverser**: Inverts the controls of all other players for 5 seconds.
-  - **Snake Eater**: Allows your snake to eat other snakes, causing them to die, for 5 seconds.
-
 ## Technologies Used
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js
@@ -64,9 +60,6 @@ docker run -p 1337:1337 mahgoh/snake
 2. **Navigating Your Snake**: Use the arrow keys or WASD to navigate your snake on the map.
 3. **Eating Apples**: Guide your snake to eat apples scattered on the map to grow longer.
 4. **Collecting Powerups**: Move your snake over the powerups to collect them and gain temporary abilities.
-   - **Star**: Your snake becomes invulnerable for 5 seconds.
-   - **Inverser**: Inverts the controls of all other players for 5 seconds.
-   - **Snake Eater**: Your snake can eat other snakes, causing them to die, for 5 seconds.
 
 ## Powerups Details
 - **Star (Invulnerability)**:
