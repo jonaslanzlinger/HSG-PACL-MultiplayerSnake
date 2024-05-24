@@ -67,7 +67,7 @@ function startGame() {
   }
 
   document.getElementById("login").style.display = "none";
-  document.getElementById("final-score-value").style.display = "block";
+  document.getElementById("final-score").style.display = "block";
   document.getElementById("game").style.display = "grid";
   let nickname = document.getElementById("nickname").value;
 
@@ -119,12 +119,26 @@ function initSocket(nickname) {
     ) {
       gameAudio.stopMusic();
 
-      document.getElementById("login").style.display = "block";
+      document.getElementById("login").style.display = "flex";
       document.getElementById("game").style.display = "none";
-      document.getElementById("final-score-value").innerText = `Final Score: ${gameState.players.find(
+
+      const p = gameState.players.find(
         (player) => player.playerNumber === this.playerNumber
-      ).score
-        }`;
+      )
+
+      const name = document.querySelector("#final-score .name")
+      const score = document.querySelector("#final-score .score")
+      const colors = snakeColors[(p.playerNumber - 1 ) % snakeColors.length];
+
+      name.innerText = p.nickname
+      name.style.backgroundColor = colors[1]
+      name.style.color = colors[2]
+      score.innerText = p.score
+      score.style.backgroundColor = colors[0]
+      score.style.color = colors[2]
+
+      playBtn = document.querySelector("#play")
+      playBtn.innerText = "Play Again"
 
       // Reset camera
       camera = null;
