@@ -212,15 +212,8 @@ function initSocket(nickname) {
                 tileSize,
                 tileSize
               );
-              // Check if sounds should be played for my snake
-              if (
-                gameState.map[x][y] === -this.playerNumber &&
-                prevGameState !== null
-              ) {
-                gameAudio.playSoundByFieldType(prevGameState[x][y], player);
-              }
-
-              if (player?.activePowerUps.includes("ps")) {
+              if (gameState.players.find((p) => p.playerNumber === -gameState.map[x][y]).activePowerUps.includes("ps")) {
+                ctx.globalAlpha = 0.8;
                 ctx.drawImage(
                   ShieldImage,
                   (x - camera.x) * tileSize,
@@ -228,6 +221,25 @@ function initSocket(nickname) {
                   tileSize,
                   tileSize
                 );
+                ctx.globalAlpha = 1;
+              }
+              if (gameState.players.find((p) => p.playerNumber === -gameState.map[x][y]).activePowerUps.includes("pe")) {
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(
+                  SnakeEaterImage,
+                  (x - camera.x) * tileSize,
+                  (y - camera.y) * tileSize,
+                  tileSize,
+                  tileSize
+                );
+                ctx.globalAlpha = 1;
+              }
+              // Check if sounds should be played for my snake
+              if (
+                gameState.map[x][y] === -this.playerNumber &&
+                prevGameState !== null
+              ) {
+                gameAudio.playSoundByFieldType(prevGameState[x][y], player);
               }
               break;
             //field: apple
