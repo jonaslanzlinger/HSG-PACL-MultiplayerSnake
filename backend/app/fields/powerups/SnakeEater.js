@@ -14,7 +14,7 @@ class SnakeEater {
     BackendConfig.POWERUPS.SNAKE_EATER.SPAWN_CHANCE_PER_SECOND /
     BackendConfig.FPS;
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Randomly generate valid eater coordinates while reflecting the desired SPAWN_CHANCE
@@ -66,15 +66,25 @@ class SnakeEater {
    *
    * @param player is the snake receiving the powerup.
    */
-  static activatePowerUp(player) {
-    player.snakeEatability = true;
-    player.isPowerUpActive = true;
+  // static activatePowerUp(player) {
+  //   player.snakeEatability = true;
+  //   player.isPowerUpActive = true;
 
+  //   setTimeout(() => {
+  //     player.snakeEatability = false;
+  //     player.isPowerUpActive = false;
+  //     player.activatePowerUp = null;
+  //   }, BackendConfig.POWERUPS.SNAKE_EATER.EFFECT.SNAKE_EATS_SNAKE_MS);
+  // }
+
+  static activatePowerUp(player) {
+    player.activePowerUps.push(SnakeEater.IDENTIFIER);
     setTimeout(() => {
-      player.snakeEatability = false;
-      player.isPowerUpActive = false;
-      player.activatePowerUp = null;
-    }, BackendConfig.POWERUPS.SNAKE_EATER.EFFECT.SNAKE_EATS_SNAKE_MS);
+      let firstPowerUpOccurrence = player.activePowerUps.indexOf(SnakeEater.IDENTIFIER);
+      if (firstPowerUpOccurrence !== -1) {
+        player.activePowerUps.splice(firstPowerUpOccurrence, 1);
+      }
+    }, BackendConfig.POWERUPS.SNAKE_EATER.DURATION);
   }
 }
 

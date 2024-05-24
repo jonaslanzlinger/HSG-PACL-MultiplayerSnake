@@ -66,30 +66,54 @@ class Inverser {
      * @param castingPlayer is the snake activating the powerup.
      * @param players is the current list of players that are affected by the powerup
      */
-    static activatePowerUp(castingPlayer, players) {
-        castingPlayer.isPowerUpActive = true;
+    // static activatePowerUp(castingPlayer, players) {
+    //     castingPlayer.isPowerUpActive = true;
 
-        //Add the inverser debuff to all other players
-        players.filter(player => player.socket.id !== castingPlayer.socket.id)
-            .forEach(player => {
-                player.activeDebuffs.push(Inverser.IDENTIFIER);
-            });
+    //     //Add the inverser debuff to all other players
+    //     players.filter(player => player.socket.id !== castingPlayer.socket.id)
+    //         .forEach(player => {
+    //             player.activeDebuffs.push(Inverser.IDENTIFIER);
+    //         });
 
-        // Stop powerup effect after specified time
+    //     // Stop powerup effect after specified time
+    //     setTimeout(() => {
+    //         castingPlayer.isPowerUpActive = false;
+    //         castingPlayer.activePowerUp = null;
+
+    //         // For each player, remove the first occurrence of the debuff in the list of activeDebuffs of the opponent
+    //         players.filter(player => player.socket.id !== castingPlayer.socket.id)
+    //             .forEach(player => {
+    //                 // Note that because we only remove the first occurrence, it is possible to stack multiple debuffs that have their own setTimeout until they expire
+    //                 let firstDebuffOccurrence = player.activeDebuffs.indexOf(Inverser.IDENTIFIER);
+    //                 if (firstDebuffOccurrence !== -1) {
+    //                     player.activeDebuffs.splice(firstDebuffOccurrence, 1);
+    //                 }
+    //             });
+    //     }, BackendConfig.POWERUPS.INVERSER.EFFECT.INVERSE_OTHER_PLAYERS_MOVEMENT_MS);
+    // }
+
+    static activatePowerUp(player, allPlayers) {
+        player.activePowerUps.push(Inverser.IDENTIFIER);
         setTimeout(() => {
-            castingPlayer.isPowerUpActive = false;
-            castingPlayer.activePowerUp = null;
-
-            // For each player, remove the first occurrence of the debuff in the list of activeDebuffs of the opponent
-            players.filter(player => player.socket.id !== castingPlayer.socket.id)
-                .forEach(player => {
-                    // Note that because we only remove the first occurrence, it is possible to stack multiple debuffs that have their own setTimeout until they expire
-                    let firstDebuffOccurrence = player.activeDebuffs.indexOf(Inverser.IDENTIFIER);
+            let firstPowerUpOccurrence = player.activePowerUps.indexOf(Inverser.IDENTIFIER);
+            if (firstPowerUpOccurrence !== -1) {
+                player.activePowerUps.splice(firstPowerUpOccurrence, 1);
+            }
+            // Remove the inverser debuff from all other players
+            allPlayers.filter(otherPlayer => otherPlayer.socket.id !== player.socket.id)
+                .forEach(otherPlayer => {
+                    let firstDebuffOccurrence = otherPlayer.activeDebuffs.indexOf(Inverser.IDENTIFIER);
                     if (firstDebuffOccurrence !== -1) {
-                        player.activeDebuffs.splice(firstDebuffOccurrence, 1);
+                        otherPlayer.activeDebuffs.splice(firstDebuffOccurrence, 1);
                     }
                 });
-        }, BackendConfig.POWERUPS.INVERSER.EFFECT.INVERSE_OTHER_PLAYERS_MOVEMENT_MS);
+        }, BackendConfig.POWERUPS.INVERSER.DURATION);
+
+        // Add the inverser debuff to all other players
+        allPlayers.filter(otherPlayer => otherPlayer.socket.id !== player.socket.id)
+            .forEach(otherPlayer => {
+                otherPlayer.activeDebuffs.push(Inverser.IDENTIFIER);
+            });
     }
 }
 

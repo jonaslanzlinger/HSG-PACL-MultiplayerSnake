@@ -67,9 +67,9 @@ class Game {
     this.players
       .filter((player) => !player.gameOver)
       .forEach((player) => {
-        if (!player.isPowerUpActive && player.activePowerUp !== null) {
-          this.handleActivePowerUp(player);
-        }
+        // if (!player.isPowerUpActive && player.activePowerUp !== null) {
+        //   this.handleActivePowerUp(player);
+        // }
 
         if (!player.move(this.gameState.map)) {
           this.handlePlayerGameOver(player);
@@ -82,7 +82,6 @@ class Game {
     this.gameState.map = map;
 
     // Add all player states to gameState
-    //TODO: Currently, gameState includes player indefinitely with gameOver=true but we could also remove it and do it via io.emit (not very important)
     this.gameState.players = this.players.map((player) =>
       player.getPlayerGameState()
     );
@@ -121,20 +120,20 @@ class Game {
     SnakeEater.generateEaters(this.gameState.map);
   }
 
-  handleActivePowerUp(player) {
-    switch (player.activePowerUp) {
-      case Star.IDENTIFIER:
-        Star.activatePowerUp(player);
-        break;
-      case Inverser.IDENTIFIER:
-        Inverser.activatePowerUp(player, this.players);
-        break;
-      case SnakeEater.IDENTIFIER:
-        SnakeEater.activatePowerUp(player, this.players);
-      default:
-        break;
-    }
-  }
+  // handleActivePowerUp(player) {
+  //   switch (player.activePowerUp) {
+  //     case Star.IDENTIFIER:
+  //       Star.activatePowerUp(player);
+  //       break;
+  //     case Inverser.IDENTIFIER:
+  //       Inverser.activatePowerUp(player, this.players);
+  //       break;
+  //     case SnakeEater.IDENTIFIER:
+  //       SnakeEater.activatePowerUp(player, this.players);
+  //     default:
+  //       break;
+  //   }
+  // }
 
   drawObstacles(map) {
     Obstacle.obstacles.forEach((o) => {

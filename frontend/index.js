@@ -46,6 +46,7 @@ const snakeColors = [
 
 // Initialize audio
 gameAudio = new GameAudio();
+initKeyControls();
 
 function startGame() {
   document.getElementById("login").style.display = "none";
@@ -54,7 +55,6 @@ function startGame() {
   let nickname = document.getElementById("nickname").value;
 
   initSocket(nickname);
-  initKeyControls();
   initMap();
   gameAudio.playMusic();
 }
@@ -126,6 +126,7 @@ function initSocket(nickname) {
     updateLeaderboard(gameState);
     updatePowerups(this.player);
     updateBuffs(this.player);
+    updateDebuffs(this.player);
 
     //TODO: add field which shows powerups in inventory (picked up)
     //TODO: add field which shows currently active powerup? -> also show timer that decreases on frontend! Example: See INVERSE_OTHER_PLAYERS_MOVEMENT_MS that defines how lung the debuff is active
@@ -202,7 +203,7 @@ function initSocket(nickname) {
                 gameAudio.playSoundByFieldType(prevGameState[x][y], player);
               }
 
-              if (player?.snakeInvulnerability) {
+              if (player?.activePowerUps.includes("ps")) {
                 ctx.drawImage(
                   ShieldImage,
                   (x - camera.x) * TILE_SIZE,
@@ -362,7 +363,7 @@ function initKeyControls() {
       case '3': // send powerUp (pe) when '3' is pressed
         if (this.player.powerUpInventory.includes('pe')) {
           sendUserInput('pe')
-          gameAudio.playSnakeEater();
+          gameAudio.playSnakeEaterSound();
         } else {
           gameAudio.playInventoryError();
         }
