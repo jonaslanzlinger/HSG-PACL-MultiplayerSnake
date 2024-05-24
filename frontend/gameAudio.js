@@ -91,30 +91,37 @@ class GameAudio {
 
    playApple() {
       const index = Math.floor(Math.random() * this.#appleSoundList.length);
+      this.#appleSoundList[index].currentTime = 0;
       this.#appleSoundList[index].play();
    }
 
    playPickup() {
+      this.#pickup.currentTime = 0;
       this.#pickup.play();
    }
 
    playInverser() {
+      this.#inverser.currentTime = 0;
       this.#inverser.play();
    }
 
    playStar() {
+      this.#star.currentTime = 0;
       this.#star.play();
    }
 
    playObstacle() {
+      this.#obstacle.currentTime = 0;
       this.#obstacle.play();
    }
 
    playImmune() {
+      this.#immune.currentTime = 0;
       this.#immune.play();
    }
 
    playInventoryError() {
+      this.#inventoryError.currentTime = 0;
       this.#inventoryError.play();
    }
 

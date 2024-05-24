@@ -88,6 +88,16 @@ class Player {
     }
   }
 
+    setDirection(direction) {
+
+        let previousDirection = this.direction;
+
+        const oppositeDirections = {
+            [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
+            [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
+            [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
+            [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT
+        };
   setDirection(direction) {
     //TODO: it's possible to move reverse by quickly pressing another direction and then back (e.g. you go right, then quickly press up,left to go left, which should not be possible)
     const oppositeDirections = {
@@ -98,10 +108,29 @@ class Player {
     };
 
     // Check if the new direction is opposite to the current direction
-    if (this.direction === oppositeDirections[direction]) {
+    if (this.direction === oppositeDirections[direction] || this.direction === direction) {
       return; // If it is, don't change the direction
     }
 
+        // Check if inverser debuff is active
+        // If so, change the direction to the opposite of the user input
+        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
+            this.direction = oppositeDirections[direction]
+        } else {
+            this.direction = direction;
+        }
+
+        // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
+        // If so, the snake should not move in the specified direction and ignore the user input.
+        // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
+        if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.RIGHT && this.snake[0].x + 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+        ) {
+            this.direction = previousDirection;
+        }
+    }
     // Check if inverser debuff is active
     // If so, change the direction to the opposite of the user input
     if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
