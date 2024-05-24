@@ -68,6 +68,8 @@ function startGame() {
     cameraHeight = MAX_TILES;
   }
 
+  document.getElementById("game").style.gridTemplateColumns = `1fr ${cameraWidth * tileSize}px`
+
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score").style.display = "block";
   document.getElementById("game").style.display = "grid";
@@ -368,6 +370,41 @@ function initSocket(nickname) {
       ctx.stroke();
     }
   });
+
+  // Listen for chat messages
+  socket.on("chatToFrontend", (message) => {
+
+    const chat = document.getElementById("chat-messages");
+
+    // clear chat entirely
+    while (chat.firstChild) {
+      chat.removeChild(chat.firstChild);
+    }
+
+    // add new messages
+    message.forEach((message) => {
+      const messageElement = document.createElement("li");
+      const name = document.createElement("span");
+      name.classList.add("name")
+      name.innerText = message.nickname + ": ";
+
+      const messageText = document.createElement("span");
+      messageText.classList.add("message")
+      messageText.innerText = message.message;
+
+      messageElement.appendChild(name);
+      messageElement.appendChild(messageText);
+
+      const colors = snakeColors[(message.playerNumber - 1) % snakeColors.length];
+
+      // name.style.color = colors[0]
+      name.style.color = colors[0]
+
+      chat.appendChild(messageElement);
+      chat.scrollTop = chat.scrollHeight;
+    });
+
+  });
 }
 
 /**
@@ -375,7 +412,17 @@ function initSocket(nickname) {
  */
 function initKeyControls() {
   document.addEventListener("keydown", (event) => {
+
+    let chatInputElement = document.getElementById("chat-input");
+    let activeElement = document.activeElement;
+    let focusedChat = activeElement === chatInputElement;
+
     if (document.getElementById("game").style.display === "none") return;
+
+    if (["w", "a", "s", "d"].includes(event.key) && focusedChat) {
+      return;
+    }
+
     switch (event.key) {
       case "w":
       case "ArrowUp":

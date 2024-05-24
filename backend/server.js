@@ -1,6 +1,7 @@
 const Game = require("./app/Game.js");
 const SocketConfig = require("./configs/socketConfig.js");
 const BackendConfig = require("./configs/backendConfig.js");
+const Chat = require("./app/Chat.js");
 
 const express = require("express");
 const socketio = require("socket.io");
@@ -28,6 +29,9 @@ app.get("/", (req, res) => {
 // Mount socket.io on the server
 const io = socketio(server);
 
+// Instantiate Chat Log
+const chat = new Chat();
+
 // Listen socket.io events
 io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
   console.log("User: " + socket.id + " connected");
@@ -38,6 +42,7 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
     console.log("Player " + nickname + " joined the game");
     player = game.handlePlayerJoinedGame(socket, nickname);
     socket.emit(SocketConfig.EVENTS.PLAYER_NUMBER, player.playerNumber);
+    socket.emit(SocketConfig.EVENTS.CHAT_TO_FRONTENT, chat.getMessages());
   });
 
   // Listen for user input
@@ -61,6 +66,12 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
   // Remove player from players array when game over
   socket.on(SocketConfig.EVENTS.FORCE_DISCONNECT, () => {
     socket.disconnect();
+  });
+
+  // Listen for chat messages
+  socket.on(SocketConfig.EVENTS.CHAT, (message) => {
+    chat.addMessage(message, player.playerNumber, player.nickname);
+    socket.emit(SocketConfig.EVENTS.CHAT_TO_FRONTENT, chat.getMessages());
   });
 });
 
