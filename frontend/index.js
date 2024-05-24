@@ -59,7 +59,7 @@ function startGame() {
     tileSize = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / MAX_TILES);
     cameraWidth = MAX_TILES;
     cameraHeight = Math.floor(window.innerHeight / tileSize);
-  // If portrait mode
+    // If portrait mode
   } else {
     tileSize = Math.floor(window.innerHeight / MAX_TILES);
     cameraWidth = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / tileSize);
@@ -345,6 +345,7 @@ function initSocket(nickname) {
 // Init key controls
 function initKeyControls() {
   document.addEventListener("keydown", (event) => {
+    if (document.getElementById("game").style.display === "none") return;
     switch (event.key) {
       case "w":
       case "ArrowUp":
