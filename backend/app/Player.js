@@ -280,7 +280,7 @@ class Player {
     } else {
       return (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
-        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
+        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0 && !this.activePowerUps.includes(Star.IDENTIFIER))
       );
     }
   }
