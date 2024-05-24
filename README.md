@@ -25,6 +25,8 @@ This is a multiplayer version of the classic Snake game, enhanced with various p
 - npm (Node package manager)
 
 ### How To Run
+
+#### Using Node.js
 1. Navigate to /backend
 2. Execute the following command
 ```
@@ -35,6 +37,26 @@ npm run start
 ```
 http:localhost:1337
 ```
+
+#### Using Docker
+1. Build docker image
+```sh
+# Build yourself
+docker build -t snake .
+
+# Use prebuilt image from docker hub
+docker pull mahgoh/snake
+```
+
+2. Run docker image
+```sh
+# Own build
+docker run -p 1337:1337 snake
+
+# Prebuilt
+docker run -p 1337:1337 mahgoh/snake
+```
+
 
 ## Gameplay Instructions
 1. **Joining the Game**: Open the game in your browser and enter a username to join.
