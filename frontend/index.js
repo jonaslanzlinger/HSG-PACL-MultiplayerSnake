@@ -398,7 +398,7 @@ function initSocket(nickname) {
       const colors = snakeColors[(message.playerNumber - 1) % snakeColors.length];
 
       // name.style.color = colors[0]
-      messageElement.style.color = colors[0]
+      name.style.color = colors[0]
 
       chat.appendChild(messageElement);
       chat.scrollTop = chat.scrollHeight;
