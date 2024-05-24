@@ -44,71 +44,53 @@ input[type=range] {
 }
 
 #game {
-  display: none;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 1fr;
 }
 
-#color-customizer {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  width: auto;
-  z-index: 100;
-  padding: 10px;
-  border: 1px solid #c8c8c8;
-  background: #fff;
-  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
-}
-
-#color-customizer .color-pair {
+.stats-container {
   display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  flex-direction: column;
+  gap: 30px;
 }
 
-#color-customizer input[type="color"] {
-  appearance: none;
-  border: 1px solid white;
-  height: 30px;
+.stats-container div h2 {
+  font-size: 1.3em;
+  font-family: monospace;
+  padding: 0.2em 0.4em;
+  border: 1px solid #ccc;
+  border-left: none;
+  margin-top: 0.5em;
+  background: #f3f3f3;
+  display: inline-block;
+}
+
+.stats-container ol {
   margin: 0;
-  padding: 0;
-  background: none;
-  cursor: pointer;
-  outline: none;
+  padding: 0.2em 0 0.2em 0.4em;
+  font-size: 1.1em;
+  font-family: monospace;
 }
 
-#color-customizer input[type="color"].body {
-  width: 90px;
-}
-
-#color-customizer input[type="color"].head {
-  width: 30px;
-}
-
-#color-customizer input[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-
-#color-customizer input[type="color"]::-webkit-color-swatch {
-  border: none;
-}
-
-#color-customizer .buttons {
+.stats-container li.player {
   display: flex;
   justify-content: space-between;
-  gap: 5px;
+  align-items: center;
 }
 
-#color-customizer button {
-  border: 1px solid #999;
-  padding: 5px 10px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 10pt;
-  flex-grow: 1;
+.stats-container li.player span.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.powerup-container {
-  height: 150px;
+.stats-container li.player span.score {
+  display: block;
+  text-align: center;
+  padding: 0 0.4em;
 }
 
 .powerup-container img {
@@ -121,13 +103,21 @@ input[type=range] {
   justify-content: left;
   width: 50px;
   height: 25px;
+  gap: 8px;
 }
 
-.leaderboard-container {
-  justify-content: left;
+ol#buff-list,
+ol#debuff-list {
+  display: flex;
+  gap: 6px;
 }
 
-.stats-container {}
+#canvas-container {
+  display: flex;
+  justify-content: end;
+  align-items: start;
+  height: 100%;
+}
 
 .grid-container {
   padding-top: 25px;
@@ -169,4 +159,67 @@ input[type=range] {
 
 .gap {
   height: 100px;
+}
+
+#color-customizer {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: auto;
+  z-index: 100;
+  padding: 10px;
+  border: 1px solid #c8c8c8;
+  background: #fff;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+#color-customizer .color-triple {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+#color-customizer input[type="color"] {
+  appearance: none;
+  border: 1px solid white;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+
+#color-customizer input[type="color"].body {
+  width: 90px;
+}
+
+#color-customizer input[type="color"].head {
+  width: 30px;
+}
+
+#color-customizer input[type="color"].text {
+  width: 30px;
+}
+
+#color-customizer input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+#color-customizer input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+
+#color-customizer .buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+#color-customizer button {
+  border: 1px solid #999;
+  padding: 5px 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 10pt;
 }

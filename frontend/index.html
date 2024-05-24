@@ -5,8 +5,7 @@
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="stylesheet" href="./style.css" />
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-      rel="stylesheet" />
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
    <script src="/socket.io/socket.io.js"></script>
    <title>HSG-PACL-MultiplayerSnake</title>
 </head>
@@ -15,8 +14,7 @@
 
    <section id="login">
       <div class="login-container">
-         <div class="container d-flex justify-content-center align-items-center"
-            id="enter-username-container">
+         <div class="container d-flex justify-content-center align-items-center" id="enter-username-container">
             <div>
                <h1 id="final-score-value"></h1>
                <h2>Enter Your Nickname</h2>
@@ -82,39 +80,37 @@
       </div>
    </section>
 
-   <section id="game">
-      <div class="container vh-100 d-flex justify-content-center align-items-center">
-
-         <div id="audio-controls">
-            <input type="range" id="slider-music" min="0" max="100" value="30" step="5" />
-            <input type="range" id="slider-fx" min="0" max="100" value="40" step="5" />
+   <section id="game" style="display: none">
+      
+     <div id="audio-controls">
+        <input type="range" id="slider-music" min="0" max="100" value="30" step="5" />
+        <input type="range" id="slider-fx" min="0" max="100" value="40" step="5" />
+     </div>
+  
+      <div class="stats-container" id="stats">
+         <div class="leaderboard-container" id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboard-list"></ol>
          </div>
 
-         <div class="stats-container" id="stats">
-            <div class="leaderboard-container" id="leaderboard">
-               <h2>Leaderboard</h2>
-               <ol id="leaderboard-list"></ol>
-            </div>
-
-            <div class="powerup-container" id="powerups">
-               <h2>Powerups</h2>
-               <ol id="powerups-list"></ol>
-            </div>
-
-            <div class="powerup-container" id="buff">
-               <h2>Buff</h2>
-               <ol id="buff-list"></ol>
-            </div>
-
-            <div class="powerup-container" id="debuff">
-               <h2>Debuff</h2>
-               <ol id="debuff-list"></ol>
-            </div>
+         <div class="powerup-container" id="powerups">
+            <h2>Powerups</h2>
+            <ol id="powerups-list"></ol>
          </div>
 
-         <div class="container vh-100 d-flex justify-content-center align-items-center">
-            <canvas id="canvas"></canvas>
+         <div class="powerup-container" id="buff">
+            <h2>Buff</h2>
+            <ol id="buff-list"></ol>
          </div>
+
+         <div class="powerup-container" id="debuff">
+            <h2>Debuff</h2>
+            <ol id="debuff-list"></ol>
+         </div>
+      </div>
+
+      <div id="canvas-container">
+         <canvas id="canvas"></canvas>
       </div>
    </section>
 </body>

@@ -26,10 +26,10 @@ class Tooling {
 class ColorCustomizer {
 
   /**
-   * Render the color customizer for given color pairs
-   * @param {string[][]]} colorPairs 
+   * Render the color customizer for given color triples
+   * @param {string[][]]} colorTriples
    */
-  static render(colorPairs) {
+  static render(colorTriples) {
     // Create container
     const container = document.createElement('div')
     container.id = 'color-customizer'
@@ -39,10 +39,10 @@ class ColorCustomizer {
     colors.classList.add('colors')
     container.appendChild(colors)
     
-    // Render color pairs
-    colorPairs.forEach((colorPair) => {
-      const pair = ColorCustomizer.renderColorPair(colorPair)
-      colors.appendChild(pair)
+    // Render color triples
+    colorTriples.forEach((colorTriple) => {
+      const triple = ColorCustomizer.renderColorTriple(colorTriple)
+      colors.appendChild(triple)
     })
     
     // Create buttons
@@ -54,32 +54,39 @@ class ColorCustomizer {
   }
   
   /**
-   * Render a color pair and return the element
-   * @param {string[2]} colorPair 
+   * Render a color triple and return the element
+   * @param {string[3]} colorTriple 
    * @returns 
    */
-  static renderColorPair(colorPair) {
+  static renderColorTriple(colorTriple) {
     // Create the color input for the body color
     const bodyInput = document.createElement('input')
     bodyInput.type = 'color'
-    bodyInput.value = colorPair[1]
+    bodyInput.value = colorTriple[1]
     bodyInput.classList.add('body')
     
     // Create the color input for the head color
     const headInput = document.createElement('input')
     headInput.type = 'color'
-    headInput.value = colorPair[0]
+    headInput.value = colorTriple[0]
     headInput.classList.add('head')
+
+    // Create the color input for the text color
+    const textInput = document.createElement('input')
+    textInput.type = 'color'
+    textInput.value = colorTriple[2]
+    textInput.classList.add('text')
     
-    // Create the color pair container
-    const pair = document.createElement('div')
-    pair.classList.add('color-pair')
+    // Create the color triple container
+    const triple = document.createElement('div')
+    triple.classList.add('color-triple')
     
     // Add the color inputs to the container
-    pair.appendChild(bodyInput)
-    pair.appendChild(headInput)
+    triple.appendChild(bodyInput)
+    triple.appendChild(headInput)
+    triple.appendChild(textInput)
     
-    return pair
+    return triple
   }
   
   /**
@@ -87,12 +94,12 @@ class ColorCustomizer {
    * @returns 
    */
   static renderButtons() {
-    // Create button to add new color pair
+    // Create button to add new color triple
     const addButton = document.createElement('button')
     addButton.innerText = 'Add'
     addButton.addEventListener('click', () => {
-      const pair = ColorCustomizer.renderColorPair(['#cccccc', '#cccccc'])
-      document.querySelector("#color-customizer .colors").appendChild(pair)
+      const triple = ColorCustomizer.renderColorTriple(['#cccccc', '#cccccc', '#111111'])
+      document.querySelector("#color-customizer .colors").appendChild(triple)
     })
     
     // Create button to export colors to console
@@ -101,12 +108,13 @@ class ColorCustomizer {
     exportButton.addEventListener('click', () => {
       const colors = []
       
-      // Get all color pair containers, get the inputs for the corresponding colors
+      // Get all color triple containers, get the inputs for the corresponding colors
       // and add them to an array
-      document.querySelectorAll('#color-customizer .color-pair').forEach((colorPair) => {
+      document.querySelectorAll('#color-customizer .color-triple').forEach((colorPair) => {
         const bodyInput = colorPair.querySelector('.body')
         const headInput = colorPair.querySelector('.head')
-        colors.push([headInput.value, bodyInput.value])
+        const textInput = colorPair.querySelector('.text')
+        colors.push([headInput.value, bodyInput.value, textInput.value])
       })
       
       // Log the array to the console
