@@ -17,7 +17,8 @@ function updateLeaderboard(gameState) {
 
       const name = document.createElement("span")
       name.classList.add("name")
-      name.style.color = colors[0]
+      name.style.backgroundColor = colors[1]
+      name.style.color = colors[2]
       name.innerText = player.nickname
 
       const score = document.createElement("span")

@@ -75,22 +75,33 @@ input[type=range] {
   font-family: monospace;
 }
 
+.stats-container ol#leaderboard-list {
+  padding-left: 0;
+}
+
 .stats-container li.player {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 2px;
+}
+
+.stats-container li.player:last-of-type {
+  margin: 0;
 }
 
 .stats-container li.player span.name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex-grow: 1;
+  padding: 0 0.6em;
 }
 
 .stats-container li.player span.score {
   display: block;
   text-align: center;
-  padding: 0 0.4em;
+  padding: 0 0.6em;
 }
 
 .powerup-container img {
@@ -156,15 +167,99 @@ ol#debuff-list {
 
 .login-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
   height: 100vh;
 }
 
-.gap {
-  height: 100px;
+.login-container > div {
+  display: flex;
+  gap: 100px;
+}
+
+.login-container h2 {
+  font-size: 1.8em;
+}
+
+#final-score {
+  display: none;
+  margin-bottom: 50px;
+}
+
+#final-score h1 {
+  color: red;
+  font-weight: 900;
+}
+
+#final-score .player {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+#final-score .player .name {
+  flex-grow: 1;
+  padding: 0.4em 0.8em;
+}
+
+#final-score .player .score {
+  padding: 0.4em 0.8em;
+}
+
+.inputs {
+  display: flex;
+}
+
+.inputs input[type=text] {
+    padding: 0.4em 0.8em;
+    border: 1px solid #ddd;
+    outline: none;
+    min-width: 250px;
+}
+
+.inputs input[type=text]:focus {
+    border: 1px solid #333333;
+    color: #333333;
+}
+
+.inputs button {
+  padding: 0em 0.8em;
+  height: 40px;
+  background: #333333;
+  border: 2px solid #333333;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.inputs button:hover {
+  background: #fff;
+  color: #333333;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.controls > div {
+  background: #f0f0f0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.controls > :nth-child(odd) {
+  justify-content: center;
+  gap: 5px;
+}
+
+.controls > :nth-child(even) {
+  padding: 0 10px;
+  justify-content: start;
+  text-wrap: wrap;
 }
 
 #color-customizer {
