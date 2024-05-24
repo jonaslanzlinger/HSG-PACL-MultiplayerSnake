@@ -91,19 +91,26 @@
   grid-gap: 10px;
 }
 .grid-item {
-   background-color: #ddd;
-   padding: 20px;
-   height: 70px;
-   font-size: 20px;
-   text-align: left;
+  background-color: #ddd;
+  padding: 0 20px;
+  height: 70px;
+  font-size: 20px;
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
+
+.grid-item p {
+  margin: 0;
+}
+
 .grid-item-icon {
-   background-color: #ddd;
-   padding: 20px;
-   font-size: 20px;
-   height: 70px;
-   text-align: center;
-   width: 100px;
+  background-color: #ddd;
+  padding: 20px;
+  font-size: 20px;
+  height: 70px;
+  text-align: center;
+  width: 100px;
 }
 .control-img {
   height: 30px;
