@@ -16,9 +16,9 @@ const BackendConfig = {
   FIELDS: {
     APPLE: {
       IDENTIFIER: "a",
-      INITIAL_SPAWN_AMOUNT: 10,
-      SPAWN_CHANCE_PER_SECOND: 0.2,
-      MAX_ON_MAP: 20,
+      INITIAL_SPAWN_AMOUNT: 20,
+      SPAWN_CHANCE_PER_SECOND: 1.5,
+      MAX_ON_MAP: 30,
     },
     OBSTACLE: {
       IDENTIFIER: "o",

@@ -294,8 +294,7 @@ class Player {
     if (this.activePowerUps.includes(SnakeEater.IDENTIFIER)) {
       if (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
-        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0
-        )
+        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
       ) {
         // Get the player number and make it positive
         let playernumber = map[snakeHead.x][snakeHead.y];
