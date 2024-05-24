@@ -3,7 +3,6 @@ const BackendConfig = require("../../../configs/backendConfig");
 
 class Star {
 
-    //p for powerup, s for star
     static IDENTIFIER = BackendConfig.POWERUPS.STAR.IDENTIFIER;
 
     // Stores positions of stars on map
@@ -13,8 +12,7 @@ class Star {
     // is 1000 / FPS, so we have to calculate the chance per tick.
     static SPAWN_CHANCE_PER_TICK = BackendConfig.POWERUPS.STAR.SPAWN_CHANCE_PER_SECOND / BackendConfig.FPS;
 
-    constructor() {
-    }
+    constructor() { }
 
     /**
      * Randomly generate valid star coordinates while reflecting the desired SPAWN_CHANCE
@@ -23,7 +21,7 @@ class Star {
      * @returns {*[]}
      */
     static generateStars(map) {
-        //Denotes the maximum number of stars allowed on the map
+        // Denotes the maximum number of stars allowed on the map
         const maxStarsReached = this.stars.length >= BackendConfig.POWERUPS.STAR.MAX_ON_MAP;
 
         // Only generate stars at a rate that resembles the defined SPAWN_CHANCE
@@ -47,6 +45,15 @@ class Star {
         }
     }
 
+    /**
+     * Handle the consumption of a star by a snake.
+     * The star is removed from the map and the powerup is added to the inventory of the snake.
+     * 
+     * @param map is the current map of the game
+     * @param starCoordinate is the coordinate of the star that is consumed
+     * @param powerUpInventory is the inventory of the snake that consumes the star
+     * @returns void
+     */
     static handleSnakeConsumedStar(map, starCoordinate, powerUpInventory) {
         // After consumption, the field cell is back to normal
         map[starCoordinate.x][starCoordinate.y] = Empty.IDENTIFIER;
@@ -64,6 +71,7 @@ class Star {
      * Gain invulnerability until timeout is reached.
      *
      * @param player is the snake receiving the powerup.
+     * @returns void
      */
     static activatePowerUp(player) {
         player.activePowerUps.push(Star.IDENTIFIER);

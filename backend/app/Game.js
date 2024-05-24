@@ -9,6 +9,7 @@ const SocketConfig = require("../configs/socketConfig");
 const BackendConfig = require("../configs/backendConfig");
 
 class Game {
+
   // Initialize an empty map to serve as a blank canvas
   static EMPTY_MAP = new Array(BackendConfig.MAP_SIZE)
     .fill(Empty.IDENTIFIER)
@@ -31,6 +32,13 @@ class Game {
     };
   }
 
+  /**
+   * Handle player joining the game
+   * 
+   * @param socket
+   * @param nickname
+   * @returns Player
+   */
   handlePlayerJoinedGame(socket, nickname) {
     let player = new Player(
       socket,
@@ -67,10 +75,6 @@ class Game {
     this.players
       .filter((player) => !player.gameOver)
       .forEach((player) => {
-        // if (!player.isPowerUpActive && player.activePowerUp !== null) {
-        //   this.handleActivePowerUp(player);
-        // }
-
         if (!player.move(this.gameState.map)) {
           this.handlePlayerGameOver(player);
         } else {
@@ -87,7 +91,11 @@ class Game {
     );
   }
 
-  // Game loop
+  /**
+   * Start the game loop
+   * 
+   * @returns void
+   */
   startGameLoop() {
     // For the initial game setup, add the default amount of obstacles and apples
     Obstacle.generateFixNumberOfObstacles(
@@ -114,39 +122,43 @@ class Game {
     }, 1000 / BackendConfig.FPS);
   }
 
+  /**
+   * Generate power ups on the map
+   */
   generatePowerUps() {
     Star.generateStars(this.gameState.map);
     Inverser.generateInversers(this.gameState.map);
     SnakeEater.generateEaters(this.gameState.map);
   }
 
-  // handleActivePowerUp(player) {
-  //   switch (player.activePowerUp) {
-  //     case Star.IDENTIFIER:
-  //       Star.activatePowerUp(player);
-  //       break;
-  //     case Inverser.IDENTIFIER:
-  //       Inverser.activatePowerUp(player, this.players);
-  //       break;
-  //     case SnakeEater.IDENTIFIER:
-  //       SnakeEater.activatePowerUp(player, this.players);
-  //     default:
-  //       break;
-  //   }
-  // }
-
+  /**
+   * Draw obstacles on the map
+   * 
+   * @param map
+   */
   drawObstacles(map) {
     Obstacle.obstacles.forEach((o) => {
       map[o.x][o.y] = Obstacle.IDENTIFIER;
     });
   }
 
+  /**
+   * Draw apples on the map
+   * 
+   * @param map
+   */
   drawApples(map) {
     Apple.apples.forEach((a) => {
       map[a.x][a.y] = Apple.IDENTIFIER;
     });
   }
 
+  /**
+   * Draw power ups on the map
+   * 
+   * @param map
+   * @returns void
+   */
   drawPowerUps(map) {
     Star.stars.forEach((a) => {
       map[a.x][a.y] = Star.IDENTIFIER;
@@ -161,16 +173,29 @@ class Game {
     });
   }
 
+  /**
+   * Draw the snake on the map
+   * 
+   * @param map
+   * @param player
+   * @returns void
+   */
   drawSnake(map, player) {
-    //the snake body is denoted as the playerNumber (e.g. 2)
+    // the snake body is denoted as the playerNumber (e.g. 2)
     player.snake.forEach((s) => {
       map[s.x][s.y] = player.playerNumber;
     });
-    //the snake head is denoted as the negative playerNumber (e.g. -2)
+    // the snake head is denoted as the negative playerNumber (e.g. -2)
     map[player.snake[0].x][player.snake[0].y] = -player.playerNumber;
   }
 
-  // Let the snake die if another player has snake eater powerup
+  /**
+   * Let a snake consume a power up
+   * 
+   * @param player
+   * @param powerUp
+   * @returns void
+   */
   letSnakeDie(playerNumber) {
     this.players.forEach((player) => {
       if (player.playerNumber === playerNumber) {

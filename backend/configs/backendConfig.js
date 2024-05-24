@@ -10,8 +10,8 @@ const BackendConfig = {
   },
   FPS: 8,
   MAP_SIZE: 50,
-  SNAKE_SPAWN_LENGTH: 3, // default length of the snake when it spawns
-  SNAKE_SPAWN_DIRECTION: "d", //default direction the snake moves when it spawns
+  SNAKE_SPAWN_LENGTH: 3,
+  SNAKE_SPAWN_DIRECTION: "d",
   SNAKE_SPAWN_INVULNERABILITY_MS: 2000,
   FIELDS: {
     APPLE: {
@@ -22,7 +22,7 @@ const BackendConfig = {
     },
     OBSTACLE: {
       IDENTIFIER: "o",
-      INITIAL_SPAWN_AMOUNT: 30, //the number of fields to be initially generated on the map
+      INITIAL_SPAWN_AMOUNT: 30,
     },
     EMPTY: {
       IDENTIFIER: 0,

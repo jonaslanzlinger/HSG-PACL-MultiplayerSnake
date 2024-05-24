@@ -2,7 +2,7 @@ const Empty = require("../Empty");
 const BackendConfig = require("../../../configs/backendConfig");
 
 class SnakeEater {
-  //p for powerup, e for eater
+
   static IDENTIFIER = BackendConfig.POWERUPS.SNAKE_EATER.IDENTIFIER;
 
   // Stores positions of eater on map
@@ -23,7 +23,7 @@ class SnakeEater {
    * @returns {*[]}
    */
   static generateEaters(map) {
-    //Denotes the maximum number of eaters allowed on the map
+    // Denotes the maximum number of eaters allowed on the map
     const maxEatersReached =
       this.eaters.length >= BackendConfig.POWERUPS.SNAKE_EATER.MAX_ON_MAP;
 
@@ -48,6 +48,15 @@ class SnakeEater {
     }
   }
 
+  /**
+   * Handle the consumption of an eater by a snake.
+   * The eater is removed from the map and the powerup is added to the inventory of the snake.
+   * 
+   * @param map is the current map of the game
+   * @param eaterCoordinate is the coordinate of the eater that is consumed
+   * @param powerUpInventory is the inventory of the snake that consumes the eater
+   * @returns void
+   */
   static handleSnakeConsumedEater(map, eaterCoordinate, powerUpInventory) {
     // After consumption, the field cell is back to normal
     map[eaterCoordinate.x][eaterCoordinate.y] = Empty.IDENTIFIER;
@@ -62,21 +71,12 @@ class SnakeEater {
   }
 
   /**
-   * Gain ability to eat other snakes until timeout is reached.
-   *
-   * @param player is the snake receiving the powerup.
+   * Activate the eater powerup for a player.
+   * The player is given the eater powerup for a certain duration.
+   * 
+   * @param player is the player that consumes the eater
+   * @returns void
    */
-  // static activatePowerUp(player) {
-  //   player.snakeEatability = true;
-  //   player.isPowerUpActive = true;
-
-  //   setTimeout(() => {
-  //     player.snakeEatability = false;
-  //     player.isPowerUpActive = false;
-  //     player.activatePowerUp = null;
-  //   }, BackendConfig.POWERUPS.SNAKE_EATER.EFFECT.SNAKE_EATS_SNAKE_MS);
-  // }
-
   static activatePowerUp(player) {
     player.activePowerUps.push(SnakeEater.IDENTIFIER);
     setTimeout(() => {
