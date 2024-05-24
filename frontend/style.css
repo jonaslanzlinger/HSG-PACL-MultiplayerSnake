@@ -1,7 +1,7 @@
 #audio-controls {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  bottom: 8px;
+  left: 8px;
   display: flex;
   flex-direction: column;
   background-color: #f1f1f1;
