@@ -294,7 +294,8 @@ class Player {
     if (this.activePowerUps.includes(SnakeEater.IDENTIFIER)) {
       if (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
-        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
+        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0
+        )
       ) {
         // Get the player number and make it positive
         let playernumber = map[snakeHead.x][snakeHead.y];
@@ -302,8 +303,10 @@ class Player {
           playernumber = playernumber * -1;
         }
 
-        // Let the snake die
-        this.game.letSnakeDie(playernumber);
+        // Let the snake die only if the player has no shield active
+        if (!this.game.players.find(player => player.playerNumber === playernumber).activePowerUps.includes(Star.IDENTIFIER)) {
+          this.game.letSnakeDie(playernumber);
+        }
         return false;
       }
     } else {
