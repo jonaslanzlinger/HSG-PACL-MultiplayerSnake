@@ -84,15 +84,33 @@
 .stats-container {
 }
 .grid-container {
+  width: 75vh;
    display: grid;
-   grid-template-columns: repeat(2, 1fr);
+   grid-template-columns: 100px 1fr;
    grid-gap: 10px;
 }
 .grid-item {
    background-color: #ddd;
    padding: 20px;
-   font-size: 30px;
-   text-align: center;
+   height: 70px;
+   font-size: 20px;
+   text-align: left;
 }
-
-/* TODO add styles */
+.grid-item-icon {
+   background-color: #ddd;
+   padding: 20px;
+   font-size: 20px;
+   height: 70px;
+   text-align: center;
+   width: 100px;
+}
+.control-img {
+  height: 30px;
+}
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
