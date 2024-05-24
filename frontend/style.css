@@ -129,10 +129,16 @@ ol#debuff-list {
 
 .grid-item {
   background-color: #ddd;
-  padding: 20px;
+  padding: 0 20px;
   height: 70px;
   font-size: 20px;
   text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.grid-item p {
+  margin: 0;
 }
 
 .grid-item-icon {
@@ -208,4 +214,19 @@ ol#debuff-list {
 
 #color-customizer input[type="color"]::-webkit-color-swatch {
   border: none;
+}
+
+#color-customizer .buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+#color-customizer button {
+  border: 1px solid #999;
+  padding: 5px 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 10pt;
+  flex-grow: 1;
 }
