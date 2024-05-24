@@ -6,6 +6,7 @@ class GameAudio {
    #inverser
    #star
    #obstacle
+   #snakeEater
 
    constructor() {
 
@@ -41,6 +42,9 @@ class GameAudio {
 
       this.#obstacle = new Audio()
       this.#obstacle.src = '/assets/sounds/obstacle.m4a'
+
+      this.#snakeEater = new Audio()
+      this.#snakeEater.src = '/assets/sounds/snakeEater.m4a'
    }
 
    playMusic() {
@@ -87,5 +91,9 @@ class GameAudio {
 
    playObstacleSound() {
       this.#obstacle.play();
+   }
+
+   playSnakeEaterSound() {
+      this.#snakeEater.play();
    }
 }
