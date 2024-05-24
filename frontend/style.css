@@ -132,7 +132,7 @@ ol#debuff-list {
   box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
 }
 
-#color-customizer .color-pair {
+#color-customizer .color-triple {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -154,6 +154,10 @@ ol#debuff-list {
 }
 
 #color-customizer input[type="color"].head {
+  width: 30px;
+}
+
+#color-customizer input[type="color"].text {
   width: 30px;
 }
 
