@@ -4,11 +4,13 @@ let playerNumber = null;
 let player = null;
 let camera = null;
 let gameAudio = null;
+let tileSize = null;
+let cameraWidth = null;
+let cameraHeight = null;
 
 // Constants
-const TILE_SIZE = 28;
-const cameraWidth = 40;
-const cameraHeight = 24;
+const SIDEBAR_WIDTH = 250;
+const MAX_TILES = 40;
 const cameraThreshold = 7;
 
 // Initialize images for drawing
@@ -27,22 +29,23 @@ ObstacleImage.src = "/assets/obstacle.svg";
 ShieldImage.src = "/assets/shield.svg";
 
 // Snake colors
+// [head, body, text]
 const snakeColors = [
-  ["#0000ff", "#7a7aff"],
-  ["#ff0000", "#ff7a7a"],
-  ["#ffd700", "#fbe87e"],
-  ["#9ae91c", "#c7fb74"],
-  ["#1cf29c", "#85ffce"],
-  ["#9b30f2", "#c583fb"],
-  ["#322f36", "#68666b"],
-  ["#00bfff", "#8fe3ff"],
-  ["#f2991c", "#ffc370"],
-  ["#ff338b", "#ff7ab4"],
-  ["#196b1b", "#59915a"],
-  ["#232277", "#56558b"],
-  ["#806452", "#bea293"],
-  ["#800080", "#c665c8"],
-  ["#a7320c", "#db7c5c"],
+  ["#0000ff", "#7a7aff", "#ffffff"],
+  ["#ff0000", "#ff7a7a", "#ffffff"],
+  ["#ffd700", "#fbe87e", "#111111"],
+  ["#9ae91c", "#c7fb74", "#111111"],
+  ["#1cf29c", "#85ffce", "#111111"],
+  ["#9b30f2", "#c583fb", "#ffffff"],
+  ["#322f36", "#68666b", "#ffffff"],
+  ["#00bfff", "#8fe3ff", "#ffffff"],
+  ["#f2991c", "#ffc370", "#111111"],
+  ["#ff338b", "#ff7ab4", "#ffffff"],
+  ["#196b1b", "#59915a", "#ffffff"],
+  ["#232277", "#56558b", "#ffffff"],
+  ["#806452", "#bea293", "#ffffff"],
+  ["#800080", "#c665c8", "#ffffff"],
+  ["#a7320c", "#db7c5c", "#ffffff"],
 ];
 
 // Initialize audio
@@ -51,9 +54,21 @@ initKeyControls();
 
 // Start the game
 function startGame() {
+  // If landscape mode
+  if (window.innerHeight < (window.innerWidth - SIDEBAR_WIDTH)) {
+    tileSize = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / MAX_TILES);
+    cameraWidth = MAX_TILES;
+    cameraHeight = Math.floor(window.innerHeight / tileSize);
+  // If portrait mode
+  } else {
+    tileSize = Math.floor(window.innerHeight / MAX_TILES);
+    cameraWidth = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / tileSize);
+    cameraHeight = MAX_TILES;
+  }
+
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score-value").style.display = "block";
-  document.getElementById("game").style.display = "block";
+  document.getElementById("game").style.display = "grid";
   let nickname = document.getElementById("nickname").value;
 
   initSocket(nickname);
@@ -72,11 +87,11 @@ function setBackground(color1, color2) {
   ctx.fillStyle = color1;
   ctx.strokeStyle = color2;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
+  for (var x = 0.5; x < canvas.width; x += tileSize) {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, canvas.height);
   }
-  for (var y = 0.5; y < canvas.height; y += TILE_SIZE) {
+  for (var y = 0.5; y < canvas.height; y += tileSize) {
     ctx.moveTo(0, y);
     ctx.lineTo(canvas.width, y);
   }
@@ -125,6 +140,11 @@ function initSocket(nickname) {
       (player) => player.playerNumber === this.playerNumber
     );
 
+    // Play inverter sound effect if enemy has inverter powerup activated
+    if (this.player.activeDebuffs.length < gameState.players.find(player => player.playerNumber === this.playerNumber).activeDebuffs.length) {
+      gameAudio.playInverterSound();
+    }
+
     // Update leaderboard
     updateLeaderboard(gameState);
     updatePowerups(this.player);
@@ -132,8 +152,10 @@ function initSocket(nickname) {
     updateDebuffs(this.player);
 
     let canvas = document.getElementById("canvas");
-    canvas.height = TILE_SIZE * cameraHeight + 1;
-    canvas.width = TILE_SIZE * cameraWidth + 1;
+    canvas.width = tileSize * cameraWidth + 1;
+    canvas.height = tileSize * cameraHeight + 1;
+    // canvas.height = tileSize * cameraHeight + 1;
+    // canvas.width = tileSize * cameraWidth + 1;
     ctx.beginPath();
     setBackground("#fff", "#ccc");
 
@@ -172,10 +194,10 @@ function initSocket(nickname) {
                 ];
 
               ctx.fillRect(
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             //field: snake head
@@ -185,10 +207,10 @@ function initSocket(nickname) {
                 (gameState.map[x][y] * -1 - 1) % snakeColors.length
                 ][player?.activeDebuffs.includes("pi") ? 1 : 0];
               ctx.fillRect(
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               // Check if sounds should be played for my snake
               if (
@@ -201,10 +223,10 @@ function initSocket(nickname) {
               if (player?.activePowerUps.includes("ps")) {
                 ctx.drawImage(
                   ShieldImage,
-                  (x - camera.x) * TILE_SIZE,
-                  (y - camera.y) * TILE_SIZE,
-                  TILE_SIZE,
-                  TILE_SIZE
+                  (x - camera.x) * tileSize,
+                  (y - camera.y) * tileSize,
+                  tileSize,
+                  tileSize
                 );
               }
               break;
@@ -212,20 +234,20 @@ function initSocket(nickname) {
             case gameState.map[x][y] === "a":
               ctx.drawImage(
                 AppleImage,
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             //field: obstacle
             case gameState.map[x][y] === "o":
               ctx.drawImage(
                 ObstacleImage,
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             //powerup field: star
@@ -234,40 +256,40 @@ function initSocket(nickname) {
             case gameState.map[x][y] === "ps":
               ctx.drawImage(
                 StarImage,
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             //powerup field: inverser
             case gameState.map[x][y] === "pi":
               ctx.drawImage(
                 InverserImage,
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             //powerup field: snake eater
             case gameState.map[x][y] === "pe":
               ctx.drawImage(
                 SnakeEaterImage,
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
             default:
               // nothing should be orange, so be careful if you see that on the map. handle better
               ctx.fillStyle = "orange";
               ctx.fillRect(
-                (x - camera.x) * TILE_SIZE,
-                (y - camera.y) * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE
+                (x - camera.x) * tileSize,
+                (y - camera.y) * tileSize,
+                tileSize,
+                tileSize
               );
               break;
           }

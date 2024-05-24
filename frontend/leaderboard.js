@@ -9,9 +9,26 @@ function updateLeaderboard(gameState) {
    }
 
    // iterate through all players and add them to the leaderboard
-   gameState.players.forEach((player) => {
-      let playerElement = document.createElement("p");
-      playerElement.innerHTML = `${player.nickname}: ${player.score}`;
+   gameState.players.sort((a, b) => (b.score - a.score)).forEach((player) => {
+      let playerElement = document.createElement("li");
+      playerElement.className = "player";
+
+      const colors = snakeColors[(player.playerNumber - 1 ) % snakeColors.length];
+
+      const name = document.createElement("span")
+      name.classList.add("name")
+      name.style.color = colors[0]
+      name.innerText = player.nickname
+
+      const score = document.createElement("span")
+      score.classList.add("score")
+      score.style.backgroundColor = colors[0]
+      score.style.color = colors[2]
+      score.innerText = player.score
+
+      playerElement.appendChild(name)
+      playerElement.appendChild(score)
+
       leaderboardList.appendChild(playerElement);
    });
 }

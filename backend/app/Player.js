@@ -35,7 +35,6 @@ class Player {
       gameOver: this.gameOver,
       snakeInvulnerability: this.snakeInvulnerability,
       powerUpInventory: this.powerUpInventory,
-      activePowerUp: this.activePowerUp,
       activePowerUps: this.activePowerUps,
       activeDebuffs: this.activeDebuffs,
     };
@@ -280,7 +279,7 @@ class Player {
     } else {
       return (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
-        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
+        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0 && !this.activePowerUps.includes(Star.IDENTIFIER))
       );
     }
   }
