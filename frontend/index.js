@@ -53,7 +53,7 @@ initKeyControls();
 function startGame() {
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score-value").style.display = "block";
-  document.getElementById("game").style.display = "block";
+  document.getElementById("game").style.display = "grid";
   let nickname = document.getElementById("nickname").value;
 
   initSocket(nickname);

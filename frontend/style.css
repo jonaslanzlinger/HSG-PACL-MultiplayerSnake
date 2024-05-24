@@ -3,8 +3,102 @@
 }
 
 #game {
-  display: none;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 1fr;
 }
+
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid red;
+}
+
+.stats-container div {
+  padding: 5px 10px;
+}
+
+.stats-container div h2 {
+  font-size: 1.5em;
+}
+
+.stats-container ol {
+  margin: 0;
+  padding: 0;
+}
+
+.stats-container li.player {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stats-container li.player:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.powerup-container {
+  height: 150px;
+}
+.powerup-container img {
+  height: 25px;
+  width: auto;
+}
+.powerup-container div {
+  display: flex;
+  justify-content: left;
+  width: 50px;
+  height: 25px;
+}
+.leaderboard-container {
+  justify-content: left;
+}
+
+.grid-container {
+  padding-top: 25px;
+  width: 75vh;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  grid-gap: 10px;
+}
+.grid-item {
+   background-color: #ddd;
+   padding: 20px;
+   height: 70px;
+   font-size: 20px;
+   text-align: left;
+}
+.grid-item-icon {
+   background-color: #ddd;
+   padding: 20px;
+   font-size: 20px;
+   height: 70px;
+   text-align: center;
+   width: 100px;
+}
+.control-img {
+  height: 30px;
+}
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+}
+.gap {
+  height: 100px;
+}
+
+
+
+
+
 
 #color-customizer {
   position: fixed;
@@ -64,58 +158,4 @@
   cursor: pointer;
   font-size: 10pt;
   flex-grow: 1;
-}
-.powerup-container {
-  height: 150px;
-}
-.powerup-container img {
-  height: 25px;
-  width: auto;
-}
-.powerup-container div {
-  display: flex;
-  justify-content: left;
-  width: 50px;
-  height: 25px;
-}
-.leaderboard-container {
-  justify-content: left;
-}
-.stats-container {
-}
-.grid-container {
-  padding-top: 25px;
-  width: 75vh;
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  grid-gap: 10px;
-}
-.grid-item {
-   background-color: #ddd;
-   padding: 20px;
-   height: 70px;
-   font-size: 20px;
-   text-align: left;
-}
-.grid-item-icon {
-   background-color: #ddd;
-   padding: 20px;
-   font-size: 20px;
-   height: 70px;
-   text-align: center;
-   width: 100px;
-}
-.control-img {
-  height: 30px;
-}
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  height: 100vh;
-}
-.gap {
-  height: 100px;
 }
