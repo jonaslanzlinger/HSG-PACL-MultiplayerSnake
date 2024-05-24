@@ -1,5 +1,6 @@
 class Camera {
   #map
+  #playerNumber
   #camX
   #camY
   #camWidth
@@ -8,17 +9,19 @@ class Camera {
 
   /**
    * Creates a new camera
-   * @param {number[][]} map    The map
-   * @param {number} camWidth   The width of the camera 
-   * @param {number} camHeight  The height of the camera
-   * @param {number} threshold  The threshold for the camera to move
+   * @param {number[][]} map        The map
+   * @param {number} playerNumber   The player number
+   * @param {number} camWidth       The width of the camera 
+   * @param {number} camHeight      The height of the camera
+   * @param {number} threshold      The threshold for the camera to move
    */
-  constructor(map, camWidth, camHeight, threshold = 5) {
+  constructor(map, playerNumber, camWidth, camHeight, threshold = 5) {
     if (camWidth > map.length || camHeight > map[0].length) {
       throw new Error('Camera cannot be larger than the map')
     }
 
     this.#map = map
+    this.#playerNumber = playerNumber
     this.#camWidth = camWidth
     this.#camHeight = camHeight
     this.#threshold = threshold
@@ -63,7 +66,8 @@ class Camera {
   #getPlayerPosition() {
     for (let x = 0; x < this.#map.length; x++) {
       for (let y = 0; y < this.#map[x].length; y++) {
-        if (this.#map[x][y] < 0) {
+        if (this.#map[x][y] === -1 * this.#playerNumber) {
+          // console.log(`Player ${this.#playerNumber} found at (${x}, ${y})`)
           return { playerX: x, playerY: y }
         }
       }
@@ -84,12 +88,12 @@ class Camera {
     let camY = playerY - Math.floor(this.#camHeight / 2)
 
     // Clamp camera bounds (top/left)
-    if (camX < this.#threshold) camX = this.#threshold
-    if (camY < this.#threshold) camY = this.#threshold
+    if (camX < this.#threshold) camX = 0
+    if (camY < this.#threshold) camY = 0
 
     // Clamp camera bounds (bottom/right)
-    if (camX + this.#camWidth >= this.#map.length - this.#threshold) camX = this.#map.length - this.#camWidth - this.#threshold
-    if (camY + this.#camHeight >= this.#map[0].length - this.#threshold) camY = this.#map[0].length - this.#camHeight - this.#threshold
+    if (camX + this.#camWidth >= this.#map.length) camX = this.#map.length - this.#camWidth
+    if (camY + this.#camHeight >= this.#map[0].length) camY = this.#map.length - this.#camHeight
 
     // Set camera bounds
     this.#camX = camX

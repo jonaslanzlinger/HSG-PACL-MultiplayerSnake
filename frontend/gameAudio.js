@@ -1,11 +1,14 @@
 class GameAudio {
 
    #music
+   #gameOver
    #appleSoundList = []
    #pickup
    #inverser
    #star
    #obstacle
+   #immune
+   #inventoryError
    #snakeEater
 
    constructor() {
@@ -16,6 +19,9 @@ class GameAudio {
       this.#music.src = '/assets/sounds/music.wav'
       this.#music.loop = true;
       this.#music.volume = 0.5;
+
+      this.#gameOver = new Audio()
+      this.#gameOver.src = '/assets/sounds/gameOver.m4a'
 
       let appleSoundPaths = [
          '/assets/sounds/apple/apple1.m4a',
@@ -43,6 +49,12 @@ class GameAudio {
       this.#obstacle = new Audio()
       this.#obstacle.src = '/assets/sounds/obstacle.m4a'
 
+      this.#immune = new Audio()
+      this.#immune.src = '/assets/sounds/immune.m4a'
+
+      this.#inventoryError = new Audio()
+      this.#inventoryError.src = '/assets/sounds/inventoryError.m4a'
+
       this.#snakeEater = new Audio()
       this.#snakeEater.src = '/assets/sounds/snakeEater.m4a'
    }
@@ -52,48 +64,74 @@ class GameAudio {
    }
 
    stopMusic() {
+      this.playObstacle();
       this.#music.pause();
+      this.playGameOver();
    }
 
-   playSoundByFieldType(fieldType) {
+   playGameOver() {
+      this.#gameOver.play();
+   }
+
+   playSoundByFieldType(fieldType, player) {
       switch (fieldType) {
          case 'a':
-            this.playAppleSound();
+            this.playApple();
             break;
          case 'ps':
-            this.playPickupSound();
+            this.playPickup();
             break;
          case 'pi':
-            this.playPickupSound();
+            this.playPickup();
             break;
          case 'o':
-            this.playObstacleSound();
+            if (player.snakeInvulnerability)
+               this.playImmune();
+            else
+               this.playObstacle();
             break;
       }
    }
 
-   playAppleSound() {
+   playApple() {
       const index = Math.floor(Math.random() * this.#appleSoundList.length);
+      this.#appleSoundList[index].currentTime = 0;
       this.#appleSoundList[index].play();
    }
 
-   playPickupSound() {
+   playPickup() {
+      this.#pickup.currentTime = 0;
       this.#pickup.play();
    }
 
-   playInverserSound() {
+   playInverser() {
+      this.#inverser.currentTime = 0;
       this.#inverser.play();
    }
 
-   playStarSound() {
+   playStar() {
+      this.#star.currentTime = 0;
       this.#star.play();
    }
 
-   playObstacleSound() {
+   playObstacle() {
+      this.#obstacle.currentTime = 0;
       this.#obstacle.play();
    }
 
+   playImmune() {
+      this.#immune.currentTime = 0;
+      this.#immune.play();
+   }
+
+   playInventoryError() {
+      this.#inventoryError.currentTime = 0;
+      this.#inventoryError.play();
+   }
+
    playSnakeEaterSound() {
+      this.#snakeEater.currentTime = 0;
       this.#snakeEater.play();
    }
+
 }

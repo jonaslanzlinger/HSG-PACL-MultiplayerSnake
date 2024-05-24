@@ -35,7 +35,7 @@ class Player {
             snakeInvulnerability: this.snakeInvulnerability,
             powerUpInventory: this.powerUpInventory,
             activePowerUp: this.activePowerUp,
-            activeDebuffs: [],
+            activeDebuffs: this.activeDebuffs,
         };
     }
 
@@ -48,11 +48,11 @@ class Player {
         let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
 
         //Create snake head at the random starting position
-        let snake = [{x: randomX, y: randomY}];
+        let snake = [{ x: randomX, y: randomY }];
 
         //Fill the snake body counting cells backwards from the starting cell (by subtracting from x coordinate as the snake spawns horizontally)
         for (let snakeBodyNum = 1; snakeBodyNum < length; snakeBodyNum++) {
-            snake[snakeBodyNum] = {x: randomX - snakeBodyNum, y: randomY};
+            snake[snakeBodyNum] = { x: randomX - snakeBodyNum, y: randomY };
         }
 
         return snake;
@@ -68,17 +68,20 @@ class Player {
         return true;
     }
 
-    // Add the first powerUp from the inventory to the player's active PowerUp
-    //TODO: we could think about player selecting a powerUp rather than always using the first one he picked up
-    usePowerUp() {
+    // Use powerUp from inventory if it exists
+    usePowerUp(powerUpIdentifier) {
         // Move powerUp from inventory to active
-        if (this.powerUpInventory.length > 0) {
-            this.activePowerUp = this.powerUpInventory.shift();
+        // and remove one instance of the powerUp from the inventory
+        if (this.powerUpInventory.includes(powerUpIdentifier)) {
+            this.activePowerUp = powerUpIdentifier;
+            this.powerUpInventory.splice(this.powerUpInventory.indexOf(powerUpIdentifier), 1);
         }
     }
 
     setDirection(direction) {
-        //TODO: it's possible to move reverse by quickly pressing another direction and then back (e.g. you go right, then quickly press up,left to go left, which should not be possible)
+
+        let previousDirection = this.direction;
+
         const oppositeDirections = {
             [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
             [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
@@ -87,10 +90,28 @@ class Player {
         };
 
         // Check if the new direction is opposite to the current direction
-        if (this.direction === oppositeDirections[direction]) {
+        if (this.direction === oppositeDirections[direction] || this.direction === direction) {
             return; // If it is, don't change the direction
         }
-        this.direction = direction;
+
+        // Check if inverser debuff is active
+        // If so, change the direction to the opposite of the user input
+        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
+            this.direction = oppositeDirections[direction]
+        } else {
+            this.direction = direction;
+        }
+
+        // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
+        // If so, the snake should not move in the specified direction and ignore the user input.
+        // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
+        if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+            || this.direction === BackendConfig.USER_INPUTS.RIGHT && this.snake[0].x + 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+        ) {
+            this.direction = previousDirection;
+        }
     }
 
     /**
@@ -102,30 +123,17 @@ class Player {
      * @returns {boolean} whether snake move was a success.
      */
     move(map) {
-        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
-        if (this.snakeInvulnerability) {
-            //Handle snake moving to the next coordinate based on user input
-            let newSnakeHead = this.moveSnakeHead(1);
-            if (this.isWallCollision(newSnakeHead, map)) {
-                //TODO: currently, even when invulnerable a wall collision means game over.
-                // Possibly handle wall collision differently (maybe move to side randomly?).
-                this.gameOver = true;
-                return false;
-            }
-            this.snake.pop();
-            return true;
-        }
 
+        //Handle snake moving to the next coordinate based on user input
         //Handle active debuff effect from Inverser powerup activated by another player
-        let newSnakeHead;
-        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
-            newSnakeHead = this.moveSnakeHeadInverse(1);
-        } else {
-            newSnakeHead = this.moveSnakeHead(1);
-        }
+        let newSnakeHead = this.moveSnakeHead(1);
 
-        //Handle regular snake move
-        if (this.collides(newSnakeHead, map)) {
+        // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
+
+        if (this.isWallCollision(newSnakeHead, map)) {
+            //TODO: currently, even when invulnerable a wall collision means game over.
+            // Possibly handle wall collision differently (maybe move to side randomly?).
+            this.gameOver = true;
             return false;
         }
 
@@ -146,6 +154,15 @@ class Player {
             default:
                 this.snake.pop(); //Snake should not increase in size
         }
+
+        if (this.snakeInvulnerability) {
+            return true;
+        }
+
+        //Handle regular snake move
+        if (this.collides(newSnakeHead, map)) {
+            return false;
+        }
         return true;
     }
 
@@ -157,7 +174,7 @@ class Player {
      * @returns {{x, y}} the new coordinate of the snake head
      */
     moveSnakeHead(numberOfSteps) {
-        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
+        let snakeHead = { x: this.snake[0].x, y: this.snake[0].y };
         switch (this.direction) {
             case BackendConfig.USER_INPUTS.UP:
                 snakeHead.y -= numberOfSteps;
@@ -170,35 +187,6 @@ class Player {
                 break;
             case BackendConfig.USER_INPUTS.RIGHT:
                 snakeHead.x += numberOfSteps;
-                break;
-        }
-        this.snake.unshift(snakeHead);
-        return snakeHead;
-    }
-
-    /**
-     * Moves the snake's head by specified number of steps in the INVERSE direction provided by user input
-     *
-     *
-     * @param numberOfSteps is the number of steps the snake should move at once
-     *
-     * @returns {{x, y}} the new coordinate of the snake head
-     */
-    moveSnakeHeadInverse(numberOfSteps) {
-        let snakeHead = {x: this.snake[0].x, y: this.snake[0].y};
-        switch (this.direction) {
-            //Note: All move directions are inversed. Example: if user presses UP, snake moves down
-            case BackendConfig.USER_INPUTS.UP:
-                snakeHead.y += numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.LEFT:
-                snakeHead.x += numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.DOWN:
-                snakeHead.y -= numberOfSteps;
-                break;
-            case BackendConfig.USER_INPUTS.RIGHT:
-                snakeHead.x -= numberOfSteps;
                 break;
         }
         this.snake.unshift(snakeHead);
