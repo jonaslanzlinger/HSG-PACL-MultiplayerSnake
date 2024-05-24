@@ -5,9 +5,10 @@ class Chat {
 
    constructor() { }
 
-   addMessage(message, nickname) {
+   addMessage(message, playerNumber, nickname) {
       this.#messages.push({
          message: message,
+         playerNumber: playerNumber,
          nickname: nickname
       });
       if (this.#messages.length > this.#logLength) {

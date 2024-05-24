@@ -70,7 +70,7 @@ io.on(SocketConfig.EVENTS.CONNECTION, (socket) => {
 
   // Listen for chat messages
   socket.on(SocketConfig.EVENTS.CHAT, (message) => {
-    chat.addMessage(message, player.nickname);
+    chat.addMessage(message, player.playerNumber, player.nickname);
     socket.emit(SocketConfig.EVENTS.CHAT_TO_FRONTENT, chat.getMessages());
   });
 });

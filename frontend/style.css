@@ -1,29 +1,27 @@
 #audio-controls {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
-  padding: 10px;
-  gap: 2rem;
+  padding: 5px 10px 15px 10px ;
+  gap: 15px;
 }
 
 input[type=range] {
   -webkit-appearance: none;
   width: 100%;
   height: 12px;
-  background: #ddd;
+  background: #f0f0f0;
   outline: none;
   opacity: 0.7;
   transition: opacity .2s;
+  border: 1px solid #ccc;
+  border-radius: 7px;
 }
 
 #slider-music::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background: url('./assets/audio-icon.svg') no-repeat center center;
   background-size: cover;
   cursor: pointer;
@@ -32,8 +30,8 @@ input[type=range] {
 #slider-fx::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background: url('./assets/audiofx-icon.svg') no-repeat center center;
   background-size: cover;
   cursor: pointer;
@@ -47,14 +45,17 @@ input[type=range] {
   width: 100vw;
   height: 100vh;
   display: grid;
-  grid-template-columns: 250px 1fr;
   grid-template-rows: 1fr;
+  background-color: #ddd;
+  gap: 1px;
 }
 
 .stats-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
+  max-height: 100vh;
+  background-color: #fff;
 }
 
 .stats-container div h2 {
@@ -63,7 +64,7 @@ input[type=range] {
   padding: 0.2em 0.4em;
   border: 1px solid #ccc;
   border-left: none;
-  margin-top: 0.5em;
+  margin: 0.3em 0 0.1em 0;
   background: #f3f3f3;
   display: inline-block;
 }
@@ -77,6 +78,7 @@ input[type=range] {
 
 .stats-container ol#leaderboard-list {
   padding-left: 0;
+  padding-right: 0.5em;
 }
 
 .stats-container li.player {
@@ -118,14 +120,32 @@ input[type=range] {
 }
 
 .chat-container {
-  height: 300px;
-  width: auto;
-  background-color: antiquewhite;
+  flex-grow: 1;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 #chat-messages {
-  height: 100%;
-  overflow-y: auto;
+  flex-grow: 1;
+  overflow-y: scroll;
+  margin: 0;
+  padding: 0.4em;
+  font-size: 0.9em;
+}
+
+.chat-container li span.name {
+  font-weight: bold;
+}
+
+.chat-container input {
+  border: none;
+  border-top: 1px solid #ddd;
+  box-sizing: border-box;
+  padding: 0.4em 0.8em;
+  outline: none;
 }
 
 ol#buff-list,
@@ -139,6 +159,7 @@ ol#debuff-list {
   justify-content: end;
   align-items: start;
   height: 100%;
+  background-color: #fff;
 }
 
 .grid-container {

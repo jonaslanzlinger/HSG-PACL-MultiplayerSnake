@@ -68,6 +68,8 @@ function startGame() {
     cameraHeight = MAX_TILES;
   }
 
+  document.getElementById("game").style.gridTemplateColumns = `1fr ${cameraWidth * tileSize}px`
+
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score").style.display = "block";
   document.getElementById("game").style.display = "grid";
@@ -378,10 +380,26 @@ function initSocket(nickname) {
     while (chat.firstChild) {
       chat.removeChild(chat.firstChild);
     }
+
     // add new messages
     message.forEach((message) => {
       const messageElement = document.createElement("li");
-      messageElement.textContent = message.nickname + ": " + message.message;
+      const name = document.createElement("span");
+      name.classList.add("name")
+      name.innerText = message.nickname + ": ";
+
+      const messageText = document.createElement("span");
+      messageText.classList.add("message")
+      messageText.innerText = message.message;
+
+      messageElement.appendChild(name);
+      messageElement.appendChild(messageText);
+
+      const colors = snakeColors[(message.playerNumber - 1) % snakeColors.length];
+
+      // name.style.color = colors[0]
+      messageElement.style.color = colors[0]
+
       chat.appendChild(messageElement);
       chat.scrollTop = chat.scrollHeight;
     });
