@@ -117,6 +117,17 @@ input[type=range] {
   gap: 8px;
 }
 
+.chat-container {
+  height: 300px;
+  width: auto;
+  background-color: antiquewhite;
+}
+
+#chat-messages {
+  height: 100%;
+  overflow-y: auto;
+}
+
 ol#buff-list,
 ol#debuff-list {
   display: flex;
@@ -172,7 +183,7 @@ ol#debuff-list {
   height: 100vh;
 }
 
-.login-container > div {
+.login-container>div {
   display: flex;
   gap: 100px;
 }
@@ -212,15 +223,15 @@ ol#debuff-list {
 }
 
 .inputs input[type=text] {
-    padding: 0.4em 0.8em;
-    border: 1px solid #ddd;
-    outline: none;
-    min-width: 250px;
+  padding: 0.4em 0.8em;
+  border: 1px solid #ddd;
+  outline: none;
+  min-width: 250px;
 }
 
 .inputs input[type=text]:focus {
-    border: 1px solid #333333;
-    color: #333333;
+  border: 1px solid #333333;
+  color: #333333;
 }
 
 .inputs button {
@@ -244,19 +255,19 @@ ol#debuff-list {
   gap: 8px;
 }
 
-.controls > div {
+.controls>div {
   background: #f0f0f0;
   height: 50px;
   display: flex;
   align-items: center;
 }
 
-.controls > :nth-child(odd) {
+.controls> :nth-child(odd) {
   justify-content: center;
   gap: 5px;
 }
 
-.controls > :nth-child(even) {
+.controls> :nth-child(even) {
   padding: 0 10px;
   justify-content: start;
   text-wrap: wrap;

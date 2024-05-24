@@ -368,6 +368,25 @@ function initSocket(nickname) {
       ctx.stroke();
     }
   });
+
+  // Listen for chat messages
+  socket.on("chatToFrontend", (message) => {
+
+    const chat = document.getElementById("chat-messages");
+
+    // clear chat entirely
+    while (chat.firstChild) {
+      chat.removeChild(chat.firstChild);
+    }
+    // add new messages
+    message.forEach((message) => {
+      const messageElement = document.createElement("li");
+      messageElement.textContent = message.nickname + ": " + message.message;
+      chat.appendChild(messageElement);
+      chat.scrollTop = chat.scrollHeight;
+    });
+
+  });
 }
 
 /**
@@ -375,7 +394,17 @@ function initSocket(nickname) {
  */
 function initKeyControls() {
   document.addEventListener("keydown", (event) => {
+
+    let chatInputElement = document.getElementById("chat-input");
+    let activeElement = document.activeElement;
+    let focusedChat = activeElement === chatInputElement;
+
     if (document.getElementById("game").style.display === "none") return;
+
+    if (["w", "a", "s", "d"].includes(event.key) && focusedChat) {
+      return;
+    }
+
     switch (event.key) {
       case "w":
       case "ArrowUp":
