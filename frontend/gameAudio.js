@@ -1,5 +1,8 @@
 class GameAudio {
 
+   sliderMusic = document.getElementById('slider-music');
+   sliderFx = document.getElementById('slider-fx');
+
    #music
    #gameOver
    #appleSoundList = []
@@ -10,6 +13,7 @@ class GameAudio {
    #immune
    #inventoryError
    #snakeEater
+   #fxList
 
    constructor() {
 
@@ -22,6 +26,7 @@ class GameAudio {
 
       this.#gameOver = new Audio()
       this.#gameOver.src = '/assets/sounds/gameOver.m4a'
+      this.#fxList = [this.#gameOver];
 
       let appleSoundPaths = [
          '/assets/sounds/apple/apple1.m4a',
@@ -35,28 +40,46 @@ class GameAudio {
          let audio = new Audio()
          audio.src = path;
          this.#appleSoundList.push(audio);
+         this.#fxList.push(audio);
       });
 
       this.#pickup = new Audio()
       this.#pickup.src = '/assets/sounds/pickup.m4a'
+      this.#fxList.push(this.#pickup);
 
       this.#inverser = new Audio()
       this.#inverser.src = '/assets/sounds/inverser.m4a'
+      this.#fxList.push(this.#inverser);
 
       this.#star = new Audio()
       this.#star.src = '/assets/sounds/star.m4a'
+      this.#fxList.push(this.#star);
 
       this.#obstacle = new Audio()
       this.#obstacle.src = '/assets/sounds/obstacle.m4a'
+      this.#fxList.push(this.#obstacle);
 
       this.#immune = new Audio()
       this.#immune.src = '/assets/sounds/immune.m4a'
+      this.#fxList.push(this.#immune);
 
       this.#inventoryError = new Audio()
       this.#inventoryError.src = '/assets/sounds/inventoryError.m4a'
+      this.#fxList.push(this.#inventoryError);
 
       this.#snakeEater = new Audio()
       this.#snakeEater.src = '/assets/sounds/snakeEater.m4a'
+      this.#fxList.push(this.#snakeEater);
+
+      this.sliderMusic.addEventListener('input', () => {
+         this.#music.volume = this.sliderMusic.value / 100;
+      });
+
+      this.sliderFx.addEventListener('input', () => {
+         this.#fxList.forEach(fx => {
+            fx.volume = this.sliderFx.value / 100;
+         });
+      });
    }
 
    playMusic() {
