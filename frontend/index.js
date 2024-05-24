@@ -104,11 +104,10 @@ function initSocket(nickname) {
 
       document.getElementById("login").style.display = "block";
       document.getElementById("game").style.display = "none";
-      document.getElementById("final-score-value").innerText = `Final Score: ${
-        gameState.players.find(
-          (player) => player.playerNumber === this.playerNumber
-        ).score
-      }`;
+      document.getElementById("final-score-value").innerText = `Final Score: ${gameState.players.find(
+        (player) => player.playerNumber === this.playerNumber
+      ).score
+        }`;
 
       // Reset camera
       camera = null;
@@ -173,7 +172,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] > 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
-                  player?.activeDebuffs.includes("pi") ? 0 : 1
+                player?.activeDebuffs.includes("pi") ? 0 : 1
                 ];
 
               ctx.fillRect(
@@ -187,7 +186,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] < 0:
               ctx.fillStyle =
                 snakeColors[
-                  (gameState.map[x][y] * -1 - 1) % snakeColors.length
+                (gameState.map[x][y] * -1 - 1) % snakeColors.length
                 ][player?.activeDebuffs.includes("pi") ? 1 : 0];
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
@@ -363,7 +362,7 @@ function initKeyControls() {
       case '3': // send powerUp (pe) when '3' is pressed
         if (this.player.powerUpInventory.includes('pe')) {
           sendUserInput('pe')
-          gameAudio.playPickup();
+          gameAudio.playSnakeEater();
         } else {
           gameAudio.playInventoryError();
         }
