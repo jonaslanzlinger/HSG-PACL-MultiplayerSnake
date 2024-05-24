@@ -84,8 +84,11 @@ class GameAudio {
          case 'pi':
             this.playPickup();
             break;
+         case 'pe':
+            this.playPickup();
+            break;
          case 'o':
-            if (player.snakeInvulnerability)
+            if (player.activePowerUps.includes('ps'))
                this.playImmune();
             else
                this.playObstacle();
