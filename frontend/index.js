@@ -26,6 +26,7 @@ InverserImage.src = "/assets/inverser.svg";
 ObstacleImage.src = "/assets/obstacle.svg";
 ShieldImage.src = "/assets/shield.svg";
 
+// Snake colors
 const snakeColors = [
   ["#0000ff", "#7a7aff"],
   ["#ff0000", "#ff7a7a"],
@@ -48,6 +49,7 @@ const snakeColors = [
 gameAudio = new GameAudio();
 initKeyControls();
 
+// Start the game
 function startGame() {
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score-value").style.display = "block";
@@ -123,18 +125,11 @@ function initSocket(nickname) {
       (player) => player.playerNumber === this.playerNumber
     );
 
+    // Update leaderboard
     updateLeaderboard(gameState);
     updatePowerups(this.player);
     updateBuffs(this.player);
     updateDebuffs(this.player);
-
-    //TODO: add field which shows powerups in inventory (picked up)
-    //TODO: add field which shows currently active powerup? -> also show timer that decreases on frontend! Example: See INVERSE_OTHER_PLAYERS_MOVEMENT_MS that defines how lung the debuff is active
-    //TODO: handle all powerUp states -> See Player.activePowerUp and Player.activeDebuffs
-    //TODO: mark visually when player has a debuff (e.g. Inverser makes movement inverse for player)
-    //TODO: add visuals for spawnInvulnerability (currently same visual as for Star.js -> see Player.snakeInvulnerability)
-
-    //TODO: probably much more. For hints, check all todos in backend and what is sent to frontend in Player.getPlayerGameState
 
     let canvas = document.getElementById("canvas");
     canvas.height = TILE_SIZE * cameraHeight + 1;
@@ -234,6 +229,7 @@ function initSocket(nickname) {
               );
               break;
             //powerup field: star
+            case gameState.map[x][y] === 'ps':
             //TODO: move field identifiers to common config (see configs folder -> some things are necessary for both backend and frontend (not super important))
             case gameState.map[x][y] === "ps":
               ctx.drawImage(
@@ -265,7 +261,7 @@ function initSocket(nickname) {
               );
               break;
             default:
-              //TODO: nothing should be orange, so be careful if you see that on the map. handle better
+              // nothing should be orange, so be careful if you see that on the map. handle better
               ctx.fillStyle = "orange";
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
