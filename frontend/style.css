@@ -71,4 +71,16 @@
    flex-grow: 1;
 }
 
+.grid-container {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   grid-gap: 10px;
+}
+.grid-item {
+   background-color: #ddd;
+   padding: 20px;
+   font-size: 30px;
+   text-align: center;
+}
+
 /* TODO add styles */

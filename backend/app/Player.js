@@ -39,7 +39,6 @@ class Player {
         };
     }
 
-    //TODO: if enough time, add random spawn direction? currently snake is always horizontal and moves to the right by default
     spawnRandomSnake(map, length) {
         // Create random starting position for snake.
         // As the snake is drawn horizontally, we want at least its body length as space to the left.
