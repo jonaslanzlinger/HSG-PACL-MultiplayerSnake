@@ -125,6 +125,11 @@ function initSocket(nickname) {
       (player) => player.playerNumber === this.playerNumber
     );
 
+    // Play inverter sound effect if enemy has inverter powerup activated
+    if (this.player.activeDebuffs.length < gameState.players.find(player => player.playerNumber === this.playerNumber).activeDebuffs.length) {
+      gameAudio.playInverterSound();
+    }
+
     // Update leaderboard
     updateLeaderboard(gameState);
     updatePowerups(this.player);

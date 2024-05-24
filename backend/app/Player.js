@@ -35,7 +35,6 @@ class Player {
       gameOver: this.gameOver,
       snakeInvulnerability: this.snakeInvulnerability,
       powerUpInventory: this.powerUpInventory,
-      activePowerUp: this.activePowerUp,
       activePowerUps: this.activePowerUps,
       activeDebuffs: this.activeDebuffs,
     };
