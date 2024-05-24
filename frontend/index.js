@@ -5,10 +5,12 @@ let player = null;
 let camera = null;
 let gameAudio = null;
 let tileSize = null;
+let cameraWidth = null;
+let cameraHeight = null;
 
 // Constants
-const cameraWidth = 40;
-let cameraHeight = 10;
+const SIDEBAR_WIDTH = 250;
+const MAX_TILES = 40;
 const cameraThreshold = 7;
 
 // Initialize images for drawing
@@ -51,8 +53,17 @@ initKeyControls();
 
 // Start the game
 function startGame() {
-  tileSize = Math.floor(((window.innerWidth - 250) / cameraWidth));
-  cameraHeight = Math.floor(window.innerHeight / tileSize);
+  // If landscape mode
+  if (window.innerHeight < (window.innerWidth - SIDEBAR_WIDTH)) {
+    tileSize = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / MAX_TILES);
+    cameraWidth = MAX_TILES;
+    cameraHeight = Math.floor(window.innerHeight / tileSize);
+  // If portrait mode
+  } else {
+    tileSize = Math.floor(window.innerHeight / MAX_TILES);
+    cameraWidth = Math.floor((window.innerWidth - SIDEBAR_WIDTH) / tileSize);
+    cameraHeight = MAX_TILES;
+  }
 
   document.getElementById("login").style.display = "none";
   document.getElementById("final-score-value").style.display = "block";
