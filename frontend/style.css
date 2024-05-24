@@ -1,76 +1,88 @@
 #final-score-value {
-   display: none;
+  display: none;
 }
 
 #game {
-   display: none;
-}
-
-#leaderboard {
-   position: absolute;
-   z-index: 1;
+  display: none;
 }
 
 #color-customizer {
-   position: fixed;
-   top: 10px;
-   left: 10px;
-   width: auto;
-   z-index: 100;
-   padding: 10px;
-   border: 1px solid #c8c8c8;
-   background: #fff;
-   box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: auto;
+  z-index: 100;
+  padding: 10px;
+  border: 1px solid #c8c8c8;
+  background: #fff;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 #color-customizer .color-pair {
-   display: flex;
-   align-items: center;
-   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
 #color-customizer input[type="color"] {
-   appearance: none;
-   border: 1px solid white;
-   height: 30px;
-   margin: 0;
-   padding: 0;
-   background: none;
-   cursor: pointer;
-   outline: none;
+  appearance: none;
+  border: 1px solid white;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  outline: none;
 }
 
 #color-customizer input[type="color"].body {
-   width: 90px;
+  width: 90px;
 }
 
 #color-customizer input[type="color"].head {
-   width: 30px;
+  width: 30px;
 }
 
 #color-customizer input[type="color"]::-webkit-color-swatch-wrapper {
-   padding: 0;
+  padding: 0;
 }
 
 #color-customizer input[type="color"]::-webkit-color-swatch {
-   border: none;
+  border: none;
 }
 
 #color-customizer .buttons {
-   display: flex;
-   justify-content: space-between;
-   gap: 5px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
 }
 
 #color-customizer button {
-   border: 1px solid #999;
-   padding: 5px 10px;
-   background: #fff;
-   cursor: pointer;
-   font-size: 10pt;
-   flex-grow: 1;
+  border: 1px solid #999;
+  padding: 5px 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 10pt;
+  flex-grow: 1;
 }
-
+.powerup-container {
+  height: 150px;
+}
+.powerup-container img {
+  height: 25px;
+  width: auto;
+}
+.powerup-container div {
+  display: flex;
+  justify-content: left;
+  width: 50px;
+  height: 25px;
+}
+.leaderboard-container {
+  justify-content: left;
+}
+.stats-container {
+}
 .grid-container {
    display: grid;
    grid-template-columns: repeat(2, 1fr);

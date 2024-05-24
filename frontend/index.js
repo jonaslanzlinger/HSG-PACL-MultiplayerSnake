@@ -1,62 +1,64 @@
-let socket = null
-let prevGameState = null
-let playerNumber = null
-let player = null
-let camera = null
-let gameAudio = null
+let socket = null;
+let prevGameState = null;
+let playerNumber = null;
+let player = null;
+let camera = null;
+let gameAudio = null;
 
 // Constants
-const TILE_SIZE = 28
-const cameraWidth = 40
-const cameraHeight = 24
-const cameraThreshold = 7
+const TILE_SIZE = 28;
+const cameraWidth = 40;
+const cameraHeight = 24;
+const cameraThreshold = 7;
 
 // Initialize images for drawing
 // Only need to load once
-const AppleImage = new Image()
-const StarImage = new Image()
-const InverserImage = new Image()
-const ObstacleImage = new Image()
-const ShieldImage = new Image()
-AppleImage.src = '/assets/apple.svg'
-StarImage.src = '/assets/star.svg'
-InverserImage.src = '/assets/inverser.svg'
-ObstacleImage.src = '/assets/obstacle.svg'
-ShieldImage.src = '/assets/shield.svg'
+const AppleImage = new Image();
+const StarImage = new Image();
+const InverserImage = new Image();
+const SnakeEaterImage = new Image();
+const ObstacleImage = new Image();
+const ShieldImage = new Image();
+AppleImage.src = "/assets/apple.svg";
+StarImage.src = "/assets/star.svg";
+SnakeEaterImage.src = "/assets/snake_eater.svg";
+InverserImage.src = "/assets/inverser.svg";
+ObstacleImage.src = "/assets/obstacle.svg";
+ShieldImage.src = "/assets/shield.svg";
 
 // Snake colors
 const snakeColors = [
-  ['#0000ff', '#7a7aff'],
-  ['#ff0000', '#ff7a7a'],
-  ['#ffd700', '#fbe87e'],
-  ['#9ae91c', '#c7fb74'],
-  ['#1cf29c', '#85ffce'],
-  ['#9b30f2', '#c583fb'],
-  ['#322f36', '#68666b'],
-  ['#00bfff', '#8fe3ff'],
-  ['#f2991c', '#ffc370'],
-  ['#ff338b', '#ff7ab4'],
-  ['#196b1b', '#59915a'],
-  ['#232277', '#56558b'],
-  ['#806452', '#bea293'],
-  ['#800080', '#c665c8'],
-  ['#a7320c', '#db7c5c'],
-]
+  ["#0000ff", "#7a7aff"],
+  ["#ff0000", "#ff7a7a"],
+  ["#ffd700", "#fbe87e"],
+  ["#9ae91c", "#c7fb74"],
+  ["#1cf29c", "#85ffce"],
+  ["#9b30f2", "#c583fb"],
+  ["#322f36", "#68666b"],
+  ["#00bfff", "#8fe3ff"],
+  ["#f2991c", "#ffc370"],
+  ["#ff338b", "#ff7ab4"],
+  ["#196b1b", "#59915a"],
+  ["#232277", "#56558b"],
+  ["#806452", "#bea293"],
+  ["#800080", "#c665c8"],
+  ["#a7320c", "#db7c5c"],
+];
 
 // Initialize audio
-gameAudio = new GameAudio()
+gameAudio = new GameAudio();
 
 // Start the game
 function startGame() {
-  document.getElementById('login').style.display = 'none'
-  document.getElementById('final-score-value').style.display = 'block'
-  document.getElementById('game').style.display = 'block'
-  let nickname = document.getElementById('nickname').value
+  document.getElementById("login").style.display = "none";
+  document.getElementById("final-score-value").style.display = "block";
+  document.getElementById("game").style.display = "block";
+  let nickname = document.getElementById("nickname").value;
 
-  initSocket(nickname)
-  initKeyControls()
-  initMap()
-  gameAudio.playMusic()
+  initSocket(nickname);
+  initKeyControls();
+  initMap();
+  gameAudio.playMusic();
 }
 
 /**
@@ -67,66 +69,76 @@ function startGame() {
  * @return {void} This function does not return a value.
  */
 function setBackground(color1, color2) {
-  ctx.fillStyle = color1
-  ctx.strokeStyle = color2
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = color1;
+  ctx.strokeStyle = color2;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   for (var x = 0.5; x < canvas.width; x += TILE_SIZE) {
-    ctx.moveTo(x, 0)
-    ctx.lineTo(x, canvas.height)
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
   }
   for (var y = 0.5; y < canvas.height; y += TILE_SIZE) {
-    ctx.moveTo(0, y)
-    ctx.lineTo(canvas.width, y)
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
   }
-  ctx.stroke()
+  ctx.stroke();
 }
 
 // Init socket
 function initSocket(nickname) {
-  socket = io()
+  socket = io();
 
-  socket.emit('joinGame', nickname)
+  socket.emit("joinGame", nickname);
 
   // Lister for player number
-  socket.on('playerNumber', (playerNumber) => {
-    this.playerNumber = playerNumber
-  })
+  socket.on("playerNumber", (playerNumber) => {
+    this.playerNumber = playerNumber;
+  });
 
   // Listen for game state updates
-  socket.on('gameState', (gameState) => {
-
+  socket.on("gameState", (gameState) => {
     // If player is dead, return to login screen
-    if (gameState.players.find((player) => player.playerNumber === this.playerNumber).gameOver) {
-      gameAudio.stopMusic()
+    if (
+      gameState.players.find(
+        (player) => player.playerNumber === this.playerNumber
+      ).gameOver
+    ) {
+      gameAudio.stopMusic();
 
-      document.getElementById('login').style.display = 'block'
-      document.getElementById('game').style.display = 'none'
-      document.getElementById('final-score-value').innerText = `Final Score: ${gameState.players.find((player) => player.playerNumber === this.playerNumber).score
-        }`
+      document.getElementById("login").style.display = "block";
+      document.getElementById("game").style.display = "none";
+      document.getElementById("final-score-value").innerText = `Final Score: ${
+        gameState.players.find(
+          (player) => player.playerNumber === this.playerNumber
+        ).score
+      }`;
 
       // Reset camera
-      camera = null
+      camera = null;
       // Reset background
-      setBackground('#fff', '#ccc')
+      setBackground("#fff", "#ccc");
 
-      socket.emit('forceDisconnect')
-      return
+      socket.emit("forceDisconnect");
+      return;
     }
 
     // Update player state
-    this.player = gameState.players.find((player) => player.playerNumber === this.playerNumber)
+    this.player = gameState.players.find(
+      (player) => player.playerNumber === this.playerNumber
+    );
 
     // Update leaderboard
-    updateLeaderboard(gameState)
+    updateLeaderboard(gameState);
+    updatePowerups(this.player);
+    updateBuffs(this.player);
 
-    let canvas = document.getElementById('canvas')
-    canvas.height = TILE_SIZE * cameraHeight + 1
-    canvas.width = TILE_SIZE * cameraWidth + 1
-    ctx.beginPath()
-    setBackground('#fff', '#ccc')
+    let canvas = document.getElementById("canvas");
+    canvas.height = TILE_SIZE * cameraHeight + 1;
+    canvas.width = TILE_SIZE * cameraWidth + 1;
+    ctx.beginPath();
+    setBackground("#fff", "#ccc");
 
     if (!this.playerNumber) {
-      return
+      return;
     }
 
     if (!camera) {
@@ -137,13 +149,15 @@ function initSocket(nickname) {
         cameraWidth,
         cameraHeight,
         cameraThreshold
-      )
+      );
     } else {
       // Update camera with new map state, i.e. move camera if needed
-      camera.update(gameState.map)
+      camera.update(gameState.map);
     }
 
-    let player = gameState.players.find((p) => p.playerNumber === this.playerNumber)
+    let player = gameState.players.find(
+      (p) => p.playerNumber === this.playerNumber
+    );
 
     // Draw map
     for (let x = camera.x; x < camera.x + camera.width; x++) {
@@ -154,31 +168,34 @@ function initSocket(nickname) {
             case gameState.map[x][y] > 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
-                player?.activeDebuffs.includes('pi') ? 0 : 1
-                ]
+                  player?.activeDebuffs.includes("pi") ? 0 : 1
+                ];
 
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
             //field: snake head
             case gameState.map[x][y] < 0:
               ctx.fillStyle =
-                snakeColors[(gameState.map[x][y] * -1 - 1) % snakeColors.length][
-                player?.activeDebuffs.includes('pi') ? 1 : 0
-                ]
+                snakeColors[
+                  (gameState.map[x][y] * -1 - 1) % snakeColors.length
+                ][player?.activeDebuffs.includes("pi") ? 1 : 0];
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
+              );
               // Check if sounds should be played for my snake
-              if (gameState.map[x][y] === -this.playerNumber && prevGameState !== null) {
-                gameAudio.playSoundByFieldType(prevGameState[x][y], player)
+              if (
+                gameState.map[x][y] === -this.playerNumber &&
+                prevGameState !== null
+              ) {
+                gameAudio.playSoundByFieldType(prevGameState[x][y], player);
               }
 
               if (player?.snakeInvulnerability) {
@@ -188,30 +205,32 @@ function initSocket(nickname) {
                   (y - camera.y) * TILE_SIZE,
                   TILE_SIZE,
                   TILE_SIZE
-                )
+                );
               }
-              break
+              break;
             //field: apple
-            case gameState.map[x][y] === 'a':
+            case gameState.map[x][y] === "a":
               ctx.drawImage(
                 AppleImage,
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
             //field: obstacle
-            case gameState.map[x][y] === 'o':
+            case gameState.map[x][y] === "o":
               ctx.drawImage(
                 ObstacleImage,
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
             //powerup field: star
+            //TODO: move field identifiers to common config (see configs folder -> some things are necessary for both backend and frontend (not super important))
+            case gameState.map[x][y] === "ps":
             case gameState.map[x][y] === 'ps':
               ctx.drawImage(
                 StarImage,
@@ -219,18 +238,28 @@ function initSocket(nickname) {
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
             //powerup field: inverser
-            case gameState.map[x][y] === 'pi':
+            case gameState.map[x][y] === "pi":
               ctx.drawImage(
                 InverserImage,
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
+            //powerup field: snake eater
+            case gameState.map[x][y] === "pe":
+              ctx.drawImage(
+                SnakeEaterImage,
+                (x - camera.x) * TILE_SIZE,
+                (y - camera.y) * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+              );
+              break;
             default:
               // nothing should be orange, so be careful if you see that on the map. handle better
               ctx.fillStyle = 'orange'
@@ -239,108 +268,116 @@ function initSocket(nickname) {
                 (y - camera.y) * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE
-              )
-              break
+              );
+              break;
           }
         }
       }
     }
 
     // Save previous game state
-    prevGameState = gameState.map
+    prevGameState = gameState.map;
 
     // Draw map bounds left
     if (camera.x === 0) {
-      ctx.beginPath()
-      ctx.moveTo(0, 0)
-      ctx.lineTo(0, canvas.height)
-      ctx.strokeStyle = 'red'
-      ctx.lineWidth = 4
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, canvas.height);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 4;
+      ctx.stroke();
     }
 
     // Draw map bounds right
     if (camera.x + camera.width === gameState.map.length) {
-      ctx.beginPath()
-      ctx.moveTo(canvas.width, 0)
-      ctx.lineTo(canvas.width, canvas.height)
-      ctx.strokeStyle = 'red'
-      ctx.lineWidth = 4
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(canvas.width, 0);
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 4;
+      ctx.stroke();
     }
 
     // Draw map bounds top
     if (camera.y === 0) {
-      ctx.beginPath()
-      ctx.moveTo(0, 0)
-      ctx.lineTo(canvas.width, 0)
-      ctx.strokeStyle = 'red'
-      ctx.lineWidth = 4
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(canvas.width, 0);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 4;
+      ctx.stroke();
     }
 
     // Draw map bounds bottom
     if (camera.y + camera.height === gameState.map[0].length) {
-      ctx.beginPath()
-      ctx.moveTo(0, canvas.height)
-      ctx.lineTo(canvas.width, canvas.height)
-      ctx.strokeStyle = 'red'
-      ctx.lineWidth = 4
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 4;
+      ctx.stroke();
     }
-  })
+  });
 }
 
 // Init key controls
 function initKeyControls() {
-  document.addEventListener('keydown', (event) => {
+  document.addEventListener("keydown", (event) => {
     switch (event.key) {
-      case 'w':
-      case 'ArrowUp':
-        sendUserInput('w')
-        break
-      case 'a':
-      case 'ArrowLeft':
-        sendUserInput('a')
-        break
-      case 's':
-      case 'ArrowDown':
-        sendUserInput('s')
-        break
-      case 'd':
-      case 'ArrowRight':
-        sendUserInput('d')
-        break
-      case '1': // send powerUp (ps) when '1' is pressed
-        if (this.player.powerUpInventory.includes('ps')) {
-          sendUserInput('ps')
+      case "w":
+      case "ArrowUp":
+        sendUserInput("w");
+        break;
+      case "a":
+      case "ArrowLeft":
+        sendUserInput("a");
+        break;
+      case "s":
+      case "ArrowDown":
+        sendUserInput("s");
+        break;
+      case "d":
+      case "ArrowRight":
+        sendUserInput("d");
+        break;
+      case "1": // send powerUp (ps) when '1' is pressed
+        if (this.player.powerUpInventory.includes("ps")) {
+          sendUserInput("ps");
           gameAudio.playStar();
         } else {
           gameAudio.playInventoryError();
         }
-        break
-      case '2': // send powerUp (pi) when '2' is pressed
-        if (this.player.powerUpInventory.includes('pi')) {
-          sendUserInput('pi')
+        break;
+      case "2": // send powerUp (pi) when '2' is pressed
+        if (this.player.powerUpInventory.includes("pi")) {
+          sendUserInput("pi");
           gameAudio.playInverser();
         } else {
           gameAudio.playInventoryError();
         }
-        break
+        break;
+      case '3': // send powerUp (pe) when '3' is pressed
+        if (this.player.powerUpInventory.includes('pe')) {
+          sendUserInput('pe')
+          gameAudio.playPickup();
+        } else {
+          gameAudio.playInventoryError();
+        }
+        break;
     }
-  })
+  });
 }
 
 // Init map
 function initMap() {
-  let canvas = document.getElementById('canvas')
-  ctx = canvas.getContext('2d')
-  canvas.setAttribute('tabindex', 1)
-  canvas.style.outline = 'none'
-  canvas.focus()
+  let canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
+  canvas.setAttribute("tabindex", 1);
+  canvas.style.outline = "none";
+  canvas.focus();
 }
 
 // Send user input
 function sendUserInput(userInput) {
-  socket.emit('userInput', userInput)
+  socket.emit("userInput", userInput);
 }
