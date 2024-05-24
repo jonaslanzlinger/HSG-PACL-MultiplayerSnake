@@ -14,16 +14,11 @@ class Player {
     this.playerNumber = playerNumber;
     this.gameOver = false;
     this.snake = this.spawnRandomSnake(map, BackendConfig.SNAKE_SPAWN_LENGTH);
-    this.snakeInvulnerability = this.setSpawnInvulnerability(
-      BackendConfig.SNAKE_SPAWN_INVULNERABILITY_MS
-    );
-    this.snakeEatability = false;
     this.direction = BackendConfig.SNAKE_SPAWN_DIRECTION;
-    //Holds an inventory of available power ups that the player holds, can be consumed.
-    this.powerUpInventory = []; //TODO: we might want to limit how many power ups a player can hold at a time
-    this.activePowerUp = null; // Holds the identifier of the currently active powerup
-    this.isPowerUpActive = false; // Flag to denote whether player currently has an ongoing powerup
-    this.activeDebuffs = []; // Holds a list of active debuffs the player suffers from
+    this.powerUpInventory = [];
+    this.activePowerUps = [];
+    Star.activatePowerUp(this);
+    this.activeDebuffs = [];
     this.game = game;
   }
 
@@ -36,22 +31,22 @@ class Player {
     return {
       playerNumber: this.playerNumber,
       nickname: this.nickname,
-      //TODO: the score might not only be based on the snake length (e.g. killing other snakes)
       score: this.snake.length - BackendConfig.SNAKE_SPAWN_LENGTH,
       gameOver: this.gameOver,
       snakeInvulnerability: this.snakeInvulnerability,
       powerUpInventory: this.powerUpInventory,
       activePowerUp: this.activePowerUp,
+      activePowerUps: this.activePowerUps,
       activeDebuffs: this.activeDebuffs,
     };
   }
 
-    spawnRandomSnake(map, length) {
-        // Create random starting position for snake.
-        // As the snake is drawn horizontally, we want at least its body length as space to the left.
-        // As the snake moves horizontally to the right, we want an arbitrary margin of 12 to give the player enough time to react.
-        let randomX = Math.floor(Math.random() * (map.length - 20) + length);
-        let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
+  spawnRandomSnake(map, length) {
+    // Create random starting position for snake.
+    // As the snake is drawn horizontally, we want at least its body length as space to the left.
+    // As the snake moves horizontally to the right, we want an arbitrary margin of 12 to give the player enough time to react.
+    let randomX = Math.floor(Math.random() * (map.length - 20) + length);
+    let randomY = Math.floor(Math.random() * (map.length - 3) + 3);
 
     //Create snake head at the random starting position
     let snake = [{ x: randomX, y: randomY }];
@@ -79,55 +74,63 @@ class Player {
     // Move powerUp from inventory to active
     // and remove one instance of the powerUp from the inventory
     if (this.powerUpInventory.includes(powerUpIdentifier)) {
-      this.activePowerUp = powerUpIdentifier;
+
+      // Remove powerUp from inventory
       this.powerUpInventory.splice(
         this.powerUpInventory.indexOf(powerUpIdentifier),
         1
       );
+
+      // STAR
+      if (powerUpIdentifier === Star.IDENTIFIER) {
+        Star.activatePowerUp(this);
+      }
+
+      // INVERTER
+      if (powerUpIdentifier === Inverser.IDENTIFIER) {
+        Inverser.activatePowerUp(this, this.game.players);
+      }
+
+      // SNAKE EATER
+      if (powerUpIdentifier === SnakeEater.IDENTIFIER) {
+        SnakeEater.activatePowerUp(this);
+      }
     }
   }
 
-    setDirection(direction) {
+  setDirection(direction) {
 
-        let previousDirection = this.direction;
+    let previousDirection = this.direction;
 
-        const oppositeDirections = {
-            [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
-            [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
-            [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
-            [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT
-        };
+    const oppositeDirections = {
+      [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
+      [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
+      [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
+      [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT
+    };
 
     // Check if the new direction is opposite to the current direction
     if (this.direction === oppositeDirections[direction] || this.direction === direction) {
       return; // If it is, don't change the direction
     }
 
-        // Check if inverser debuff is active
-        // If so, change the direction to the opposite of the user input
-        if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
-            this.direction = oppositeDirections[direction]
-        } else {
-            this.direction = direction;
-        }
-
-        // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
-        // If so, the snake should not move in the specified direction and ignore the user input.
-        // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
-        if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
-            || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
-            || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
-            || this.direction === BackendConfig.USER_INPUTS.RIGHT && this.snake[0].x + 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
-        ) {
-            this.direction = previousDirection;
-        }
-    
     // Check if inverser debuff is active
     // If so, change the direction to the opposite of the user input
     if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
-      this.direction = oppositeDirections[direction];
+      this.direction = oppositeDirections[direction]
     } else {
       this.direction = direction;
+    }
+
+    // For both (normal and inversed) check, if the direction is leading to moving into the snake's body itself.
+    // If so, the snake should not move in the specified direction and ignore the user input.
+    // This is done by checking if the snake's head is moving into the snake's body (the second element of the snake array).
+    if (this.direction === BackendConfig.USER_INPUTS.UP && this.snake[0].x === this.snake[1].x && this.snake[0].y - 1 === this.snake[1].y
+      || this.direction === BackendConfig.USER_INPUTS.DOWN && this.snake[0].x === this.snake[1].x && this.snake[0].y + 1 === this.snake[1].y
+      || this.direction === BackendConfig.USER_INPUTS.LEFT && this.snake[0].x - 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+      || this.direction === BackendConfig.USER_INPUTS.RIGHT && this.snake[0].x + 1 === this.snake[1].x && this.snake[0].y === this.snake[1].y
+    ) {
+      this.direction = previousDirection;
     }
   }
 
@@ -140,24 +143,10 @@ class Player {
    * @returns {boolean} whether snake move was a success.
    */
   move(map) {
-    // When snake moves while invulnerable, special conditions apply (e.g. cannot consume food or be hit by obstacles/snakes)
-    if (this.snakeInvulnerability) {
-      //Handle snake moving to the next coordinate based on user input
-      let newSnakeHead = this.moveSnakeHead(1);
-      if (this.isWallCollision(newSnakeHead, map)) {
-        //TODO: currently, even when invulnerable a wall collision means game over.
-        // Possibly handle wall collision differently (maybe move to side randomly?).
-        this.gameOver = true;
-        return false;
-      }
-      this.snake.pop();
-      return true;
-    }
 
     //Handle active debuff effect from Inverser powerup activated by another player
     const newSnakeHead = this.moveSnakeHead(1);
 
-    //Handle regular snake move
     if (this.collides(newSnakeHead, map)) {
       return false;
     }
@@ -222,19 +211,17 @@ class Player {
   }
 
   collides(snakeHead, map) {
-    // Check if snake collides with walls of map
+
     if (this.isWallCollision(snakeHead, map)) {
       console.log("Player " + this.nickname + " collided with wall");
       return (this.gameOver = true);
     }
 
-    // Check if snake collides with obstacle
     if (this.isObstacleCollision(snakeHead, Obstacle.obstacles)) {
       console.log("Player " + this.nickname + " collided with obstacle");
       return (this.gameOver = true);
     }
 
-    // Check if snake collides with another snake
     if (this.isSnakeCollision(snakeHead, map)) {
       console.log("Player " + this.nickname + " collided with another snake");
       return (this.gameOver = true);
@@ -253,6 +240,7 @@ class Player {
   }
 
   isObstacleCollision(snakeHead, obstacles) {
+    if (this.activePowerUps.includes(Star.IDENTIFIER)) { return false }
     for (let i = 0; i < obstacles.length; i++) {
       if (obstacles[i].x === snakeHead.x && obstacles[i].y === snakeHead.y) {
         return true;
@@ -274,9 +262,7 @@ class Player {
    * @returns {boolean} whether the snake head moved into another snake
    */
   isSnakeCollision(snakeHead, map) {
-    // TODO: Very rarely, the snake dies because it apparently collided with an invisible one. Could not reproduce reliably, possibly adding the initial check if it's a number helped.
-    // If snakeEatability is true, check if there is another snake in that spot and let it die
-    if (this.snakeEatability) {
+    if (this.activePowerUps.includes(SnakeEater.IDENTIFIER)) {
       if (
         typeof map[snakeHead.x][snakeHead.y] === "number" &&
         (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
@@ -291,12 +277,12 @@ class Player {
         this.game.letSnakeDie(playernumber);
         return false;
       }
+    } else {
+      return (
+        typeof map[snakeHead.x][snakeHead.y] === "number" &&
+        (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
+      );
     }
-    // If snakeEatability is false, check normally if there is a another snake in that spot
-    return (
-      typeof map[snakeHead.x][snakeHead.y] === "number" &&
-      (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
-    );
   }
 }
 

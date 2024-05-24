@@ -52,7 +52,7 @@ class Star {
         map[starCoordinate.x][starCoordinate.y] = Empty.IDENTIFIER;
 
         // Remove the star at given coordinates from array of available stars
-        this.stars = this.stars.filter(function(star) {
+        this.stars = this.stars.filter(function (star) {
             return !(star.x === starCoordinate.x && star.y === starCoordinate.y);
         });
 
@@ -66,14 +66,13 @@ class Star {
      * @param player is the snake receiving the powerup.
      */
     static activatePowerUp(player) {
-        player.snakeInvulnerability = true;
-        player.isPowerUpActive = true;
-
+        player.activePowerUps.push(Star.IDENTIFIER);
         setTimeout(() => {
-            player.snakeInvulnerability = false;
-            player.isPowerUpActive = false;
-            player.activePowerUp = null;
-        }, BackendConfig.POWERUPS.STAR.EFFECT.SNAKE_INVULNERABILITY_MS);
+            let firstPowerUpOccurrence = player.activePowerUps.indexOf(Star.IDENTIFIER);
+            if (firstPowerUpOccurrence !== -1) {
+                player.activePowerUps.splice(firstPowerUpOccurrence, 1);
+            }
+        }, BackendConfig.POWERUPS.STAR.DURATION);
     }
 }
 

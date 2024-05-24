@@ -33,25 +33,19 @@ const BackendConfig = {
       IDENTIFIER: "ps",
       SPAWN_CHANCE_PER_SECOND: 0.1,
       MAX_ON_MAP: 3,
-      EFFECT: {
-        SNAKE_INVULNERABILITY_MS: 3000,
-      },
+      DURATION: 5000,
     },
     INVERSER: {
       IDENTIFIER: "pi",
       SPAWN_CHANCE_PER_SECOND: 0.1,
       MAX_ON_MAP: 3,
-      EFFECT: {
-        INVERSE_OTHER_PLAYERS_MOVEMENT_MS: 5000,
-      },
+      DURATION: 5000,
     },
     SNAKE_EATER: {
       IDENTIFIER: "pe",
       SPAWN_CHANCE_PER_SECOND: 0.1,
       MAX_ON_MAP: 3,
-      EFFECT: {
-        SNAKE_EATS_SNAKE_MS: 5000,
-      },
+      DURATION: 5000,
     },
   },
 };

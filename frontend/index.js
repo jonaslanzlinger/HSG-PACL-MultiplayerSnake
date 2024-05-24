@@ -47,6 +47,7 @@ const snakeColors = [
 
 // Initialize audio
 gameAudio = new GameAudio();
+initKeyControls();
 
 // Start the game
 function startGame() {
@@ -56,7 +57,6 @@ function startGame() {
   let nickname = document.getElementById("nickname").value;
 
   initSocket(nickname);
-  initKeyControls();
   initMap();
   gameAudio.playMusic();
 }
@@ -106,11 +106,10 @@ function initSocket(nickname) {
 
       document.getElementById("login").style.display = "block";
       document.getElementById("game").style.display = "none";
-      document.getElementById("final-score-value").innerText = `Final Score: ${
-        gameState.players.find(
-          (player) => player.playerNumber === this.playerNumber
-        ).score
-      }`;
+      document.getElementById("final-score-value").innerText = `Final Score: ${gameState.players.find(
+        (player) => player.playerNumber === this.playerNumber
+      ).score
+        }`;
 
       // Reset camera
       camera = null;
@@ -130,6 +129,7 @@ function initSocket(nickname) {
     updateLeaderboard(gameState);
     updatePowerups(this.player);
     updateBuffs(this.player);
+    updateDebuffs(this.player);
 
     let canvas = document.getElementById("canvas");
     canvas.height = TILE_SIZE * cameraHeight + 1;
@@ -168,7 +168,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] > 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
-                  player?.activeDebuffs.includes("pi") ? 0 : 1
+                player?.activeDebuffs.includes("pi") ? 0 : 1
                 ];
 
               ctx.fillRect(
@@ -182,7 +182,7 @@ function initSocket(nickname) {
             case gameState.map[x][y] < 0:
               ctx.fillStyle =
                 snakeColors[
-                  (gameState.map[x][y] * -1 - 1) % snakeColors.length
+                (gameState.map[x][y] * -1 - 1) % snakeColors.length
                 ][player?.activeDebuffs.includes("pi") ? 1 : 0];
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
@@ -198,7 +198,7 @@ function initSocket(nickname) {
                 gameAudio.playSoundByFieldType(prevGameState[x][y], player);
               }
 
-              if (player?.snakeInvulnerability) {
+              if (player?.activePowerUps.includes("ps")) {
                 ctx.drawImage(
                   ShieldImage,
                   (x - camera.x) * TILE_SIZE,
@@ -359,7 +359,7 @@ function initKeyControls() {
       case '3': // send powerUp (pe) when '3' is pressed
         if (this.player.powerUpInventory.includes('pe')) {
           sendUserInput('pe')
-          gameAudio.playPickup();
+          gameAudio.playSnakeEaterSound();
         } else {
           gameAudio.playInventoryError();
         }
