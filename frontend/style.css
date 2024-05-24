@@ -40,10 +40,16 @@
   align-items: center;
 }
 
-.stats-container li.player:first-child {
+.stats-container li.player span.name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.stats-container li.player span.score {
+  display: block;
+  text-align: center;
+  padding: 0 0.4em;
 }
 
 .powerup-container img {

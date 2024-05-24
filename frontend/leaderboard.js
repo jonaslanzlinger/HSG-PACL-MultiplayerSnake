@@ -13,10 +13,22 @@ function updateLeaderboard(gameState) {
       let playerElement = document.createElement("li");
       playerElement.className = "player";
 
-      const color = snakeColors[(player.playerNumber - 1 ) % snakeColors.length][0];
-      playerElement.style.color = color;
+      const colors = snakeColors[(player.playerNumber - 1 ) % snakeColors.length];
 
-      playerElement.innerHTML = `<span>${player.nickname}</span><span>${player.score}</span>`;
+      const name = document.createElement("span")
+      name.classList.add("name")
+      name.style.color = colors[0]
+      name.innerText = player.nickname
+
+      const score = document.createElement("span")
+      score.classList.add("score")
+      score.style.backgroundColor = colors[0]
+      score.style.color = colors[2]
+      score.innerText = player.score
+
+      playerElement.appendChild(name)
+      playerElement.appendChild(score)
+
       leaderboardList.appendChild(playerElement);
    });
 }

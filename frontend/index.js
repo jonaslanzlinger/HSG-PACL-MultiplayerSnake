@@ -29,22 +29,23 @@ ObstacleImage.src = "/assets/obstacle.svg";
 ShieldImage.src = "/assets/shield.svg";
 
 // Snake colors
+// [head, body, text]
 const snakeColors = [
-  ["#0000ff", "#7a7aff"],
-  ["#ff0000", "#ff7a7a"],
-  ["#ffd700", "#fbe87e"],
-  ["#9ae91c", "#c7fb74"],
-  ["#1cf29c", "#85ffce"],
-  ["#9b30f2", "#c583fb"],
-  ["#322f36", "#68666b"],
-  ["#00bfff", "#8fe3ff"],
-  ["#f2991c", "#ffc370"],
-  ["#ff338b", "#ff7ab4"],
-  ["#196b1b", "#59915a"],
-  ["#232277", "#56558b"],
-  ["#806452", "#bea293"],
-  ["#800080", "#c665c8"],
-  ["#a7320c", "#db7c5c"],
+  ["#0000ff", "#7a7aff", "#ffffff"],
+  ["#ff0000", "#ff7a7a", "#ffffff"],
+  ["#ffd700", "#fbe87e", "#111111"],
+  ["#9ae91c", "#c7fb74", "#111111"],
+  ["#1cf29c", "#85ffce", "#111111"],
+  ["#9b30f2", "#c583fb", "#ffffff"],
+  ["#322f36", "#68666b", "#ffffff"],
+  ["#00bfff", "#8fe3ff", "#ffffff"],
+  ["#f2991c", "#ffc370", "#111111"],
+  ["#ff338b", "#ff7ab4", "#ffffff"],
+  ["#196b1b", "#59915a", "#ffffff"],
+  ["#232277", "#56558b", "#ffffff"],
+  ["#806452", "#bea293", "#ffffff"],
+  ["#800080", "#c665c8", "#ffffff"],
+  ["#a7320c", "#db7c5c", "#ffffff"],
 ];
 
 // Initialize audio
