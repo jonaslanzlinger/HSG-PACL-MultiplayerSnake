@@ -1,5 +1,7 @@
 # Multiplayer Snake Game
 
+[Play Online](https://snake.marcokaufmann.ch/)
+
 ## Overview
 This is a multiplayer version of the classic Snake game, enhanced with various powerups to make the gameplay more dynamic and competitive. Players navigate their snakes on the map, eat apples to grow, and collect powerups that grant temporary abilities. The game is built using Socket.IO for real-time communication between the frontend and backend.
 
@@ -56,7 +58,6 @@ docker run -p 1337:1337 snake
 # Prebuilt
 docker run -p 1337:1337 mahgoh/snake
 ```
-
 
 ## Gameplay Instructions
 1. **Joining the Game**: Open the game in your browser and enter a username to join.
