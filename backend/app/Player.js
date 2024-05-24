@@ -98,14 +98,6 @@ class Player {
             [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
             [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT
         };
-  setDirection(direction) {
-    //TODO: it's possible to move reverse by quickly pressing another direction and then back (e.g. you go right, then quickly press up,left to go left, which should not be possible)
-    const oppositeDirections = {
-      [BackendConfig.USER_INPUTS.UP]: BackendConfig.USER_INPUTS.DOWN,
-      [BackendConfig.USER_INPUTS.DOWN]: BackendConfig.USER_INPUTS.UP,
-      [BackendConfig.USER_INPUTS.LEFT]: BackendConfig.USER_INPUTS.RIGHT,
-      [BackendConfig.USER_INPUTS.RIGHT]: BackendConfig.USER_INPUTS.LEFT,
-    };
 
     // Check if the new direction is opposite to the current direction
     if (this.direction === oppositeDirections[direction] || this.direction === direction) {
@@ -130,7 +122,7 @@ class Player {
         ) {
             this.direction = previousDirection;
         }
-    }
+    
     // Check if inverser debuff is active
     // If so, change the direction to the opposite of the user input
     if (this.activeDebuffs.includes(Inverser.IDENTIFIER)) {
@@ -302,9 +294,6 @@ class Player {
       }
     }
     // If snakeEatability is false, check normally if there is a another snake in that spot
-    console.log(
-      "Checking if player " + this.nickname + " collided with another snake"
-    );
     return (
       typeof map[snakeHead.x][snakeHead.y] === "number" &&
       (map[snakeHead.x][snakeHead.y] < 0 || map[snakeHead.x][snakeHead.y] > 0)
