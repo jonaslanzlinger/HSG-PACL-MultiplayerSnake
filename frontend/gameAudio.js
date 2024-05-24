@@ -22,7 +22,6 @@ class GameAudio {
       this.#music = new Audio()
       this.#music.src = '/assets/sounds/music.wav'
       this.#music.loop = true;
-      this.#music.volume = 0.5;
 
       this.#gameOver = new Audio()
       this.#gameOver.src = '/assets/sounds/gameOver.m4a'

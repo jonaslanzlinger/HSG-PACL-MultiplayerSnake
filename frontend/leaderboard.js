@@ -1,4 +1,8 @@
-// Update leaderboard
+/**
+ * Updates the leaderboard with the current gamestate
+ * 
+ * @param {Object} gameState - The current gamestate
+ */
 function updateLeaderboard(gameState) {
 
    let leaderboardList = document.getElementById("leaderboard-list");
@@ -13,7 +17,7 @@ function updateLeaderboard(gameState) {
       let playerElement = document.createElement("li");
       playerElement.className = "player";
 
-      const colors = snakeColors[(player.playerNumber - 1 ) % snakeColors.length];
+      const colors = snakeColors[(player.playerNumber - 1) % snakeColors.length];
 
       const name = document.createElement("span")
       name.classList.add("name")

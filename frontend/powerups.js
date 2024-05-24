@@ -4,7 +4,12 @@ const PowerupInverserImage = document.createElement("img");
 PowerupInverserImage.src = "/assets/inverser.svg";
 const PowerupEaterImage = document.createElement("img");
 PowerupEaterImage.src = "/assets/snake_eater.svg";
-// Update powerups
+
+/**
+ * Updates the powerups with the current player
+ * 
+ * @param {Object} player - The current player
+ */
 function updatePowerups(player) {
   let powerupsList = document.getElementById("powerups-list");
 

@@ -52,7 +52,9 @@ const snakeColors = [
 gameAudio = new GameAudio();
 initKeyControls();
 
-// Start the game
+/**
+ * Starts the game by hiding the login screen and showing the game screen.
+ */
 function startGame() {
   // If landscape mode
   if (window.innerHeight < (window.innerWidth - SIDEBAR_WIDTH)) {
@@ -98,13 +100,17 @@ function setBackground(color1, color2) {
   ctx.stroke();
 }
 
-// Init socket
+/**
+ * Initializes the socket connection to the server.
+ * 
+ * @param {string} nickname - The nickname of the player.
+ */
 function initSocket(nickname) {
   socket = io();
 
   socket.emit("joinGame", nickname);
 
-  // Lister for player number
+  // Listen for player number
   socket.on("playerNumber", (playerNumber) => {
     this.playerNumber = playerNumber;
   });
@@ -128,7 +134,7 @@ function initSocket(nickname) {
 
       const name = document.querySelector("#final-score .name")
       const score = document.querySelector("#final-score .score")
-      const colors = snakeColors[(p.playerNumber - 1 ) % snakeColors.length];
+      const colors = snakeColors[(p.playerNumber - 1) % snakeColors.length];
 
       name.innerText = p.nickname
       name.style.backgroundColor = colors[1]
@@ -168,8 +174,6 @@ function initSocket(nickname) {
     let canvas = document.getElementById("canvas");
     canvas.width = tileSize * cameraWidth + 1;
     canvas.height = tileSize * cameraHeight + 1;
-    // canvas.height = tileSize * cameraHeight + 1;
-    // canvas.width = tileSize * cameraWidth + 1;
     ctx.beginPath();
     setBackground("#fff", "#ccc");
 
@@ -200,7 +204,7 @@ function initSocket(nickname) {
       for (let y = camera.y; y < camera.y + camera.height; y++) {
         if (gameState.map[x][y] !== 0) {
           switch (true) {
-            //field: snake body
+            // field: snake body
             case gameState.map[x][y] > 0:
               ctx.fillStyle =
                 snakeColors[(gameState.map[x][y] - 1) % snakeColors.length][
@@ -214,7 +218,7 @@ function initSocket(nickname) {
                 tileSize
               );
               break;
-            //field: snake head
+            // field: snake head
             case gameState.map[x][y] < 0:
               ctx.fillStyle =
                 snakeColors[
@@ -256,7 +260,7 @@ function initSocket(nickname) {
                 gameAudio.playSoundByFieldType(prevGameState[x][y], player);
               }
               break;
-            //field: apple
+            // field: apple
             case gameState.map[x][y] === "a":
               ctx.drawImage(
                 AppleImage,
@@ -266,7 +270,7 @@ function initSocket(nickname) {
                 tileSize
               );
               break;
-            //field: obstacle
+            // field: obstacle
             case gameState.map[x][y] === "o":
               ctx.drawImage(
                 ObstacleImage,
@@ -276,10 +280,8 @@ function initSocket(nickname) {
                 tileSize
               );
               break;
-            //powerup field: star
+            // powerup field: star
             case gameState.map[x][y] === 'ps':
-            //TODO: move field identifiers to common config (see configs folder -> some things are necessary for both backend and frontend (not super important))
-            case gameState.map[x][y] === "ps":
               ctx.drawImage(
                 StarImage,
                 (x - camera.x) * tileSize,
@@ -288,7 +290,7 @@ function initSocket(nickname) {
                 tileSize
               );
               break;
-            //powerup field: inverser
+            // powerup field: inverser
             case gameState.map[x][y] === "pi":
               ctx.drawImage(
                 InverserImage,
@@ -298,7 +300,7 @@ function initSocket(nickname) {
                 tileSize
               );
               break;
-            //powerup field: snake eater
+            // powerup field: snake eater
             case gameState.map[x][y] === "pe":
               ctx.drawImage(
                 SnakeEaterImage,
@@ -368,7 +370,9 @@ function initSocket(nickname) {
   });
 }
 
-// Init key controls
+/**
+ * Initializes key controls for the game.
+ */
 function initKeyControls() {
   document.addEventListener("keydown", (event) => {
     if (document.getElementById("game").style.display === "none") return;

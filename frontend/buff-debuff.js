@@ -8,6 +8,12 @@ BuffEaterImage.src = "/assets/snake_eater.svg";
 var buffList = document.getElementById("buff-list");
 var debuffList = document.getElementById("debuff-list");
 
+/**
+ * Updates the buff and debuff list for the player
+ * 
+ * @param {Player} player the player to update the buffs and debuffs for
+ * @returns {void}
+ */
 function updateBuffs(player) {
 
   // remove all children of powerups div
@@ -28,6 +34,12 @@ function updateBuffs(player) {
   }
 }
 
+/**
+ * Updates the debuff list for the player
+ * 
+ * @param {Player} player the player to update the debuffs for
+ * @returns {void}
+ */
 function updateDebuffs(player) {
 
   // remove all children of powerups div
