@@ -229,9 +229,9 @@ function initSocket(nickname) {
               );
               break;
             //powerup field: star
+            case gameState.map[x][y] === 'ps':
             //TODO: move field identifiers to common config (see configs folder -> some things are necessary for both backend and frontend (not super important))
             case gameState.map[x][y] === "ps":
-            case gameState.map[x][y] === 'ps':
               ctx.drawImage(
                 StarImage,
                 (x - camera.x) * TILE_SIZE,
@@ -262,7 +262,7 @@ function initSocket(nickname) {
               break;
             default:
               // nothing should be orange, so be careful if you see that on the map. handle better
-              ctx.fillStyle = 'orange'
+              ctx.fillStyle = "orange";
               ctx.fillRect(
                 (x - camera.x) * TILE_SIZE,
                 (y - camera.y) * TILE_SIZE,
