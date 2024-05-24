@@ -13,20 +13,25 @@
 .stats-container {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid red;
-}
-
-.stats-container div {
-  padding: 5px 10px;
+  gap: 30px;
 }
 
 .stats-container div h2 {
-  font-size: 1.5em;
+  font-size: 1.3em;
+  font-family: monospace;
+  padding: 0.2em 0.4em;
+  border: 1px solid #ccc;
+  border-left: none;
+  margin-top: 0.5em;
+  background: #f3f3f3;
+  display: inline-block;
 }
 
 .stats-container ol {
   margin: 0;
-  padding: 0;
+  padding: 0.2em 0 0.2em 0.4em;
+  font-size: 1.1em;
+  font-family: monospace;
 }
 
 .stats-container li.player {
@@ -41,21 +46,30 @@
   white-space: nowrap;
 }
 
-.powerup-container {
-  height: 150px;
-}
 .powerup-container img {
   height: 25px;
   width: auto;
 }
+
 .powerup-container div {
   display: flex;
   justify-content: left;
   width: 50px;
   height: 25px;
+  gap: 8px;
 }
-.leaderboard-container {
-  justify-content: left;
+
+ol#buff-list,
+ol#debuff-list {
+  display: flex;
+  gap: 6px;
+}
+
+#canvas-container {
+  display: flex;
+  justify-content: end;
+  align-items: start;
+  height: 100%;
 }
 
 .grid-container {
@@ -65,6 +79,7 @@
   grid-template-columns: 100px 1fr;
   grid-gap: 10px;
 }
+
 .grid-item {
    background-color: #ddd;
    padding: 20px;
@@ -72,6 +87,7 @@
    font-size: 20px;
    text-align: left;
 }
+
 .grid-item-icon {
    background-color: #ddd;
    padding: 20px;
@@ -80,9 +96,11 @@
    text-align: center;
    width: 100px;
 }
+
 .control-img {
   height: 30px;
 }
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -91,14 +109,10 @@
   text-align: center;
   height: 100vh;
 }
+
 .gap {
   height: 100px;
 }
-
-
-
-
-
 
 #color-customizer {
   position: fixed;
